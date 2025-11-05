@@ -1,1 +1,1 @@
-import SDG.Example
+import SDG.Synthetic
