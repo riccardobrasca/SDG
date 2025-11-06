@@ -3,12 +3,20 @@ import Mathlib.Data.Set.CoeSort
 import Mathlib.Logic.ExistsUnique
 import Mathlib.Tactic.Coe
 import Mathlib.Tactic.Use
+import Mathlib.Algebra.Group.Submonoid.Basic
+import Mathlib.Algebra.Group.Basic
+import Mathlib.Algebra.DualNumber
+import Mathlib.Algebra.Algebra.Pi
 
 namespace SDG
 
+open DualNumber
+
 variable (R : Type*) [CommRing R]
 
-abbrev D := {(x : R) | x ^ 2 = 0}
+abbrev D : Subsemigroup R where
+ carrier := {(x : R) | x ^ 2 = 0}
+ mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
 
 lemma zero_mem_D : (0 : R) ∈ D R := by
   show 0 ^ 2 = 0
@@ -22,9 +30,15 @@ instance : Zero (D R) where
 class IsKockLawvere extends Nontrivial R where
   isKockLawvere : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + d * b
 
-def α : R × R → (D R → R) := fun ⟨a, b⟩ ↦ (fun d ↦ a + d * b)
+lemma coe_sq : ((↑) : D R → R) * (↑) = 0 := by
+  ext d
+  simpa only [← pow_two, Pi.zero_apply] using d.2
 
-@[simp] lemma α_apply (a b : R) (d : D R) : α R ⟨a, b⟩ d = a + d * b := rfl
+def α : DualNumber R →ₐ[R] (D R → R) :=
+  lift ⟨⟨Algebra.ofId _ _, (↑)⟩, coe_sq _, fun _ ↦ Commute.all _ _⟩
+
+@[simp] lemma α_apply (a b : R) (d : D R) : α R ⟨a, b⟩ d = a + d * b := by
+  simp [α, lift_apply_apply, mul_comm]
 
 variable [IsKockLawvere R] {R}
 
