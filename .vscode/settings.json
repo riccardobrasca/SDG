@@ -180,5 +180,9 @@
             "env": {}
         }
     ],
-    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/blueprint/print"
+    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/blueprint/print",
+    "cSpell.words": [
+        "Kock",
+        "Lawvere"
+    ]
 }

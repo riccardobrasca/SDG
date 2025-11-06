@@ -11,10 +11,32 @@
 Let $R$ be a commutative ring.
 
 \begin{definition}
+  \label{SDG.D}
   \leanok
   \lean{SDG.D}
 We denote by $D$ the set
 \[
 \{r \in R \mbox{ such that } r ^ 2 = 0 \}
 \]
+\end{definition}
+
+\begin{lemma}
+  \label{SDG.zero_mem_D}
+  \leanok
+  \lean{SDG.zero_mem_D}
+  \uses{SDG.D}
+  We have that $0 \in D$
+\end{lemma}
+\begin{proof}
+  \leanok
+  Obvious.
+\end{proof}
+
+\begin{definition}
+  \label{SDG.IsKockLawvere}
+  \leanok
+  \lean{SDG.IsKockLawvere}
+  \uses{SDG.D}
+We say that $R$ is \emph{Kock--Lawvere} if it is nontrivial and forall $g : D → R$ there is a unique
+$b \in R$ such that forall $d \in D$ we have $g(d) = g(0) + d * b$.
 \end{definition}

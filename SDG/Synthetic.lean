@@ -1,6 +1,8 @@
 import Mathlib.Algebra.Ring.Defs
 import Mathlib.Data.Set.CoeSort
 import Mathlib.Logic.ExistsUnique
+import Mathlib.Tactic.Coe
+import Mathlib.Tactic.Use
 
 namespace SDG
 
@@ -15,18 +17,25 @@ lemma zero_mem_D : (0 : R) ∈ D R := by
 instance : Zero (D R) where
   zero := ⟨0, zero_mem_D _⟩
 
-@[simp] lemma coe_zero : (↑(0 : D R) : R) = 0 := rfl
+@[simp] lemma coe_zero : ((0 : D R) : R) = 0 := rfl
 
-variable (one : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + d * b)
-include one
+class IsKockLawvere extends Nontrivial R where
+  isKockLawvere : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + d * b
 
 def α : R × R → (D R → R) := fun ⟨a, b⟩ ↦ (fun d ↦ a + d * b)
 
-theorem consequence (b₁ b₂ : R) (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ = b₂ := by
+@[simp] lemma α_apply (a b : R) (d : D R) : α R ⟨a, b⟩ d = a + d * b := rfl
+
+variable [IsKockLawvere R] {R}
+
+theorem exists_derivative (g : D R → R) : ∃! b, ∀ d, g d = g 0 + d * b :=
+  IsKockLawvere.isKockLawvere g
+
+theorem cancel_d (b₁ b₂ : R) (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ = b₂ := by
   let g1 : D R → R := fun d ↦ d * b₁
-  obtain ⟨b1, -, unique1⟩ := one g1
+  obtain ⟨b1, -, unique1⟩ := exists_derivative g1
   let g2 : D R → R := fun d ↦ d * b₂
-  obtain ⟨b2, -, unique2⟩ := one g2
+  obtain ⟨b2, -, unique2⟩ := exists_derivative g2
   have h1 : b1 = b₁ := by
     specialize unique1 b₁
     simp at unique1
@@ -44,8 +53,27 @@ theorem consequence (b₁ b₂ : R) (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b
   intro d
   simp [g2, (h d d.2).symm, h1]
 
-theorem Injective : Function.Injective (α R) := by
-  intro ⟨a, b⟩ ⟨c, d⟩ h
-  sorry
+theorem injective_α : Function.Injective (α R) := by
+  intro ⟨x, y⟩ ⟨z, t⟩ h
+  have hxz := congr_fun h 0
+  simp at hxz
+  ext
+  · assumption
+  · simp
+    replace h : ∀ d ∈ D R, d * y = d * t := by
+      intro d hd
+      have := congr_fun h ⟨d, hd⟩
+      simpa [hxz]
+    exact cancel_d _ _ h
+
+theorem surjective_α : Function.Surjective (α R) := by
+  intro f
+  obtain ⟨b, hb, unique⟩ := exists_derivative f
+  use ⟨f 0, b⟩
+  ext d
+  simp [hb d]
+
+theorem bijective_α : Function.Bijective (α R) :=
+  ⟨injective_α, surjective_α⟩
 
 end SDG
