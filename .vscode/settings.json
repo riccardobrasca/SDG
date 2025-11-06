@@ -21,6 +21,7 @@
 	    "blueprint/src/print.*": true,
 	    "blueprint/src/web.*": true,
 	    "blueprint/src/*.css": true,
+	    "blueprint/src/*.pdf": true,
 	    "blueprint/src/*.cfg": true,
 	    "blueprint/src/latexmkrc": true,
 	    "blueprint/src/blueprint.sty": true,

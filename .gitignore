@@ -9,6 +9,7 @@
 /blueprint/src/web.paux
 /blueprint/src/web.bbl
 /blueprint/print/
+/blueprint/src/print.pdf
 ## TeX
 *.aux
 *.lof
