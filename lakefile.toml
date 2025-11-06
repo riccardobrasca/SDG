@@ -2,9 +2,11 @@ name = "SDG"
 defaultTargets = ["SDG"]
 
 [leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b
 pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
+maxSynthPendingDepth = 3 # same as mathlib, changes behaviour of typeclass inference
 
 [[require]]
 name = "mathlib"
