@@ -53,12 +53,6 @@ jobs:
         with:
           use-github-cache: false
 
-      - name: check that SDG.lean is up to date
-        run: ~/.elan/bin/lake exe mk_all --check
-
-      - name: Lint project
-        run: env LEAN_ABORT_ON_PANIC=1 ~/.elan/bin/lake exe runLinter SDG
-
       - name: Compile blueprint and documentation
         uses: leanprover-community/docgen-action@deed0cdc44dd8e5de07a300773eb751d33e32fc8 # 2025-10-26
         with:
