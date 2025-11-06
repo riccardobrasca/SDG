@@ -14,7 +14,7 @@ Let $R$ be a commutative ring.
   \label{SDG.D}
   \leanok
   \lean{SDG.D}
-We denote by $D$ the set
+We denote by $D$ the subsemigroup of $R$
 \[
 \{r \in R \mbox{ such that } r ^ 2 = 0 \}
 \]
@@ -26,6 +26,45 @@ We denote by $D$ the set
   \lean{SDG.zero_mem_D}
   \uses{SDG.D}
   We have that $0 \in D$
+\end{lemma}
+\begin{proof}
+  \leanok
+  Obvious.
+\end{proof}
+
+Let $\iota \colon D \to R$ be the natural inclusion.
+
+\begin{lemma}
+  \label{SDG.coe_sq}
+  \leanok
+  \lean{SDG.coe_sq}
+  \uses{SDG.zero_mem_D}
+  As an element of $D \to R$, we have that $\iota^2 = 0$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Simple calculation.
+\end{proof}
+
+\begin{definition}
+  \label{SDG.α}
+  \leanok
+  \lean{SDG.α}
+  \uses{SDG.coe_sq}
+Let $R[\varepsilon]$ denote the ring of dual numbers of $R$, and let $\alpha$ be the unique $R$-algebra
+morphism $R[\varepsilon] \to (D \to R)$ such that $\alpha(\varepsilon) = \iota$. It exists by the universal
+property of $R[\varepsilon]$ and Lemma \ref{SDG.coe_sq}.
+\end{definition}
+
+\begin{lemma}
+  \label{SDG.α_apply}
+  \leanok
+  \lean{SDG.α_apply}
+  \uses{SDG.α}
+  For all $a + b \varepsilon \in R[\varepsilon]$ and $d \in D$ we have
+  \[
+  \alpha (a + b \varepsilon \in R[\varepsilon]) d = a + d \cdot b
+  \]
 \end{lemma}
 \begin{proof}
   \leanok

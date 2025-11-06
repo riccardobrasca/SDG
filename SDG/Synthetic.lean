@@ -1,16 +1,9 @@
-import Mathlib.Algebra.Ring.Defs
-import Mathlib.Data.Set.CoeSort
-import Mathlib.Logic.ExistsUnique
-import Mathlib.Tactic.Coe
-import Mathlib.Tactic.Use
-import Mathlib.Algebra.Group.Submonoid.Basic
-import Mathlib.Algebra.Group.Basic
 import Mathlib.Algebra.DualNumber
 import Mathlib.Algebra.Algebra.Pi
 
 namespace SDG
 
-open DualNumber
+open DualNumber Function
 
 variable (R : Type*) [CommRing R]
 
@@ -27,9 +20,6 @@ instance : Zero (D R) where
 
 @[simp] lemma coe_zero : ((0 : D R) : R) = 0 := rfl
 
-class IsKockLawvere extends Nontrivial R where
-  isKockLawvere : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + d * b
-
 lemma coe_sq : ((↑) : D R → R) * (↑) = 0 := by
   ext d
   simpa only [← pow_two, Pi.zero_apply] using d.2
@@ -40,12 +30,17 @@ def α : DualNumber R →ₐ[R] (D R → R) :=
 @[simp] lemma α_apply (a b : R) (d : D R) : α R ⟨a, b⟩ d = a + d * b := by
   simp [α, lift_apply_apply, mul_comm]
 
+section IsKockLawvere
+
+class IsKockLawvere extends Nontrivial R where
+  isKockLawvere : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + d * b
+
 variable [IsKockLawvere R] {R}
 
-theorem exists_derivative (g : D R → R) : ∃! b, ∀ d, g d = g 0 + d * b :=
+lemma exists_derivative (g : D R → R) : ∃! b, ∀ d, g d = g 0 + d * b :=
   IsKockLawvere.isKockLawvere g
 
-theorem cancel_d (b₁ b₂ : R) (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ = b₂ := by
+lemma cancel_d (b₁ b₂ : R) (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ = b₂ := by
   let g1 : D R → R := fun d ↦ d * b₁
   obtain ⟨b1, -, unique1⟩ := exists_derivative g1
   let g2 : D R → R := fun d ↦ d * b₂
@@ -67,7 +62,7 @@ theorem cancel_d (b₁ b₂ : R) (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁
   intro d
   simp [g2, (h d d.2).symm, h1]
 
-theorem injective_α : Function.Injective (α R) := by
+lemma injective_α : Injective (α R) := by
   intro ⟨x, y⟩ ⟨z, t⟩ h
   have hxz := congr_fun h 0
   simp at hxz
@@ -80,14 +75,21 @@ theorem injective_α : Function.Injective (α R) := by
       simpa [hxz]
     exact cancel_d _ _ h
 
-theorem surjective_α : Function.Surjective (α R) := by
+lemma surjective_α : Surjective (α R) := by
   intro f
   obtain ⟨b, hb, unique⟩ := exists_derivative f
   use ⟨f 0, b⟩
   ext d
   simp [hb d]
 
-theorem bijective_α : Function.Bijective (α R) :=
+lemma bijective_α : Bijective (α R) :=
   ⟨injective_α, surjective_α⟩
+
+end IsKockLawvere
+
+class KockLawvere extends Nontrivial R where
+  inv : (D R → R) →ₐ[R] DualNumber R
+  left : LeftInverse (α R) inv
+  right : RightInverse (α R) inv
 
 end SDG
