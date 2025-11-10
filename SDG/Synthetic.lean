@@ -1,7 +1,25 @@
 import Mathlib.Algebra.DualNumber
 import Mathlib.Algebra.Algebra.Pi
 
-axiom unique_choice {α : Type*} [Unique α] : α
+suppress_compilation
+
+section unique_choice
+
+variable {α : Type*} {P : α → Prop}
+
+axiom axiom_unique_choice (h : ∃! (_ : α), True) : α
+
+lemma unique_subtype (h : ∃! (a : α), P a) : ∃! (_ : {a // P a}), True := by
+  obtain ⟨a, h1, h2⟩ := h
+  exact ⟨⟨a, h1⟩, by trivial, fun y _ ↦ Subtype.ext (h2 _ y.2)⟩
+
+def unique_choice (h : ∃! (a : α), P a) : α :=
+  (axiom_unique_choice (unique_subtype h)).val
+
+lemma unique_choice_spec (h : ∃! (a : α), P a) : P (unique_choice h) :=
+  Subtype.prop _
+
+end unique_choice
 namespace SDG
 
 open DualNumber Function
@@ -41,10 +59,12 @@ class IsKockLawvere extends Nontrivial R where
 
 variable [IsKockLawvere R]
 
+open IsKockLawvere
+
 lemma exists_derivative (g : D R → R) : ∃! b, ∀ d, g d = g 0 + d * b :=
   IsKockLawvere.isKockLawvere g
 
-lemma cancel_d (b₁ b₂ : R) (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ = b₂ := by
+lemma cancel_d {b₁ b₂ : R} (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ = b₂ := by
   let g1 : D R → R := fun d ↦ d * b₁
   obtain ⟨b1, -, unique1⟩ := exists_derivative g1
   let g2 : D R → R := fun d ↦ d * b₂
@@ -77,7 +97,7 @@ lemma injective_α : Injective (α (R := R)) := by
       intro d hd
       have := congr_fun h ⟨d, hd⟩
       simpa [hxz]
-    exact cancel_d _ _ h
+    exact cancel_d h
 
 lemma surjective_α : Surjective (α (R := R)) := by
   intro f
@@ -89,11 +109,15 @@ lemma surjective_α : Surjective (α (R := R)) := by
 lemma bijective_α : Bijective (α (R := R)) :=
   ⟨injective_α, surjective_α⟩
 
-end IsKockLawvere
+@[irreducible] def derivative (f : R → R) : R → R :=
+  fun x ↦ unique_choice (isKockLawvere (fun d ↦ f (x + d)))
 
-class KockLawvere extends Nontrivial R where
-  inv : (D R → R) →ₐ[R] DualNumber R
-  left : LeftInverse α inv
-  right : RightInverse α inv
+lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * (derivative f 0) := by
+  simpa [derivative] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
+
+theorem taylors_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * (derivative f x) := by
+  simpa [derivative] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
+
+end IsKockLawvere
 
 end SDG
