@@ -1,5 +1,6 @@
 import Lean.Util.CollectAxioms
 import Mathlib.Tactic.DeclarationNames
+import Mathlib.Init
 
 /-!
 #  The "detectClassical" linter

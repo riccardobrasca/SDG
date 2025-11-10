@@ -31,9 +31,10 @@ abbrev D : Subsemigroup R where
  carrier := {(x : R) | x ^ 2 = 0}
  mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
 
+lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := by rfl
+
 lemma zero_mem_D : 0 ∈ D R := by
-  show 0 ^ 2 = 0
-  rw [sq, mul_zero]
+  rw [D_mem_iff, sq, mul_zero]
 
 instance : Zero (D R) where
   zero := ⟨0, zero_mem_D _⟩
@@ -72,13 +73,13 @@ lemma cancel_d {b₁ b₂ : R} (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ =
   obtain ⟨b2, -, unique2⟩ := exists_derivative g2
   have h1 : b1 = b₁ := by
     specialize unique1 b₁
-    simp at unique1
+    simp only [Subtype.forall, Subsemigroup.mem_mk, Set.mem_setOf_eq] at unique1
     rw [unique1]
     intro d hd
     simp [g1]
   have h2 : b2 = b₂ := by
     specialize unique2 b₂
-    simp at unique2
+    simp only [Subtype.forall, Subsemigroup.mem_mk, Set.mem_setOf_eq] at unique2
     rw [unique2]
     intro b hb
     simp [g2]
@@ -90,11 +91,10 @@ lemma cancel_d {b₁ b₂ : R} (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ =
 lemma injective_α : Injective (α (R := R)) := by
   intro ⟨x, y⟩ ⟨z, t⟩ h
   have hxz := congr_fun h 0
-  simp at hxz
+  simp only [α_apply, coe_zero, zero_mul, add_zero] at hxz
   ext
   · assumption
-  · simp
-    replace h : ∀ d ∈ D R, d * y = d * t := by
+  · replace h : ∀ d ∈ D R, d * y = d * t := by
       intro d hd
       have := congr_fun h ⟨d, hd⟩
       simpa [hxz]

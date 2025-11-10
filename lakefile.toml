@@ -6,6 +6,8 @@ pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
 maxSynthPendingDepth = 3 # same as mathlib, changes behaviour of typeclass inference
+linter.flexible = true # no rigid tactic (e.g. `exact`) after a flexible tactic (e.g. `simp`)
+linter.mathlibStandardSet = true
 weak.linter.verbose.detectClassical = true
 
 [[require]]
