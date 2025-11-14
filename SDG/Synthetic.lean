@@ -4,8 +4,11 @@ import Mathlib.Tactic.Ring
 
 import SDG.UniqueChoice
 
--- `simp` lemmas that have to be removed to avoid the axiom of choice
-attribute [-simp] Nat.cast_ofNat
+-- things that have to be removed to avoid the axiom of choice
+attribute [-instance] Nat.instAtLeastTwoHAddOfNat
+
+instance (n : ℕ) [NeZero n] : (n + 1).AtLeastTwo :=
+  ⟨Nat.add_one_le_iff.2 <| Nat.succ_lt_succ <| Nat.pos_of_neZero n⟩
 namespace SDG
 
 open DualNumber Function
@@ -19,19 +22,22 @@ abbrev D : Subsemigroup R where
 lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := by rfl
 
 variable {R} in
-@[simp] lemma D_sq (x : D R) : (x : R) ^ 2 = 0 := by
-  simp only [D]
-  exact x.2
+@[simp] lemma D_sq (x : D R) : (x : R) ^ 2 = 0 :=
+  x.2
 
-lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = (2 : ℕ) * d₁ * d₂ :=
+variable {R} in
+abbrev two := ((2 : ℕ) : R)
+
+lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = 2 * d₁ * d₂ :=
   calc (d₁ + d₂ : R) ^ 2 = d₁ ^ 2 + d₂ ^ 2 + (2 : ℕ) * d₁ * d₂ := by ring
                        _ = _ := by simp
 
-lemma D_add_sq_dvd_two [Invertible ((2 : ℕ) : R)] (d₁ d₂ : D R) :
-    (d₁ + d₂ : R) ^ 2 * ⅟((2 : ℕ) : R) = d₁ * d₂ := by
-  calc (d₁ + d₂ : R) ^ 2 * ⅟((2 : ℕ) : R) = (2 : ℕ) * ⅟((2 : ℕ) : R) * d₁ * d₂ := by
-        rw [D_add_sq]; ring
-       _ = d₁ * d₂ := by simp
+lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
+    (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ := by
+  calc (d₁ + d₂ : R) ^ 2 * ⅟2 = (2 * d₁ * d₂) * ⅟2 := by rw [D_add_sq]
+    _ = d₁ * d₂ * (2 * ⅟2) := by rw [mul_comm 2, mul_assoc _ 2, mul_comm 2, ← mul_assoc,
+      ← mul_assoc]
+    _ = d₁ * d₂ := by simp
 
 lemma zero_mem_D : 0 ∈ D R := by
   rw [D_mem_iff, sq, mul_zero]
@@ -121,15 +127,15 @@ lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * ∂f 0 := by
 theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * ∂f x := by
   simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
 
-theorem taylor_two [Invertible ((2 : ℕ) : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
+theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
     letI δ : R := d₁ + d₂
-    f (x + δ) = f x + δ * ∂f x + δ ^ 2 * ∂∂f x * ⅟((2 : ℕ) : R) :=
+    f (x + δ) = f x + δ * ∂f x + δ ^ 2 * ∂∂f x * ⅟2 :=
   calc f (x + (d₁ + d₂)) = f (x + d₁ + d₂) := by rw [add_assoc]
        _ = f (x + d₁) + d₂ * ∂f (x + d₁) := by rw [taylor_one f]
        _ = f x + d₁ * ∂f x + d₂ * ∂f (x + d₁) := by rw [taylor_one f]
        _ = f x + d₁ * ∂f x + d₂ * (∂f x + d₁ * ∂∂f x) := by rw [taylor_one ∂f]
        _ = f x + (d₁ + d₂) * ∂f x + d₁ * d₂ * ∂∂f x := by ring
-       _ = f x + (d₁ + d₂) * ∂f x + ((d₁ + d₂) ^ 2 * ⅟((2 : ℕ) : R)) * ∂∂f x := by
+       _ = f x + (d₁ + d₂) * ∂f x + ((d₁ + d₂) ^ 2 * ⅟2) * ∂∂f x := by
         rw [D_add_sq_dvd_two]
        _ = _ := by ring
 
