@@ -1,6 +1,7 @@
 import Mathlib.Algebra.DualNumber
 import Mathlib.Algebra.Algebra.Pi
 import SDG.UniqueChoice
+import Mathlib.Tactic.Ring
 
 suppress_compilation
 namespace SDG
@@ -14,6 +15,22 @@ abbrev D : Subsemigroup R where
  mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
 
 lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := by rfl
+
+variable {R} in
+@[simp] lemma D_sq (x : D R) : (x : R) ^ 2 = 0 := by
+  simp only [D]
+  exact x.2
+
+variable {R} in
+@[simp] lemma D_sq' (x : D R) : (x : R) * x = 0 := by
+  simpa only [← sq] using D_sq x
+
+lemma two_eq_one_add_one : ((2 : ℕ) : R) = 1 + 1 := by
+  rw [show 2 = 1 + 1 by rfl, ← Nat.cast_one (R := R), Nat.cast_add]
+
+lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = ((2 : ℕ)) * d₁ * d₂ := by
+  rw [sq, mul_add, add_mul, D_sq', zero_add, add_mul, D_sq', add_zero, two_eq_one_add_one, add_mul,
+    one_mul, add_mul, mul_comm]
 
 lemma zero_mem_D : 0 ∈ D R := by
   rw [D_mem_iff, sq, mul_zero]
@@ -98,8 +115,14 @@ lemma bijective_α : Bijective (α (R := R)) :=
 lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * (derivative f 0) := by
   simpa [derivative] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
 
-theorem taylors_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * (derivative f x) := by
+theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * (derivative f x) := by
   simpa [derivative] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
+
+theorem taylor_two [Invertible ((2 : ℕ) : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
+    let δ : R := d₁ + d₂
+    f (x + δ) =
+      f x + δ * (derivative f x) + δ ^ 2 * (derivative (derivative f) x) * ⅟((2 : ℕ) : R) := by
+  sorry
 
 end IsKockLawvere
 
