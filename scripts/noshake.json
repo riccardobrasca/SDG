@@ -1,8 +1,6 @@
 {"ignore": {
   "SDG.Linters.choice":
     ["Mathlib.Init"],
-  "SDG.UniqueChoice":
-    ["SDG.Linters.choice"],
   "SDG.Synthetic":
     ["SDG.AvoidChoice", "Mathlib.Tactic.Ring"]
 }}
