@@ -35,8 +35,8 @@ lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = 2 * d₁ * d₂ :=
 lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
     (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ := by
   calc (d₁ + d₂ : R) ^ 2 * ⅟2 = (2 * d₁ * d₂) * ⅟2 := by rw [D_add_sq]
-    _ = d₁ * d₂ * (2 * ⅟2) := by rw [mul_comm 2, mul_assoc _ 2, mul_comm 2, ← mul_assoc,
-      ← mul_assoc]
+    _ = ((2 : ℕ) * d₁ * d₂) * ⅟2 := rfl
+    _ = d₁ * d₂ * ((2 : ℕ) * ⅟2) := by ring
     _ = d₁ * d₂ := by simp
 
 lemma zero_mem_D : 0 ∈ D R := by
@@ -135,8 +135,7 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) 
        _ = f x + d₁ * ∂f x + d₂ * ∂f (x + d₁) := by rw [taylor_one f]
        _ = f x + d₁ * ∂f x + d₂ * (∂f x + d₁ * ∂∂f x) := by rw [taylor_one ∂f]
        _ = f x + (d₁ + d₂) * ∂f x + d₁ * d₂ * ∂∂f x := by ring
-       _ = f x + (d₁ + d₂) * ∂f x + ((d₁ + d₂) ^ 2 * ⅟2) * ∂∂f x := by
-        rw [D_add_sq_dvd_two]
+       _ = f x + (d₁ + d₂) * ∂f x + ((d₁ + d₂) ^ 2 * ⅟2) * ∂∂f x := by rw [D_add_sq_dvd_two]
        _ = _ := by ring
 
 end IsKockLawvere
