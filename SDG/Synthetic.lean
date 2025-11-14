@@ -1,7 +1,10 @@
 import Mathlib.Algebra.DualNumber
 import Mathlib.Algebra.Algebra.Pi
-import SDG.UniqueChoice
 import Mathlib.Tactic.Ring
+
+import SDG.UniqueChoice
+import SDG.AvoidChoice
+
 
 suppress_compilation
 namespace SDG
