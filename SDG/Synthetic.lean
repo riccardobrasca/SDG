@@ -113,21 +113,24 @@ lemma bijective_α : Bijective (α (R := R)) :=
 @[irreducible] noncomputable def deriv (f : R → R) : R → R :=
   fun x ↦ unique_choice (isKockLawvere (fun d ↦ f (x + d)))
 
-lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * (deriv f 0) := by
+notation:max "∂" f:max => deriv f
+
+lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * ∂f 0 := by
   simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
 
-theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * (deriv f x) := by
+theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * ∂f x := by
   simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
 
 theorem taylor_two [Invertible ((2 : ℕ) : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
     letI δ : R := d₁ + d₂
-    f (x + δ) = f x + δ * (deriv f x) + δ ^ 2 * (deriv (deriv f) x) * ⅟((2 : ℕ) : R) :=
+    f (x + δ) = f x + δ * ∂f x + δ ^ 2 * ∂∂f x * ⅟((2 : ℕ) : R) :=
   calc f (x + (d₁ + d₂)) = f (x + d₁ + d₂) := by rw [add_assoc]
-       _ = f (x + d₁) + d₂ * deriv f (x + d₁) := by rw [taylor_one f]
-       _ = f x + d₁ * deriv f x + d₂ * deriv f (x + d₁) := by rw [taylor_one f]
-       _ = _ + d₂ * (deriv f x + d₁ * deriv (deriv f) x) := by rw [taylor_one (deriv f)]
-       _ = f x + (d₁ + d₂) * deriv f x + d₁ * d₂ * deriv (deriv f) x := by ring
-       _ = _ + ((d₁ + d₂ : R) ^ 2 * ⅟((2 : ℕ) : R)) * deriv (deriv f) x := by rw [D_add_sq_dvd_two]
+       _ = f (x + d₁) + d₂ * ∂f (x + d₁) := by rw [taylor_one f]
+       _ = f x + d₁ * ∂f x + d₂ * ∂f (x + d₁) := by rw [taylor_one f]
+       _ = f x + d₁ * ∂f x + d₂ * (∂f x + d₁ * ∂∂f x) := by rw [taylor_one ∂f]
+       _ = f x + (d₁ + d₂) * ∂f x + d₁ * d₂ * ∂∂f x := by ring
+       _ = f x + (d₁ + d₂) * ∂f x + ((d₁ + d₂) ^ 2 * ⅟((2 : ℕ) : R)) * ∂∂f x := by
+        rw [D_add_sq_dvd_two]
        _ = _ := by ring
 
 end IsKockLawvere
