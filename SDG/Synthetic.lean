@@ -23,7 +23,7 @@ variable {R} in
 
 attribute [-simp] Nat.cast_ofNat
 
-lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = (2 : ℕ) * d₁ * d₂ := by
+lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = (2 : ℕ) * d₁ * d₂ :=
   calc (d₁ + d₂ : R) ^ 2 = d₁ ^ 2 + d₂ ^ 2 + (2 : ℕ) * d₁ * d₂ := by ring
                        _ = _ := by simp
 
