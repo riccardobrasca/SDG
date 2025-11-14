@@ -15,8 +15,6 @@ abbrev D : Subsemigroup R where
 
 lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := by rfl
 
-example : 1 + 1 = 2 := rfl
-
 lemma zero_mem_D : 0 ∈ D R := by
   rw [D_mem_iff, sq, mul_zero]
 
