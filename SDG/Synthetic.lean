@@ -3,10 +3,9 @@ import Mathlib.Algebra.Algebra.Pi
 import Mathlib.Tactic.Ring
 
 import SDG.UniqueChoice
-import SDG.AvoidChoice
 
-
-suppress_compilation
+-- `simp` lemmas that have to be removed to avoid the axiom of choice
+attribute [-simp] Nat.cast_ofNat
 namespace SDG
 
 open DualNumber Function
@@ -24,11 +23,15 @@ variable {R} in
   simp only [D]
   exact x.2
 
-attribute [-simp] Nat.cast_ofNat
-
 lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = (2 : ℕ) * d₁ * d₂ :=
   calc (d₁ + d₂ : R) ^ 2 = d₁ ^ 2 + d₂ ^ 2 + (2 : ℕ) * d₁ * d₂ := by ring
                        _ = _ := by simp
+
+lemma D_add_sq_dvd_two [Invertible ((2 : ℕ) : R)] (d₁ d₂ : D R) :
+    (d₁ + d₂ : R) ^ 2 * ⅟((2 : ℕ) : R) = d₁ * d₂ := by
+  calc (d₁ + d₂ : R) ^ 2 * ⅟((2 : ℕ) : R) = (2 : ℕ) * ⅟((2 : ℕ) : R) * d₁ * d₂ := by
+        rw [D_add_sq]; ring
+       _ = d₁ * d₂ := by simp
 
 lemma zero_mem_D : 0 ∈ D R := by
   rw [D_mem_iff, sq, mul_zero]
@@ -107,20 +110,25 @@ lemma surjective_α : Surjective (α (R := R)) := by
 lemma bijective_α : Bijective (α (R := R)) :=
   ⟨injective_α, surjective_α⟩
 
-@[irreducible] def derivative (f : R → R) : R → R :=
+@[irreducible] noncomputable def deriv (f : R → R) : R → R :=
   fun x ↦ unique_choice (isKockLawvere (fun d ↦ f (x + d)))
 
-lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * (derivative f 0) := by
-  simpa [derivative] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
+lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * (deriv f 0) := by
+  simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
 
-theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * (derivative f x) := by
-  simpa [derivative] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
+theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * (deriv f x) := by
+  simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
 
 theorem taylor_two [Invertible ((2 : ℕ) : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
-    let δ : R := d₁ + d₂
-    f (x + δ) =
-      f x + δ * (derivative f x) + δ ^ 2 * (derivative (derivative f) x) * ⅟((2 : ℕ) : R) := by
-  sorry
+    letI δ : R := d₁ + d₂
+    f (x + δ) = f x + δ * (deriv f x) + δ ^ 2 * (deriv (deriv f) x) * ⅟((2 : ℕ) : R) :=
+  calc f (x + (d₁ + d₂)) = f (x + d₁ + d₂) := by rw [add_assoc]
+       _ = f (x + d₁) + d₂ * deriv f (x + d₁) := by rw [taylor_one f]
+       _ = f x + d₁ * deriv f x + d₂ * deriv f (x + d₁) := by rw [taylor_one f]
+       _ = _ + d₂ * (deriv f x + d₁ * deriv (deriv f) x) := by rw [taylor_one (deriv f)]
+       _ = f x + (d₁ + d₂) * deriv f x + d₁ * d₂ * deriv (deriv f) x := by ring
+       _ = _ + ((d₁ + d₂ : R) ^ 2 * ⅟((2 : ℕ) : R)) * deriv (deriv f) x := by rw [D_add_sq_dvd_two]
+       _ = _ := by ring
 
 end IsKockLawvere
 
