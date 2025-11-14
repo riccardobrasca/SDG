@@ -21,16 +21,11 @@ variable {R} in
   simp only [D]
   exact x.2
 
-variable {R} in
-@[simp] lemma D_sq' (x : D R) : (x : R) * x = 0 := by
-  simpa only [← sq] using D_sq x
+attribute [-simp] Nat.cast_ofNat
 
-lemma two_eq_one_add_one : ((2 : ℕ) : R) = 1 + 1 := by
-  rw [show 2 = 1 + 1 by rfl, ← Nat.cast_one (R := R), Nat.cast_add]
-
-lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = ((2 : ℕ)) * d₁ * d₂ := by
-  rw [sq, mul_add, add_mul, D_sq', zero_add, add_mul, D_sq', add_zero, two_eq_one_add_one, add_mul,
-    one_mul, add_mul, mul_comm]
+lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = (2 : ℕ) * d₁ * d₂ := by
+  calc (d₁ + d₂ : R) ^ 2 = d₁ ^ 2 + d₂ ^ 2 + (2 : ℕ) * d₁ * d₂ := by ring
+                       _ = _ := by simp
 
 lemma zero_mem_D : 0 ∈ D R := by
   rw [D_mem_iff, sq, mul_zero]
