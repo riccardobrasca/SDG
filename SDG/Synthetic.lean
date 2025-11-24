@@ -25,9 +25,6 @@ variable {R} in
 @[simp] lemma D_sq (x : D R) : (x : R) ^ 2 = 0 :=
   x.2
 
-variable {R} in
-abbrev two := ((2 : ℕ) : R)
-
 lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = 2 * d₁ * d₂ :=
   calc (d₁ + d₂ : R) ^ 2 = d₁ ^ 2 + d₂ ^ 2 + (2 : ℕ) * d₁ * d₂ := by ring
                        _ = _ := by simp
@@ -72,7 +69,7 @@ open IsKockLawvere
 lemma exists_derivative (g : D R → R) : ∃! b, ∀ d, g d = g 0 + d * b :=
   IsKockLawvere.isKockLawvere g
 
-lemma cancel_d {b₁ b₂ : R} (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ = b₂ := by
+lemma cancel_d {b₁ b₂ : R} (h : ∀ (d : D R), d * b₁ = d * b₂) : b₁ = b₂ := by
   let g1 : D R → R := fun d ↦ d * b₁
   obtain ⟨b1, -, unique1⟩ := exists_derivative g1
   let g2 : D R → R := fun d ↦ d * b₂
@@ -92,7 +89,7 @@ lemma cancel_d {b₁ b₂ : R} (h : ∀ d ∈ D R, d * b₁ = d * b₂) : b₁ =
   rw [← h1, ← h2]
   apply unique2
   intro d
-  simp [g2, (h d d.2).symm, h1]
+  simp [g2, (h d).symm, h1]
 
 lemma injective_α : Injective (α (R := R)) := by
   intro ⟨x, y⟩ ⟨z, t⟩ h
@@ -100,9 +97,9 @@ lemma injective_α : Injective (α (R := R)) := by
   simp only [α_apply, coe_zero, zero_mul, add_zero] at hxz
   ext
   · assumption
-  · replace h : ∀ d ∈ D R, d * y = d * t := by
-      intro d hd
-      have := congr_fun h ⟨d, hd⟩
+  · replace h : ∀ (d : D R), d * y = d * t := by
+      intro d
+      have := congr_fun h d
       simpa [hxz]
     exact cancel_d h
 
@@ -124,13 +121,31 @@ notation:max "∂" f:max => deriv f
 lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * ∂f 0 := by
   simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
 
-lemma derivative_unique (f : R → R) {r : R} (hr : ∀ d₁, f d₁ = f 0 + d₁ * r) : ∂f 0 = r := by
+lemma derivative_unique {f : R → R} {r : R} (hr : ∀ (d : D R), f d = f 0 + d * r) : ∂f 0 = r := by
   refine unique_choice_unique (isKockLawvere (fun d ↦ f (0 + d))) (fun d₁ ↦ ?_)
   rw [zero_add, zero_add]
   exact hr _
 
 theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * ∂f x := by
   simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
+
+lemma derivative_id : ∂(id : R → R) = 1 := by
+  ext x
+  refine cancel_d (fun d ↦ ?_)
+  simpa using (taylor_one (id : R → R) x d).symm
+
+lemma derivative_translation (f : R → R) (x : R) : ∂(f ∘ (x + ·)) 0 = ∂f x :=
+  derivative_unique (fun d ↦ by simpa using taylor_one f x d)
+
+theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
+  refine cancel_d (fun d ↦ ?_)
+  let d₁ : D R := ⟨d * ∂g x, by simp [mul_pow]⟩
+  have hd₁ : d * ∂g x = d₁ := by simp [d₁]
+  have := taylor_one (f ∘ g) x d
+  rw [comp_apply, taylor_one g x d, hd₁, taylor_one f (g x) d₁] at this
+  simp only [comp_apply, add_right_inj, d₁] at this
+  rw [← this]
+  ring
 
 theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
     letI δ : R := d₁ + d₂
