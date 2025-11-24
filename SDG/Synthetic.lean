@@ -116,7 +116,7 @@ lemma surjective_α : Surjective (α (R := R)) := by
 lemma bijective_α : Bijective (α (R := R)) :=
   ⟨injective_α, surjective_α⟩
 
-@[irreducible] noncomputable def deriv (f : R → R) : R → R :=
+noncomputable def deriv (f : R → R) : R → R :=
   fun x ↦ unique_choice (isKockLawvere (fun d ↦ f (x + d)))
 
 notation:max "∂" f:max => deriv f
