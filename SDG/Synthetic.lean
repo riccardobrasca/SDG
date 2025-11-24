@@ -15,7 +15,7 @@ open DualNumber Function
 
 variable (R : Type*) [CommRing R]
 
-abbrev D : Subsemigroup R where --TODO: this should be an ideal!
+abbrev D : Subsemigroup R where
  carrier := {(x : R) | x ^ 2 = 0}
  mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
 
