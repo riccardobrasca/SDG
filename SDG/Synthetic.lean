@@ -19,9 +19,16 @@ abbrev D : Subsemigroup R where
  carrier := {(x : R) | x ^ 2 = 0}
  mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
 
+variable {R}
+
 lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := by rfl
 
-variable {R} in
+lemma D_mul_mem {x : R} (y : R) (hx : x ∈ D R) : y * x ∈ D R := by
+  simp [mul_pow, D_mem_iff.1 hx]
+
+lemma D_mem_mul {x : R} (y : R) (hx : x ∈ D R) : x * y ∈ D R := by
+  simp [mul_pow, D_mem_iff.1 hx]
+
 @[simp] lemma D_sq (x : D R) : (x : R) ^ 2 = 0 :=
   x.2
 
@@ -35,6 +42,8 @@ lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
     _ = ((2 : ℕ) * d₁ * d₂) * ⅟2 := rfl
     _ = d₁ * d₂ * ((2 : ℕ) * ⅟2) := by ring
     _ = d₁ * d₂ := by simp
+
+variable (R)
 
 lemma zero_mem_D : 0 ∈ D R := by
   rw [D_mem_iff, sq, mul_zero]
@@ -139,7 +148,7 @@ lemma derivative_translation (f : R → R) (x : R) : ∂(f ∘ (x + ·)) 0 = ∂
 
 theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
   refine cancel_d (fun d ↦ ?_)
-  let d₁ : D R := ⟨d * ∂g x, by simp [mul_pow]⟩
+  let d₁ : D R := ⟨d * ∂g x, D_mem_mul _ d.2⟩
   have hd₁ : d * ∂g x = d₁ := by simp [d₁]
   have := taylor_one (f ∘ g) x d
   rw [comp_apply, taylor_one g x d, hd₁, taylor_one f (g x) d₁] at this
