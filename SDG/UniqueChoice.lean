@@ -14,3 +14,6 @@ noncomputable def unique_choice (h : ∃! (a : α), P a) : α :=
 
 lemma unique_choice_spec (h : ∃! (a : α), P a) : P (unique_choice h) :=
   Subtype.prop _
+
+lemma unique_choice_unique (h : ∃! (a : α), P a) {a₁ : α} (ha₁ : P a₁) : unique_choice h = a₁ :=
+  h.unique (unique_choice_spec h) ha₁
