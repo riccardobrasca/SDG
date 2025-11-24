@@ -124,6 +124,11 @@ notation:max "∂" f:max => deriv f
 lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * ∂f 0 := by
   simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
 
+lemma derivative_unique (f : R → R) {r : R} (hr : ∀ d₁, f d₁ = f 0 + d₁ * r) : ∂f 0 = r := by
+  refine unique_choice_unique (isKockLawvere (fun d ↦ f (0 + d))) (fun d₁ ↦ ?_)
+  rw [zero_add, zero_add]
+  exact hr _
+
 theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * ∂f x := by
   simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
 
