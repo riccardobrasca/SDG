@@ -1,6 +1,7 @@
 import Mathlib.Algebra.DualNumber
 import Mathlib.Algebra.Algebra.Pi
 import Mathlib.Tactic.Ring
+import Mathlib.Data.Nat.Choose.Sum
 
 import SDG.UniqueChoice
 
@@ -130,21 +131,37 @@ notation:max "∂" f:max => deriv f
 lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * ∂f 0 := by
   simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
 
-lemma derivative_unique {f : R → R} {r : R} (hr : ∀ (d : D R), f d = f 0 + d * r) : ∂f 0 = r := by
-  refine unique_choice_unique (isKockLawvere (fun d ↦ f (0 + d))) (fun d₁ ↦ ?_)
-  rw [zero_add, zero_add]
-  exact hr _
-
 theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * ∂f x := by
   simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
 
+lemma derivative_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = f x + d * r) :
+    ∂f x = r := by
+  refine cancel_d (fun d ↦ ?_)
+  have := taylor_one f x d
+  simpa [hr] using this.symm
+
+@[simp]
 lemma derivative_id : ∂(id : R → R) = 1 := by
   ext x
-  refine cancel_d (fun d ↦ ?_)
-  simpa using (taylor_one (id : R → R) x d).symm
+  refine derivative_unique (fun d ↦ by simp)
 
-lemma derivative_translation (f : R → R) (x : R) : ∂(f ∘ (x + ·)) 0 = ∂f x :=
-  derivative_unique (fun d ↦ by simpa using taylor_one f x d)
+@[simp]
+theorem deriv_const (r : R) : ∂(fun _ ↦ r) = 0 := by
+  ext x
+  exact derivative_unique (fun d ↦ by simp)
+
+theorem deriv_add (f g : R → R) : ∂(f + g) = ∂f + ∂g := by
+  ext x
+  refine derivative_unique (fun d ↦ ?_)
+  calc (f + g) (x + d) = (f x + d * ∂f x) + (g x + d * ∂g x) := by simp [taylor_one f, taylor_one g]
+       _ = (f + g) x + d * (∂f + ∂g) x := by simp; ring
+
+theorem deriv_mul (f g : R → R) : ∂(f * g) = ∂f * g + f * ∂g := by
+  ext x
+  refine derivative_unique (fun d ↦ ?_)
+  calc (f * g) (x + d) = (f x + d * ∂f x) * (g x + d * ∂g x) := by simp [taylor_one f, taylor_one g]
+       _ = f x * g x + d * (f x * ∂g x + ∂f x * g x) + d ^ 2 * ∂f x * ∂g x := by ring
+       _ = (f * g) x + d * (∂f * g + f * ∂g) x := by simp; ring
 
 theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
   refine cancel_d (fun d ↦ ?_)
@@ -155,6 +172,19 @@ theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g 
   simp only [comp_apply, add_right_inj, d₁] at this
   rw [← this]
   ring
+
+theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R) ^ (n - 1)
+| 0 => by
+    ext x
+    exact derivative_unique (fun d ↦ by simp)
+| 1 => by
+    ext x
+    exact derivative_unique (fun d ↦ by simp)
+| n + 2 => by
+    rw [pow_succ, deriv_mul, deriv_X_pow, Nat.add_one_sub_one]
+    ext x
+    simp [-Nat.cast_ofNat] --to avoid choice
+    ring
 
 theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
     letI δ : R := d₁ + d₂
