@@ -88,11 +88,7 @@ lemma injective_α : Injective (α (R := R)) := by
   simp only [α_apply, coe_zero, zero_mul, add_zero] at hxz
   ext
   · assumption
-  · replace h : ∀ (d : D R), d * y = d * t := by
-      intro d
-      have := congr_fun h d
-      simpa [hxz]
-    exact cancel_d h
+  · refine cancel_d (fun d ↦ by simpa [hxz] using congr_fun h d)
 
 lemma surjective_α : Surjective (α (R := R)) := by
   intro f
