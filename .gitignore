@@ -10,6 +10,7 @@
 /blueprint/src/web.bbl
 /blueprint/print/
 /blueprint/src/print.pdf
+/blueprint/lean_decls
 ## TeX
 *.aux
 *.lof
