@@ -76,30 +76,11 @@ variable [IsKockLawvere R]
 
 open IsKockLawvere
 
-lemma exists_derivative (g : D R → R) : ∃! b, ∀ d, g d = g 0 + d * b :=
-  IsKockLawvere.isKockLawvere g
-
 lemma cancel_d {b₁ b₂ : R} (h : ∀ (d : D R), d * b₁ = d * b₂) : b₁ = b₂ := by
-  let g1 : D R → R := fun d ↦ d * b₁
-  obtain ⟨b1, -, unique1⟩ := exists_derivative g1
-  let g2 : D R → R := fun d ↦ d * b₂
-  obtain ⟨b2, -, unique2⟩ := exists_derivative g2
-  have h1 : b1 = b₁ := by
-    specialize unique1 b₁
-    simp only [Subtype.forall, Subsemigroup.mem_mk, Set.mem_setOf_eq] at unique1
-    rw [unique1]
-    intro d hd
-    simp [g1]
-  have h2 : b2 = b₂ := by
-    specialize unique2 b₂
-    simp only [Subtype.forall, Subsemigroup.mem_mk, Set.mem_setOf_eq] at unique2
-    rw [unique2]
-    intro b hb
-    simp [g2]
-  rw [← h1, ← h2]
-  apply unique2
-  intro d
-  simp [g2, (h d).symm, h1]
+  obtain ⟨b1, -, unique1⟩ := isKockLawvere (· * b₁ : D R → R)
+  obtain ⟨b2, -, unique2⟩ := isKockLawvere (· * b₂ : D R → R)
+  rw [unique1 b₁ (fun d ↦ by simp), unique2 b₂ (fun d ↦ by simp)]
+  exact unique2 _ (fun d ↦ by simp [(h d).symm, unique1 b₁ (fun d ↦ by simp)])
 
 lemma injective_α : Injective (α (R := R)) := by
   intro ⟨x, y⟩ ⟨z, t⟩ h
@@ -115,7 +96,7 @@ lemma injective_α : Injective (α (R := R)) := by
 
 lemma surjective_α : Surjective (α (R := R)) := by
   intro f
-  obtain ⟨b, hb, unique⟩ := exists_derivative f
+  obtain ⟨b, hb, unique⟩ := isKockLawvere f
   use ⟨f 0, b⟩
   ext d
   simp [hb d]
@@ -143,7 +124,7 @@ lemma derivative_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) =
 @[simp]
 lemma derivative_id : ∂(id : R → R) = 1 := by
   ext x
-  refine derivative_unique (fun d ↦ by simp)
+  exact derivative_unique (fun d ↦ by simp)
 
 @[simp]
 theorem deriv_const (r : R) : ∂(fun _ ↦ r) = 0 := by
@@ -164,14 +145,10 @@ theorem deriv_mul (f g : R → R) : ∂(f * g) = ∂f * g + f * ∂g := by
        _ = (f * g) x + d * (∂f * g + f * ∂g) x := by simp; ring
 
 theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
-  refine cancel_d (fun d ↦ ?_)
-  let d₁ : D R := ⟨d * ∂g x, D_mem_mul _ d.2⟩
-  have hd₁ : d * ∂g x = d₁ := by simp [d₁]
-  have := taylor_one (f ∘ g) x d
-  rw [comp_apply, taylor_one g x d, hd₁, taylor_one f (g x) d₁] at this
-  simp only [comp_apply, add_right_inj, d₁] at this
-  rw [← this]
-  ring
+  refine derivative_unique (fun d ↦ ?_)
+  calc (f ∘ g) (x + ↑d) = f (g x + d * ∂g x) := by rw [comp_apply, taylor_one g]
+       _ = f (g x + (⟨_, D_mem_mul _ d.2⟩ : D R)) := by rfl
+       _ = (f ∘ g) x + d * (∂f (g x) * ∂g x) := by rw [taylor_one f, comp_apply]; ring
 
 theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R) ^ (n - 1)
 | 0 => by
