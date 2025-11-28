@@ -140,6 +140,10 @@ theorem deriv_mul (f g : R → R) : ∂(f * g) = ∂f * g + f * ∂g := by
        _ = f x * g x + d * (f x * ∂g x + ∂f x * g x) + d ^ 2 * ∂f x * ∂g x := by ring
        _ = (f * g) x + d * (∂f * g + f * ∂g) x := by simp; ring
 
+theorem deriv_smul (r : R) (f : R → R) : ∂((fun _ ↦ r) * f) = (fun _ ↦ r) * ∂f := by
+  calc ∂((fun _ ↦ r) * f) = ∂(fun _ ↦ r) * f + ∂f * (fun _ ↦ r) := by rw [deriv_mul (fun _ ↦ r) * f]
+       _ = ∂f * (fun _ ↦ r) := by rw [deriv_const (fun _ ↦ r)]
+
 theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
   refine derivative_unique (fun d ↦ ?_)
   calc (f ∘ g) (x + ↑d) = f (g x + d * ∂g x) := by rw [comp_apply, taylor_one g]
