@@ -1,7 +1,5 @@
 import Mathlib.Algebra.DualNumber
-import Mathlib.Algebra.Algebra.Pi
-import Mathlib.Tactic.Ring
-import Mathlib.Data.Nat.Choose.Sum
+import Mathlib.RingTheory.Derivation.Basic
 
 import SDG.UniqueChoice
 
@@ -100,22 +98,65 @@ lemma surjective_α : Surjective (α (R := R)) := by
 lemma bijective_α : Bijective (α (R := R)) :=
   ⟨injective_α, surjective_α⟩
 
-noncomputable def deriv (f : R → R) : R → R :=
+noncomputable def derivFun (f : R → R) : R → R :=
   fun x ↦ unique_choice (isKockLawvere (fun d ↦ f (x + d)))
 
-notation:max "∂" f:max => deriv f
+lemma derivFun_spec (f : R → R) (d : D R) : f d = f 0 + d * derivFun f 0 := by
+  simpa [derivFun] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
 
-lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * ∂f 0 := by
-  simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
+theorem derivFun_taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * derivFun f x := by
+  simpa [derivFun] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
 
-theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * ∂f x := by
-  simpa [deriv] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
+lemma derivFun_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = f x + d * r) :
+    derivFun f x = r := by
+  refine cancel_d (fun d ↦ ?_)
+  have := derivFun_taylor_one f x d
+  simpa [hr] using this.symm
+
+noncomputable def deriv : Derivation R (R → R) (R → R) where
+  toFun := derivFun
+  map_add' := by
+    intro f g
+    ext x
+    refine derivFun_unique (fun d ↦ ?_)
+    calc (f + g) (x + d) = (f x + d * derivFun f x) + (g x + d * derivFun g x) := by
+          simp [derivFun_taylor_one f, derivFun_taylor_one g]
+        _ = (f + g) x + d * (derivFun f + derivFun g) x := by simp; ring
+  map_smul' := by
+    intro r f
+    ext x
+    refine derivFun_unique (fun d ↦ ?_)
+    calc (r • f) (x + d) = r * (f x + d * derivFun f x) := by simp [derivFun_taylor_one f]
+       _ = (r • f) x + d * (r * derivFun f x) := by simp; ring
+  map_one_eq_zero' := by
+    ext x
+    exact derivFun_unique (fun d ↦ by simp)
+  leibniz' := by
+    intro f g
+    ext x
+    refine derivFun_unique (fun d ↦ ?_)
+    simp only [Pi.mul_apply, LinearMap.coe_mk, AddHom.coe_mk, smul_eq_mul, Pi.add_apply]
+    calc f (x + ↑d) * g (x + ↑d) = (f x + d * derivFun f x) * (g x + d * derivFun g x) := by
+          rw [derivFun_taylor_one f, derivFun_taylor_one g]
+         _ = f x * g x + d * (f x * derivFun g x + derivFun f x * g x) +
+            d ^ 2 * derivFun f x * derivFun g x := by ring
+         _ = f x * g x + d * (f x * derivFun g x + g x * derivFun f x) := by simp; ring
+
+instance : FunLike (Derivation R (R → R) (R → R)) (R → R) (R → R) where
+  coe D := D.toFun
+  coe_injective' D1 D2 h := by cases D1; cases D2; congr; exact DFunLike.coe_injective h
+
+notation3:max "∂" f:max => deriv f
+
+lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + d * ∂f 0 :=
+  derivFun_spec ..
+
+theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * ∂f x :=
+  derivFun_taylor_one ..
 
 lemma derivative_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = f x + d * r) :
-    ∂f x = r := by
-  refine cancel_d (fun d ↦ ?_)
-  have := taylor_one f x d
-  simpa [hr] using this.symm
+    ∂f x = r :=
+  derivFun_unique hr
 
 @[simp]
 lemma derivative_id : ∂(id : R → R) = 1 := by
@@ -127,30 +168,17 @@ theorem deriv_const (r : R) : ∂(fun _ ↦ r) = 0 := by
   ext x
   exact derivative_unique (fun d ↦ by simp)
 
-theorem deriv_add (f g : R → R) : ∂(f + g) = ∂f + ∂g := by
-  ext x
-  refine derivative_unique (fun d ↦ ?_)
-  calc (f + g) (x + d) = (f x + d * ∂f x) + (g x + d * ∂g x) := by simp [taylor_one f, taylor_one g]
-       _ = (f + g) x + d * (∂f + ∂g) x := by simp; ring
-
 theorem deriv_mul (f g : R → R) : ∂(f * g) = ∂f * g + f * ∂g := by
-  ext x
-  refine derivative_unique (fun d ↦ ?_)
-  calc (f * g) (x + d) = (f x + d * ∂f x) * (g x + d * ∂g x) := by simp [taylor_one f, taylor_one g]
-       _ = f x * g x + d * (f x * ∂g x + ∂f x * g x) + d ^ 2 * ∂f x * ∂g x := by ring
-       _ = (f * g) x + d * (∂f * g + f * ∂g) x := by simp; ring
-
-theorem deriv_smul (r : R) (f : R → R) : ∂(r • f) = r • ∂f := by
-  ext x
-  refine derivative_unique (fun d ↦ ?_)
-  calc (r • f) (x + d) = r * (f x + d * ∂f x) := by simp [taylor_one f]
-       _ = (r • f) x + d * (r * ∂f x) := by simp; ring
+  simp; ring
 
 theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
   refine derivative_unique (fun d ↦ ?_)
-  calc (f ∘ g) (x + ↑d) = f (g x + d * ∂g x) := by rw [comp_apply, taylor_one g]
+  calc (f ∘ g) (x + d) = f (g x + d * ∂g x) := by rw [comp_apply, taylor_one g]
        _ = f (g x + (⟨_, D_mem_mul _ d.2⟩ : D R)) := by rfl
        _ = (f ∘ g) x + d * (∂f (g x) * ∂g x) := by rw [taylor_one f, comp_apply]; ring
+
+theorem deriv_inv (f : R → R) [Invertible f] : ∂⅟f = -⅟f ^ 2 * ∂f := by
+  simp [deriv.leibniz_invOf f]
 
 theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R) ^ (n - 1)
 | 0 => by
