@@ -1,26 +1,11 @@
-import Mathlib.Algebra.DualNumber
-import Mathlib.RingTheory.Derivation.Basic
+import SDG.Defs
+import SDG.IsKockLawere
 
-import SDG.UniqueChoice
-
--- things that have to be removed to avoid the axiom of choice
-attribute [-instance] Nat.instAtLeastTwoHAddOfNat
-
-instance (n : ℕ) [NeZero n] : (n + 1).AtLeastTwo :=
-  ⟨Nat.add_one_le_iff.2 <| Nat.succ_lt_succ <| Nat.pos_of_neZero n⟩
 namespace SDG
 
 open DualNumber Function
 
-variable (R : Type*) [CommRing R]
-
-abbrev D : Subsemigroup R where
- carrier := {(x : R) | x ^ 2 = 0}
- mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
-
-variable {R}
-
-lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := by rfl
+variable {R : Type*} [CommRing R]
 
 lemma D_mul_mem {x : R} (y : R) (hx : x ∈ D R) : y * x ∈ D R := by
   simp [mul_pow, D_mem_iff.1 hx]
@@ -42,21 +27,10 @@ lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
     _ = d₁ * d₂ * ((2 : ℕ) * ⅟2) := by ring
     _ = d₁ * d₂ := by simp
 
-variable (R)
-
-lemma zero_mem_D : 0 ∈ D R := by
-  rw [D_mem_iff, sq, mul_zero]
-
-instance : Zero (D R) where
-  zero := ⟨0, zero_mem_D _⟩
-
-@[simp] lemma coe_zero : ((0 : D R) : R) = 0 := rfl
-
+variable (R) in
 lemma coe_sq : ((↑) : D R → R) * (↑) = 0 := by
   ext d
   simpa only [← pow_two, Pi.zero_apply] using d.2
-
-variable {R}
 
 def α : DualNumber R →ₐ[R] (D R → R) :=
   lift ⟨⟨Algebra.ofId _ _, (↑)⟩, coe_sq _, fun _ ↦ Commute.all _ _⟩
@@ -66,19 +40,9 @@ def α : DualNumber R →ₐ[R] (D R → R) :=
 
 section IsKockLawvere
 
-variable (R) in
-class IsKockLawvere extends Nontrivial R where
-  isKockLawvere : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + d * b
-
 variable [IsKockLawvere R]
 
 open IsKockLawvere
-
-lemma cancel_d {b₁ b₂ : R} (h : ∀ (d : D R), d * b₁ = d * b₂) : b₁ = b₂ := by
-  obtain ⟨b1, -, unique1⟩ := isKockLawvere (· * b₁ : D R → R)
-  obtain ⟨b2, -, unique2⟩ := isKockLawvere (· * b₂ : D R → R)
-  rw [unique1 b₁ (fun d ↦ by simp), unique2 b₂ (fun d ↦ by simp)]
-  exact unique2 _ (fun d ↦ by simp [(h d).symm, unique1 b₁ (fun d ↦ by simp)])
 
 lemma injective_α : Injective (α (R := R)) := by
   intro ⟨x, y⟩ ⟨z, t⟩ h
