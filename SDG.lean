@@ -1,3 +1,4 @@
+import SDG.D
 import SDG.Defs
 import SDG.EM
 import SDG.IsKockLawere
