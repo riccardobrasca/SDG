@@ -19,13 +19,13 @@ in Lean's type.
 
 ## Main definition
 
-* `unique_choice`: given a property `P : α → Prop` such that `h : ∃! (a : α), P a`, then
+* `unique_choice`: given a property `P : α → Prop` such that `h : ∃! a, P a`, then
   `unique_choice h` gives the unique `a : α` such that `P a`.
 
 ## Main lemmas
 
-* `unique_choice_spec`: given `h : ∃! (a : α), P a`, then `P (unique_choice h)` holds.
-* `unique_choice_unique`: given `h : ∃! (a : α), P a`, if `a : α` is such that `P a`, then
+* `unique_choice_spec`: given `h : ∃! a, P a`, then `P (unique_choice h)` holds.
+* `unique_choice_unique`: given `h : ∃! a, P a`, if `a : α` is such that `P a`, then
   `unique_choice h = a`.
 -/
 
@@ -33,19 +33,19 @@ in Lean's type.
 element. -/
 axiom axiom_unique_choice (h : ∃! (_ : α), True) : α
 
-lemma unique_subtype (h : ∃! (a : α), P a) : ∃! (_ : {a // P a}), True := by
+lemma unique_subtype (h : ∃! a, P a) : ∃! (_ : {a // P a}), True := by
   obtain ⟨a, h1, h2⟩ := h
   exact ⟨⟨a, h1⟩, by trivial, fun y _ ↦ Subtype.ext (h2 _ y.2)⟩
 
-/-- Given a property `P : α → Prop` such that `h : ∃! (a : α), P a`, then `unique_choice h` gives
-the unique `a : α` such that `P a`. -/
-noncomputable def unique_choice (h : ∃! (a : α), P a) : α :=
+/-- Given a property `P : α → Prop` such that `h : ∃! a, P a`, then `unique_choice h` gives the
+unique `a : α` such that `P a`. -/
+noncomputable def unique_choice (h : ∃! a, P a) : α :=
   (axiom_unique_choice (unique_subtype h)).val
 
-/-- Given `h : ∃! (a : α), P a`, then `P (unique_choice h)` holds. -/
-lemma unique_choice_spec (h : ∃! (a : α), P a) : P (unique_choice h) :=
+/-- Given `h : ∃! a, P a`, then `P (unique_choice h)` holds. -/
+lemma unique_choice_spec (h : ∃! a, P a) : P (unique_choice h) :=
   Subtype.prop _
 
-/-- Given `h : ∃! (a : α), P a`, if `a : α` is such that `P a`, then `unique_choice h = a`. -/
-lemma unique_choice_unique (h : ∃! (a : α), P a) {a : α} (ha : P a) : unique_choice h = a :=
+/-- Given `h : ∃! a, P a`, if `a : α` is such that `P a`, then `unique_choice h = a`. -/
+lemma unique_choice_unique (h : ∃! a, P a) {a : α} (ha : P a) : unique_choice h = a :=
   h.unique (unique_choice_spec h) ha
