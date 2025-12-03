@@ -29,8 +29,6 @@ lemma zero_mem_D : 0 ∈ D R := by
 instance : Zero (D R) where
   zero := ⟨0, zero_mem_D _⟩
 
-@[simp] lemma coe_zero : ((0 : D R) : R) = 0 := rfl
-
 section IsKockLawvere
 
 class IsKockLawvere extends Nontrivial R where
