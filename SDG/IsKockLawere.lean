@@ -16,9 +16,6 @@ variable (R) in
 lemma D_neq_zero : ¬(∀ d ∈ D R, d = 0) := by
   intro h
   obtain ⟨b, hb, hbunique⟩ := isKockLawvere (fun _ ↦ (0 : R))
-  refine one_ne_zero (α := R) ?_
-  rw [hbunique 0 (by simp)]
-  refine hbunique 1 (fun ⟨d, hd⟩ ↦ ?_)
-  simp [h _ hd]
+  exact one_ne_zero <| hbunique 0 (by simp) ▸ hbunique 1 (fun ⟨d, hd⟩ ↦ by simp [h _ hd])
 
 end SDG
