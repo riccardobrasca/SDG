@@ -17,6 +17,10 @@ open Lean Elab Linter Command
 
 namespace Mathlib.Linter
 
+/--
+The "detectClassical" linter emits a warning on declarations that depend on the `Classical.choice`
+axiom.
+-/
 register_option linter.detectClassical : Bool := {
   defValue := true
   descr := "enable the detectClassical linter"
@@ -24,6 +28,7 @@ register_option linter.detectClassical : Bool := {
 
 namespace DetectClassical
 
+@[inherit_doc Mathlib.Linter.linter.detectClassical]
 def detectClassicalLinter : Linter where run := withSetOptionIn fun stx ↦ do
   unless Linter.getLinterValue linter.detectClassical (← getLinterOptions) do
     return
