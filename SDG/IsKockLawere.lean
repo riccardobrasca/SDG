@@ -1,4 +1,4 @@
-import SDG.Defs
+import SDG.D
 
 namespace SDG
 
