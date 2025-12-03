@@ -12,7 +12,7 @@ Given a type `α` such that there exists a unique element `a : α`, the axiom of
 to select this element. It holds in set theory without any additional axiom, but it is not provable
 in Lean's type theory.
 
-## Main axiom
+## The axiom
 
 * `axiom_unique_choice`: given a type `α` such that `h : ∃! (_ : α), True`, then
   `axiom_unique_choice h` gives the element.
