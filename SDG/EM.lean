@@ -1,21 +1,23 @@
 import SDG.IsKockLawere
 
+set_option linter.detectClassical false
+
 namespace SDG
 
 variable {R : Type*} [CommRing R] [IsKockLawvere R]
 
 open IsKockLawvere
 
-theorem NoEM {R : Type*} [CommRing R] [IsKockLawvere R] : False := by
+include R in
+theorem NoEM : False := by
   classical
   let g : D R → R := fun ⟨d, hd⟩ ↦ if d ≠ 0 then 1 else 0
   obtain ⟨b, hb, hbunique⟩ := isKockLawvere g
   refine D_neq_zero R (fun d hd ↦ ?_)
   by_contra h
   refine one_ne_zero (α := R) ?_
-  specialize hb ⟨d, hd⟩
-  have : 1 = d * b := by simpa [g, h] using hb
-  calc (1 : R) = 1 ^ 2 := by ring
+  have : 1 = d * b := by simpa [g, h] using hb ⟨d, hd⟩
+  calc 1 = 1 ^ 2 := by ring
        _ = (d * b) ^ 2 := by simp [this]
        _ = 0 := by simp [mul_pow, D_mem_iff.1 hd]
 
