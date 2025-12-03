@@ -10,7 +10,7 @@ We add in this file the axiom of unique choice, which is a weakening of the axio
 
 Given a type `α` such that there exists a unique element `a : α`, the axiom of unique choice allows
 to select this element. It holds in set theory without any additional axiom, but it is not provable
-in Lean's type.
+in Lean's type theory.
 
 ## Main axiom
 
