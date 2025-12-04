@@ -9,8 +9,13 @@ variable {α β : Type*} {P : α → Prop}
 We add in this file the axiom of unique choice, which is a weakening of the axiom of choice.
 
 Given a type `α` such that there exists a unique element `a : α`, the axiom of unique choice allows
-to select this element. It holds in set theory without any additional axiom, but it is not provable
-in Lean's type theory.
+to select this element.
+
+The only version we will actually is the fact that, given a property `P : α → β → Prop` such that
+`(h : ∀ a, ∃! b, P a b)`, there is a function `unique_choice_fun h : α → β` such that
+`∀ a, P a (unique_choice_fun h a)` (see `unique_choice_fun` and `unique_choice_fun_spec`). The
+construction of `unique_choice_fun h` can be done in set theory without any additional axiom, but it
+is not possible to do so in Lean's type theory.
 
 ## The axiom
 
@@ -23,8 +28,7 @@ in Lean's type theory.
   `unique_choice h` gives the unique `a : α` such that `P a`.
 * `unique_choice_fun`: given a property `P : α → β → Prop` such that for all `a : α`, there exists a
     unique `b : β` with `P a b`, then `unique_choice_fun h` gives a function `α → β` selecting this
-    unique `b` for each `a`. This is the key version of the axiom of unique choice that we will use.
-    It holds automatically in set theory
+    unique `b` for each `a`.
 
 ## Main lemmas
 
@@ -59,10 +63,7 @@ lemma unique_choice_unique (h : ∃! a, P a) {a : α} (ha : P a) : unique_choice
 
 /-- Given a property `P : α → β → Prop` such that for all `a : α`, there exists a unique `b : β`
 with `P a b`, then `unique_choice_fun h` gives a function `α → β` selecting this unique `b` for
-each `a`.
-
-This is the key version of the axiom of unique choice that we will use. It holds automatically in
-set theory. -/
+each `a`. -/
 noncomputable def unique_choice_fun {P : α → β → Prop} (h : ∀ a, ∃! b, P a b) : α → β :=
   fun a ↦ unique_choice (h a)
 

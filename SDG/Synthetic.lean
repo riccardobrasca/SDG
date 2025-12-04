@@ -38,13 +38,13 @@ lemma bijective_α : Bijective (α (R := R)) :=
   ⟨injective_α, surjective_α⟩
 
 noncomputable def derivFun (f : R → R) : R → R :=
-  fun x ↦ unique_choice (isKockLawvere (fun d ↦ f (x + d)))
+  unique_choice_fun (fun x ↦ isKockLawvere (fun d ↦ f (x + d)))
 
 lemma derivFun_spec (f : R → R) (d : D R) : f d = f 0 + d * derivFun f 0 := by
-  simpa [derivFun] using unique_choice_spec (isKockLawvere (fun d ↦ f (0 + d))) d
+  simpa [derivFun] using unique_choice_fun_spec (fun x ↦ isKockLawvere (fun d ↦ f (x + d))) 0 d
 
 theorem derivFun_taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + d * derivFun f x := by
-  simpa [derivFun] using unique_choice_spec (isKockLawvere (fun d ↦ f (x + d))) d
+  simpa [derivFun] using unique_choice_fun_spec (fun x ↦ isKockLawvere (fun d ↦ f (x + d))) x d
 
 lemma derivFun_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = f x + d * r) :
     derivFun f x = r := by
