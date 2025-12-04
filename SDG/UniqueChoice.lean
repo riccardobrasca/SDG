@@ -14,15 +14,15 @@ to select this element.
 The only version we will actually is the fact that, given a property `P : α → β → Prop` such that
 `(h : ∀ a, ∃! b, P a b)`, there is a function `unique_choice_fun h : α → β` such that
 `∀ a, P a (unique_choice_fun h a)` (see `unique_choice_fun` and `unique_choice_fun_spec`). The
-construction of `unique_choice_fun h` can be done in set theory without any additional axiom, but it
-is not possible to do so in Lean's type theory.
+construction of `unique_choice_fun h` can be done in set theory without any additional axiom, but in
+Lean's type theory we need an additional axiom.
 
 ## The axiom
 
 * `axiom_unique_choice`: given a type `α` such that `h : ∃! (_ : α), True`, then
   `axiom_unique_choice h` gives the element.
 
-## Main definition
+## Main definitions
 
 * `unique_choice`: given a property `P : α → Prop` such that `h : ∃! a, P a`, then
   `unique_choice h` gives the unique `a : α` such that `P a`.
