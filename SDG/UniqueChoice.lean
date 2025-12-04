@@ -1,7 +1,7 @@
 import SDG.Linters.choice
 import Mathlib.Data.Subtype
 
-variable {α : Type*} {P : α → Prop}
+variable {α β : Type*} {P : α → Prop}
 
 /-!
 # The axiom of unique choice.
@@ -21,12 +21,19 @@ in Lean's type theory.
 
 * `unique_choice`: given a property `P : α → Prop` such that `h : ∃! a, P a`, then
   `unique_choice h` gives the unique `a : α` such that `P a`.
+* `unique_choice_fun`: given a property `P : α → β → Prop` such that for all `a : α`, there exists a
+    unique `b : β` with `P a b`, then `unique_choice_fun h` gives a function `α → β` selecting this
+    unique `b` for each `a`. This is the key version of the axiom of unique choice that we will use.
+    It holds automatically in set theory
 
 ## Main lemmas
 
-* `unique_choice_spec`: given `h : ∃! a, P a`, then `P (unique_choice h)` holds.
-* `unique_choice_unique`: given `h : ∃! a, P a`, if `a : α` is such that `P a`, then
-  `unique_choice h = a`.
+* `unique_choice_fun_spec`: given a property `P : α → β → Prop` such that for all `a : α`, there
+    exists a unique `b : β` with `P a b`, then for each `a : α`, `P a (unique_choice_fun h a)`
+    holds.
+* `unique_choice_fun_unique`: given a property `P : α → β → Prop` such that for all `a : α`, there
+    exists a unique `b : β` with `P a b`, then for each `a : α`, if `b : β` satisfies `P a b`, then
+    `unique_choice_fun h a = b`.
 -/
 
 /-- Given a type `α` such that `h : ∃! (_ : α), True`, then `axiom_unique_choice h` gives the
@@ -49,3 +56,25 @@ lemma unique_choice_spec (h : ∃! a, P a) : P (unique_choice h) :=
 /-- Given `h : ∃! a, P a`, if `a : α` is such that `P a`, then `unique_choice h = a`. -/
 lemma unique_choice_unique (h : ∃! a, P a) {a : α} (ha : P a) : unique_choice h = a :=
   h.unique (unique_choice_spec h) ha
+
+/-- Given a property `P : α → β → Prop` such that for all `a : α`, there exists a unique `b : β`
+with `P a b`, then `unique_choice_fun h` gives a function `α → β` selecting this unique `b` for
+each `a`.
+
+This is the key version of the axiom of unique choice that we will use. It holds automatically in
+set theory. -/
+noncomputable def unique_choice_fun {P : α → β → Prop} (h : ∀ a, ∃! b, P a b) : α → β :=
+  fun a ↦ unique_choice (h a)
+
+/-- Given a property `P : α → β → Prop` such that for all `a : α`, there exists a unique `b : β`
+with `P a b`, then for each `a : α`, `P a (unique_choice_fun h a)` holds. -/
+lemma unique_choice_fun_spec {P : α → β → Prop} (h : ∀ a, ∃! b, P a b) (a : α) :
+    P a (unique_choice_fun h a) :=
+  unique_choice_spec (h a)
+
+/-- Given a property `P : α → β → Prop` such that for all `a : α`, there exists a unique `b : β`
+with `P a b`, then for each `a : α`, if `b : β` satisfies `P a b`, then
+`unique_choice_fun h a = b`. -/
+lemma unique_choice_fun_unique {P : α → β → Prop} (h : ∀ a, ∃! b, P a b) {a : α} {b : β}
+    (hb : P a b) : unique_choice_fun h a = b :=
+  unique_choice_unique (h a) hb
