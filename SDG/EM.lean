@@ -16,9 +16,9 @@ theorem NoEM : False := by
   refine D_neq_zero R (fun d hd ↦ ?_)
   by_contra h
   refine one_ne_zero (α := R) ?_
-  have : 1 = d * b := by simpa [g, h] using hb ⟨d, hd⟩
+  have : 1 = b * d := by simpa [g, h] using hb ⟨d, hd⟩
   calc 1 = 1 ^ 2 := by ring
-       _ = (d * b) ^ 2 := by simp [this]
+       _ = (b * d) ^ 2 := by simp [this]
        _ = 0 := by simp [mul_pow, D_mem_iff.1 hd]
 
 lemma nontrivial_D : Nontrivial (D R) := by

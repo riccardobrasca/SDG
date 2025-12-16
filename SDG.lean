@@ -1,4 +1,5 @@
 import SDG.Alpha
+import SDG.Axiom.Fin
 import SDG.Axiom.UniqueChoice
 import SDG.D
 import SDG.Defs

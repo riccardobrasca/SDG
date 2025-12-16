@@ -6,9 +6,9 @@ variable {R : Type*} [CommRing R] [IsKockLawvereone R]
 
 open IsKockLawvereone
 
-lemma cancel_d {b₁ b₂ : R} (h : ∀ (d : D R), d * b₁ = d * b₂) : b₁ = b₂ := by
-  obtain ⟨b1, -, unique1⟩ := isKockLawvereone (· * b₁ : D R → R)
-  obtain ⟨b2, -, unique2⟩ := isKockLawvereone (· * b₂ : D R → R)
+lemma cancel_d {b₁ b₂ : R} (h : ∀ (d : D R), b₁ * d = b₂ * d) : b₁ = b₂ := by
+  obtain ⟨b1, -, unique1⟩ := isKockLawvereone (b₁ * · : D R → R)
+  obtain ⟨b2, -, unique2⟩ := isKockLawvereone (b₂ * · : D R → R)
   rw [unique1 b₁ (fun d ↦ by simp), unique2 b₂ (fun d ↦ by simp)]
   exact unique2 _ (fun d ↦ by simp [(h d).symm, unique1 b₁ (fun d ↦ by simp)])
 
