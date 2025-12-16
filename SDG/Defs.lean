@@ -55,7 +55,7 @@ class IsKockLawvereone extends Nontrivial R where
   isKockLawvereone : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + b * d
 
 class IsKockLawvere (k : ℕ) extends Nontrivial R where
-  isKockLawvere : ∀ g : 𝔻 R k → R, ∃! b : Fin k → R, ∀ d, g d = g 0 + ∑ i, b i * d ^ i.val
+  isKockLawvere : ∀ g : 𝔻 R k → R, ∃! b : Fin k → R, ∀ d, g d = g 0 + ∑ i, b i * d ^ (i.val + 1)
 
 variable [IsKockLawvereone R]
 
