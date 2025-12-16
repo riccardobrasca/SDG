@@ -31,6 +31,4 @@ lemma coe_sq : ((↑) : D R → R) * (↑) = 0 := by
   ext d
   simpa only [← pow_two, Pi.zero_apply] using d.2
 
-@[simp] lemma coe_zero : ((0 : D R) : R) = 0 := rfl
-
 end SDG

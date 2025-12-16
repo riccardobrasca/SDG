@@ -1,7 +1,7 @@
 import Mathlib.Algebra.DualNumber
 import Mathlib.RingTheory.Derivation.Basic
 
-import SDG.UniqueChoice
+import SDG.Axiom.UniqueChoice
 
 -- things that have to be removed to avoid the axiom of choice
 attribute [-instance] Nat.instAtLeastTwoHAddOfNat
@@ -29,12 +29,21 @@ lemma zero_mem_D : 0 ∈ D R := by
 instance : Zero (D R) where
   zero := ⟨0, zero_mem_D _⟩
 
+@[simp] lemma coe_zero : ((0 : D R) : R) = 0 := rfl
+
 section IsKockLawvere
 
 class IsKockLawvere extends Nontrivial R where
   isKockLawvere : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + d * b
 
 variable [IsKockLawvere R]
+
+open IsKockLawvere
+
+variable {R}
+
+noncomputable def derivFun (f : R → R) : R → R :=
+  unique_choice_fun (fun x ↦ isKockLawvere (fun d ↦ f (x + d)))
 
 end IsKockLawvere
 
