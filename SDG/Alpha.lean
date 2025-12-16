@@ -12,9 +12,9 @@ def α : DualNumber R →ₐ[R] (D R → R) :=
 @[simp] lemma α_apply (a b : R) (d : D R) : α ⟨a, b⟩ d = a + d * b := by
   simp [α, lift_apply_apply, mul_comm]
 
-variable [IsKockLawvere R]
+variable [IsKockLawvereone R]
 
-open IsKockLawvere
+open IsKockLawvereone
 
 lemma injective_α : Injective (α (R := R)) := by
   intro ⟨x, y⟩ ⟨z, t⟩ h
@@ -26,7 +26,7 @@ lemma injective_α : Injective (α (R := R)) := by
 
 lemma surjective_α : Surjective (α (R := R)) := by
   intro f
-  obtain ⟨b, hb, unique⟩ := isKockLawvere f
+  obtain ⟨b, hb, unique⟩ := isKockLawvereone f
   use ⟨f 0, b⟩
   ext d
   simp [hb d]

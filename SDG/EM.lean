@@ -4,15 +4,15 @@ set_option linter.detectClassical false
 
 namespace SDG
 
-variable {R : Type*} [CommRing R] [IsKockLawvere R]
+variable {R : Type*} [CommRing R] [IsKockLawvereone R]
 
-open IsKockLawvere
+open IsKockLawvereone
 
 include R in
 theorem NoEM : False := by
   classical
   let g : D R → R := fun ⟨d, hd⟩ ↦ if d ≠ 0 then 1 else 0
-  obtain ⟨b, hb, hbunique⟩ := isKockLawvere g
+  obtain ⟨b, hb, hbunique⟩ := isKockLawvereone g
   refine D_neq_zero R (fun d hd ↦ ?_)
   by_contra h
   refine one_ne_zero (α := R) ?_
@@ -25,7 +25,7 @@ lemma nontrivial_D : Nontrivial (D R) := by
   have := D_neq_zero R
   simp only [Subsemigroup.mem_mk, Set.mem_setOf_eq, not_forall] at this
   obtain ⟨d, hd, hd0⟩ := this
-  obtain ⟨b, hb, hbunique⟩ := isKockLawvere (fun _ ↦ (0 : R))
+  obtain ⟨b, hb, hbunique⟩ := isKockLawvereone (fun _ ↦ (0 : R))
   exact ⟨0, ⟨d, hd⟩, fun h ↦ hd0 <| Subtype.ext_iff.1 h.symm⟩
 
 end SDG

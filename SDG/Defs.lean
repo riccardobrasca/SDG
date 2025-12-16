@@ -17,9 +17,17 @@ abbrev D : Subsemigroup R where
  carrier := {(x : R) | x ^ 2 = 0}
  mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
 
+abbrev 𝔻 (k : ℕ) : Subsemigroup R where
+ carrier := {(x : R) | x ^ (k + 1) = 0}
+ mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
+
+lemma D_eq_𝔻_one : D R = 𝔻 R 1 := rfl
+
 variable {R}
 
 lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := by rfl
+
+lemma 𝔻_mem_iff {x : R} {k : ℕ} : x ∈ 𝔻 R k ↔ x ^ (k + 1) = 0 := by rfl
 
 variable (R)
 
@@ -33,17 +41,20 @@ instance : Zero (D R) where
 
 section IsKockLawvere
 
-class IsKockLawvere extends Nontrivial R where
+class IsKockLawvereone extends Nontrivial R where
+  isKockLawvereone : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + d * b
+
+class IsKockLawvere (k : ℕ) extends Nontrivial R where
   isKockLawvere : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + d * b
 
-variable [IsKockLawvere R]
+variable [IsKockLawvereone R]
 
-open IsKockLawvere
+open IsKockLawvereone
 
 variable {R}
 
 noncomputable def derivFun (f : R → R) : R → R :=
-  unique_choice_fun (fun x ↦ isKockLawvere (fun d ↦ f (x + d)))
+  unique_choice_fun (fun x ↦ isKockLawvereone (fun d ↦ f (x + d)))
 
 end IsKockLawvere
 
