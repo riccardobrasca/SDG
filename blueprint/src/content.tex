@@ -6,8 +6,11 @@
 % the current file can be a simple sequence of \input. Otherwise It
 % can start with a \section or \chapter for instance.
 
-\chapter{The synthetic theory}
+\section*{Introduction}
 
+\section{The unique choice axiom}
+
+\section{Basic Definitions}
 Let $R$ be a commutative ring.
 
 \begin{definition}
@@ -32,50 +35,13 @@ We denote by $D$ the subsemigroup of $R$
   Obvious.
 \end{proof}
 
-Let $\iota \colon D \to R$ be the natural inclusion.
-
-\begin{lemma}
-  \label{SDG.coe_sq}
-  \leanok
-  \lean{SDG.coe_sq}
-  \uses{SDG.zero_mem_D}
-  As an element of $D \to R$, we have that $\iota^2 = 0$.
-\end{lemma}
-\begin{proof}
-  \leanok
-  Simple calculation.
-\end{proof}
-
 \begin{definition}
-  \label{SDG.α}
+  \label{SDG.IsKockLawvereone}
   \leanok
-  \lean{SDG.α}
-  \uses{SDG.coe_sq}
-Let $R[\varepsilon]$ denote the ring of dual numbers of $R$, and let $\alpha$ be the unique $R$-algebra
-morphism $R[\varepsilon] \to (D \to R)$ such that $\alpha(\varepsilon) = \iota$. It exists by the universal
-property of $R[\varepsilon]$ and Lemma \ref{SDG.coe_sq}.
-\end{definition}
-
-\begin{lemma}
-  \label{SDG.α_apply}
-  \leanok
-  \lean{SDG.α_apply}
-  \uses{SDG.α}
-  For all $a + b \varepsilon \in R[\varepsilon]$ and $d \in D$ we have
-  \[
-  \alpha (a + b \varepsilon \in R[\varepsilon]) d = a + d \cdot b
-  \]
-\end{lemma}
-\begin{proof}
-  \leanok
-  Obvious.
-\end{proof}
-
-\begin{definition}
-  \label{SDG.IsKockLawvere}
-  \leanok
-  \lean{SDG.IsKockLawvere}
+  \lean{SDG.IsKockLawvereone}
   \uses{SDG.D}
 We say that $R$ is \emph{Kock--Lawvere} if it is nontrivial and forall $g : D → R$ there is a unique
 $b \in R$ such that forall $d \in D$ we have $g(d) = g(0) + d \cdot b$.
 \end{definition}
+
+\section{The synthetic theory}
