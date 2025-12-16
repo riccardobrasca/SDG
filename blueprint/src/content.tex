@@ -44,4 +44,15 @@ We say that $R$ is \emph{Kock--Lawvere} if it is nontrivial and forall $g : D â†
 $b \in R$ such that forall $d \in D$ we have $g(d) = g(0) + d \cdot b$.
 \end{definition}
 
+\begin{definition}
+  \label{SDG.deriv}
+  \leanok
+  \lean{SDG.deriv}
+  \uses{SDG.IsKockLawvereone}
+  Let $f \colon R \to R$ be any function. We define $\partial f \colon R \to R$, the \emph{derivative} of $f$, as the unique function such that for all $x \in R$ and $d \in D$ we have
+\[
+f(x + d)=f(0)+\partial f(x) \cdot d
+\]
+\end{definition}
+
 \section{The synthetic theory}
