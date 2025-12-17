@@ -7,11 +7,7 @@ import SDG.Axiom.Fin
 open BigOperators
 
 -- things that have to be removed to avoid the axiom of choice
-attribute [-instance] Nat.instAtLeastTwoHAddOfNat
 attribute [-instance] Fin.fintype
-
-instance (n : ℕ) [NeZero n] : (n + 1).AtLeastTwo :=
-  ⟨Nat.add_one_le_iff.2 <| Nat.succ_lt_succ <| Nat.pos_of_neZero n⟩
 
 namespace SDG
 

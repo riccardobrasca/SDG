@@ -102,7 +102,7 @@ theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R
 | n + 2 => by
     rw [pow_succ, deriv_mul, deriv_X_pow, Nat.add_one_sub_one]
     ext x
-    simp [-Nat.cast_ofNat] --to avoid choice
+    simp
     ring
 
 theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :

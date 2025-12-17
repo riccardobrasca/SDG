@@ -16,14 +16,12 @@ lemma D_mem_mul {x : R} (y : R) (hx : x ∈ D R) : x * y ∈ D R := by
   x.2
 
 lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = 2 * d₁ * d₂ :=
-  calc (d₁ + d₂ : R) ^ 2 = d₁ ^ 2 + d₂ ^ 2 + (2 : ℕ) * d₁ * d₂ := by ring
+  calc (d₁ + d₂ : R) ^ 2 = d₁ ^ 2 + d₂ ^ 2 + 2 * d₁ * d₂ := by ring
                        _ = _ := by simp
 
 lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
     (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ := by
-  calc (d₁ + d₂ : R) ^ 2 * ⅟2 = (2 * d₁ * d₂) * ⅟2 := by rw [D_add_sq]
-    _ = ((2 : ℕ) * d₁ * d₂) * ⅟2 := rfl
-    _ = d₁ * d₂ * ((2 : ℕ) * ⅟2) := by ring
+  calc (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ * 2 * ⅟2 := by rw [D_add_sq]; ring
     _ = d₁ * d₂ := by simp
 
 variable (R) in
