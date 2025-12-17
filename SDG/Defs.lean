@@ -4,10 +4,10 @@ import Mathlib.RingTheory.Derivation.Basic
 import SDG.Axiom.UniqueChoice
 import SDG.Axiom.Fin
 
-open BigOperators
-
 -- things that have to be removed to avoid the axiom of choice
 attribute [-instance] Fin.fintype
+
+open BigOperators
 
 namespace SDG
 
