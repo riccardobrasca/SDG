@@ -28,16 +28,10 @@ lemma 𝔻_mem_mul {x : R} (y : R) (hx : x ∈ 𝔻 R k) : x * y ∈ 𝔻 R k :=
 
 lemma 𝔻_le {k ℓ : ℕ} (h : k ≤ ℓ) : (𝔻 R k) ≤ 𝔻 R ℓ := by
   refine fun x hx ↦ 𝔻_mem_iff.2 ?_
-  have hx' : x ^ (k + 1) = 0 := 𝔻_mem_iff.1 hx
-  have hsum : k + 1 + (ℓ - k) = ℓ + 1 := by
-      have h' : k + (ℓ - k) = ℓ := Nat.add_sub_of_le h
-      calc
-        k + 1 + (ℓ - k) = (k + (ℓ - k)) + 1 := by ac_rfl
-        _ = ℓ + 1 := by simp [h']
   calc
-    x ^ (ℓ + 1) = x ^ (k + 1 + (ℓ - k)) := by simp [hsum]
-    _ = x ^ (k + 1) * x ^ (ℓ - k) := by simp [pow_add]
-    _ = 0 := by simp [hx']
+    x ^ (ℓ + 1) = x ^ (k + 1 + (ℓ - k)) := by congr 1; zify [h]; ring
+              _ = x ^ (k + 1) * x ^ (ℓ - k) := by ring
+              _ = 0 := by simp [𝔻_mem_iff.1 hx]
 
 lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = 2 * d₁ * d₂ :=
   calc (d₁ + d₂ : R) ^ 2 = d₁ ^ 2 + d₂ ^ 2 + 2 * d₁ * d₂ := by ring
