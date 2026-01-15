@@ -23,12 +23,22 @@ We denote by $D$ the subsemigroup of $R$
 \]
 \end{definition}
 
+\begin{definition}
+  \label{SDG.𝔻}
+  \leanok
+  \lean{SDG.𝔻}
+For any $k\in \mathbb{N},$ we denote by $D_k$ the subsemigroup of $R$
+\[
+\{r \in R \mbox{ such that } r ^ {k+1} = 0 \}
+\]
+\end{definition}
+
 \begin{lemma}
-  \label{SDG.zero_mem_D}
+  \label{SDG.zero_mem_𝔻}
   \leanok
   \lean{SDG.zero_mem_D}
   \uses{SDG.D}
-  We have that $0 \in D$
+  We have that $0 \in D.$
 \end{lemma}
 \begin{proof}
   \leanok
