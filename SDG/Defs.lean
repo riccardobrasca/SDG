@@ -1,8 +1,12 @@
-import Mathlib.Algebra.DualNumber
-import Mathlib.RingTheory.Derivation.Basic
+module
 
-import SDG.Axiom.UniqueChoice
-import SDG.Axiom.Fin
+public import Mathlib.Algebra.DualNumber
+public import Mathlib.RingTheory.Derivation.Basic
+
+public import SDG.Axiom.UniqueChoice
+public import SDG.Axiom.Fin
+
+@[expose] public section
 
 -- things that have to be removed to avoid the axiom of choice
 attribute [-instance] Fin.fintype

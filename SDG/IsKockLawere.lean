@@ -1,4 +1,8 @@
-import SDG.D
+module
+
+public import SDG.D
+
+@[expose] public section
 
 namespace SDG
 

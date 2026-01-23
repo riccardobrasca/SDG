@@ -1,10 +1,11 @@
 /-
 This file has been written essentially ba Damiano Testa.
 -/
+module
 
-import Lean.Util.CollectAxioms
-import Mathlib.Tactic.DeclarationNames
-import Mathlib.Init
+public meta import Lean.Util.CollectAxioms
+public meta import Mathlib.Tactic.DeclarationNames
+public meta import Mathlib.Init
 
 /-!
 #  The "detectClassical" linter
@@ -12,6 +13,8 @@ import Mathlib.Init
 The "detectClassical" linter emits a warning on declarations that depend on the `Classical.choice`
 and/or `sorryAx`.
 -/
+
+public meta section
 
 open Lean Elab Linter Command
 

@@ -1,5 +1,9 @@
-import SDG.D
-import SDG.IsKockLawere
+module
+
+public import SDG.D
+public import SDG.IsKockLawere
+
+@[expose] public section
 
 namespace SDG
 
