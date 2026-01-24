@@ -1,11 +1,7 @@
-module
+import SDG.Linters.choice
 
-public import SDG.Linters.choice
-
-public import Mathlib.Algebra.Order.Group.Nat
-public import Mathlib.Data.Fintype.Defs
-
-@[expose] public section
+import Mathlib.Algebra.Order.Group.Nat
+import Mathlib.Data.Fintype.Defs
 
 namespace SDG
 

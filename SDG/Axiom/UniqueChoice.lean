@@ -1,9 +1,5 @@
-module
-
-public import SDG.Linters.choice
-public import Mathlib.Data.Subtype
-
-@[expose] public section
+import SDG.Linters.choice
+import Mathlib.Data.Subtype
 
 variable {α β : Type*} {P : α → Prop}
 

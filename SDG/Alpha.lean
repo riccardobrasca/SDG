@@ -1,8 +1,4 @@
-module
-
-public import SDG.Deriv
-
-@[expose] public section
+import SDG.Deriv
 
 namespace SDG
 

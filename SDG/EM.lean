@@ -1,8 +1,4 @@
-module
-
-public import SDG.IsKockLawere
-
-@[expose] public section
+import SDG.IsKockLawere
 
 set_option linter.detectClassical false
 
