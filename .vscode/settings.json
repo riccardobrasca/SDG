@@ -33,6 +33,7 @@
         "blueprint/src/*.cfg": true,
         "blueprint/src/latexmkrc": true,
         "blueprint/src/blueprint.sty": true,
+        "blueprint/lean_decls": true,
         "html": true,
         "lake-packages": true,
         ".gitignore": true,
