@@ -52,4 +52,20 @@ lemma coe_pow : ((↑) : 𝔻 R k → R) ^ (k + 1) = 0 := by
   ext d
   simp
 
+theorem isKockLawvere_k_mono {k₁ k₂ : ℕ} (h : k₁ ≤ k₂) [IsKockLawvere_k R k₂] :
+    IsKockLawvere_k R k₁ where
+  isKockLawvere_k := fun g ↦ by
+    let f : 𝔻 R k₁ → 𝔻 R k₂ := Subtype.map id (𝔻_le h)
+    have hf0 : f 0 = 0 := rfl
+    let g' : 𝔻 R k₂ → R := Function.extend f g 0
+    have : g.FactorsThrough f := (Subtype.map_injective (𝔻_le h) injective_id).factorsThrough _
+    obtain ⟨b, hb, hbunique⟩ := IsKockLawvere_k.isKockLawvere_k g'
+    refine ⟨b ∘ Fin.castLE h, fun d ↦ ?_, ?_⟩
+    · specialize hb (f d)
+      simp only [Function.FactorsThrough.extend_apply this, g', ← hf0] at hb
+      simp only [hb, comp_apply]
+      congr 1
+      sorry
+    · sorry
+
 end SDG
