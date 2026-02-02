@@ -13,13 +13,11 @@ namespace SDG
 
 variable (R : Type*) [CommRing R]
 
-abbrev D : Subsemigroup R where
- carrier := {(x : R) | x ^ 2 = 0}
- mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
-
 abbrev 𝔻 (k : ℕ) : Subsemigroup R where
  carrier := {(x : R) | x ^ (k + 1) = 0}
  mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
+
+abbrev D := 𝔻 R 1
 
 lemma D_eq_𝔻_one : D R = 𝔻 R 1 := rfl
 
@@ -50,8 +48,19 @@ section IsKockLawvere
 class IsKockLawvereone extends Nontrivial R where
   isKockLawvereone : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + b * d
 
-class IsKockLawvere (k : ℕ) extends Nontrivial R where
-  isKockLawvere : ∀ g : 𝔻 R k → R, ∃! b : Fin k → R, ∀ d, g d = g 0 + ∑ i, b i * d ^ (i.val + 1)
+class IsKockLawvere extends Nontrivial R where
+  isKockLawvere : ∀ k, ∀ g : 𝔻 R k → R,
+    ∃! b : Fin k → R, ∀ d, g d = g 0 + ∑ i, b i * d ^ (i.val + 1)
+
+instance [IsKockLawvere R] : IsKockLawvereone R where
+  isKockLawvereone := fun g ↦ by
+    obtain ⟨b, hb, hbunique⟩ := IsKockLawvere.isKockLawvere 1 g
+    refine ⟨b 0, by simpa using hb, fun b' hb' ↦ ?_⟩
+    specialize hbunique (fun _ ↦ b')
+    simp only [Finset.univ_unique, Fin.default_eq_zero, Fin.isValue, Fin.val_eq_zero, zero_add,
+      pow_one, Finset.sum_const, Finset.card_singleton, one_smul, Subtype.forall,
+      Subsemigroup.mem_mk, Nat.reduceAdd, Set.mem_setOf_eq] at hbunique
+    rw [← hbunique (by simpa using hb')]
 
 variable [IsKockLawvereone R]
 
