@@ -1,5 +1,5 @@
 import SDG.D
-import SDG.IsKockLawere
+import SDG.IsKockLawereone
 
 namespace SDG
 
