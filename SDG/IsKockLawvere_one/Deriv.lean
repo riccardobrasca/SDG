@@ -1,5 +1,5 @@
 import SDG.Basic.D
-import SDG.IsKockLawvereone.Basic
+import SDG.IsKockLawvere_one.Basic
 
 namespace SDG
 
@@ -9,15 +9,15 @@ variable {R : Type*} [CommRing R]
 
 section IsKockLawvere
 
-variable [IsKockLawvereone R]
+variable [IsKockLawvere_one R]
 
-open IsKockLawvereone
+open IsKockLawvere_one
 
 lemma derivFun_spec (f : R → R) (d : D R) : f d = f 0 + derivFun f 0 * d := by
-  simpa [derivFun] using unique_choice_fun_spec (fun x ↦ isKockLawvereone (fun d ↦ f (x + d))) 0 d
+  simpa [derivFun] using unique_choice_fun_spec (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d))) 0 d
 
 theorem derivFun_taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + derivFun f x * d := by
-  simpa [derivFun] using unique_choice_fun_spec (fun x ↦ isKockLawvereone (fun d ↦ f (x + d))) x d
+  simpa [derivFun] using unique_choice_fun_spec (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d))) x d
 
 lemma derivFun_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = f x + r * d) :
     derivFun f x = r := by
@@ -105,7 +105,7 @@ theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R
     simp
     ring
 
-theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
+theorem taylor_two_aux [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
     letI δ : R := d₁ + d₂
     f (x + δ) = f x + δ * ∂f x + δ ^ 2 * ∂∂f x * ⅟2 :=
   calc f (x + (d₁ + d₂)) = f (x + d₁ + d₂) := by rw [add_assoc]

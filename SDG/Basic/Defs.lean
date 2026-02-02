@@ -45,15 +45,18 @@ instance : Zero (𝔻 R k) where
 
 section IsKockLawvere
 
-class IsKockLawvereone extends Nontrivial R where
-  isKockLawvereone : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + b * d
+class IsKockLawvere_one extends Nontrivial R where
+  isKockLawvere_one : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + b * d
+
+class IsKockLawvere_k (k : ℕ) extends Nontrivial R where
+  isKockLawvere_k : ∀ g : 𝔻 R k → R, ∃! b : Fin k → R, ∀ d, g d = g 0 + ∑ i, b i * d ^ (i.val + 1)
 
 class IsKockLawvere extends Nontrivial R where
   isKockLawvere : ∀ k, ∀ g : 𝔻 R k → R,
     ∃! b : Fin k → R, ∀ d, g d = g 0 + ∑ i, b i * d ^ (i.val + 1)
 
-instance [IsKockLawvere R] : IsKockLawvereone R where
-  isKockLawvereone := fun g ↦ by
+instance [IsKockLawvere R] : IsKockLawvere_one R where
+  isKockLawvere_one := fun g ↦ by
     obtain ⟨b, hb, hbunique⟩ := IsKockLawvere.isKockLawvere 1 g
     refine ⟨b 0, by simpa using hb, fun b' hb' ↦ ?_⟩
     specialize hbunique (fun _ ↦ b')
@@ -62,14 +65,14 @@ instance [IsKockLawvere R] : IsKockLawvereone R where
       Subsemigroup.mem_mk, Nat.reduceAdd, Set.mem_setOf_eq] at hbunique
     rw [← hbunique (by simpa using hb')]
 
-variable [IsKockLawvereone R]
+variable [IsKockLawvere_one R]
 
-open IsKockLawvereone
+open IsKockLawvere_one
 
 variable {R}
 
 noncomputable def derivFun (f : R → R) : R → R :=
-  unique_choice_fun (fun x ↦ isKockLawvereone (fun d ↦ f (x + d)))
+  unique_choice_fun (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d)))
 
 end IsKockLawvere
 

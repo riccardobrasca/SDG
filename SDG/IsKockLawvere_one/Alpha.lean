@@ -1,4 +1,4 @@
-import SDG.IsKockLawvereone.Deriv
+import SDG.IsKockLawvere_one.Deriv
 
 namespace SDG
 
@@ -12,9 +12,9 @@ def α : DualNumber R →ₐ[R] (D R → R) :=
 @[simp] lemma α_apply (a b : R) (d : D R) : α ⟨a, b⟩ d = a + b * d := by
   simp [α, lift_apply_apply, mul_comm]
 
-variable [IsKockLawvereone R]
+variable [IsKockLawvere_one R]
 
-open IsKockLawvereone
+open IsKockLawvere_one
 
 lemma injective_α : Injective (α (R := R)) := by
   intro ⟨x, y⟩ ⟨z, t⟩ h
@@ -26,7 +26,7 @@ lemma injective_α : Injective (α (R := R)) := by
 
 lemma surjective_α : Surjective (α (R := R)) := by
   intro f
-  obtain ⟨b, hb, unique⟩ := isKockLawvereone f
+  obtain ⟨b, hb, unique⟩ := isKockLawvere_one f
   use ⟨f 0, b⟩
   ext d
   simp [hb d]

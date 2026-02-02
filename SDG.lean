@@ -2,8 +2,8 @@ import SDG.Axiom.Fin
 import SDG.Axiom.UniqueChoice
 import SDG.Basic.D
 import SDG.Basic.Defs
-import SDG.IsKockLawvereone.Alpha
-import SDG.IsKockLawvereone.Basic
-import SDG.IsKockLawvereone.Deriv
-import SDG.IsKockLawvereone.EM
+import SDG.IsKockLawvere_one.Alpha
+import SDG.IsKockLawvere_one.Basic
+import SDG.IsKockLawvere_one.Deriv
+import SDG.IsKockLawvere_one.EM
 import SDG.Linters.choice
