@@ -1,4 +1,4 @@
-import SDG.Defs
+import SDG.Basic.Defs
 
 -- things that have to be removed to avoid the axiom of choice
 attribute [-instance] Subsemigroup.instCompleteLattice

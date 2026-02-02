@@ -1,4 +1,4 @@
-import SDG.IsKockLawereone
+import SDG.IsKockLawvereone.Basic
 
 set_option linter.detectClassical false
 

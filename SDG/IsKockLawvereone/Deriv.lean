@@ -1,5 +1,5 @@
-import SDG.D
-import SDG.IsKockLawereone
+import SDG.Basic.D
+import SDG.IsKockLawvereone.Basic
 
 namespace SDG
 
