@@ -41,7 +41,7 @@ instance : Zero (D R) where
 instance : Zero (𝔻 R k) where
   zero := ⟨0, zero_mem_𝔻 _ _⟩
 
-@[simp] lemma coe_zero : ((0 : D R) : R) = 0 := rfl
+@[simp] lemma coe_zero (k : ℕ) : ((0 : 𝔻 R k) : R) = 0 := rfl
 
 section IsKockLawvere
 

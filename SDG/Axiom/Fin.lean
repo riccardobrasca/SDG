@@ -1,9 +1,11 @@
 import SDG.Linters.choice
 
 import Mathlib.Algebra.Order.Group.Nat
-import Mathlib.Data.Fintype.Defs
+import Mathlib.Algebra.BigOperators.Fin
 
 namespace SDG
+
+section List
 
 open List
 
@@ -45,5 +47,23 @@ theorem nodup_finRange (n) : (finRange n).Nodup := by
 
 instance Fin.fintype (n : ℕ) : Fintype (Fin n) :=
   ⟨⟨finRange n, nodup_finRange n⟩, List.mem_finRange⟩
+
+
+end List
+section BigOperators
+
+namespace Fin
+
+variable {n : ℕ} {M : Type*} [CommMonoid M]
+
+@[to_additive (attr := simp)]
+theorem prod_univ_two (f : Fin 2 → M) : ∏ i : Fin 2, f i = f 0 * f 1 := by
+  delta Finset.prod
+  delta Multiset.prod
+  simp [show (Finset.univ : Finset (Fin 2)).val = 0 ::ₘ {1} from rfl]
+
+end Fin
+
+end BigOperators
 
 end SDG
