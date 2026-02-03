@@ -20,17 +20,13 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
   have : ∀ (d₁ d₂ : D R), B 1 * 2 * d₁ * d₂ = ∂∂f x * d₁ * d₂ := by
     intro d₁ d₂
     specialize hB (d₁ + d₂) (mem_𝔻_of_mem_D_add_mem_D _ _)
-    rw [taylor_two_aux f x d₁ d₂, ← hB_deriv, add_assoc, D_add_sq] at hB
-    simp only [← mul_assoc, Fin.isValue, add_right_inj] at hB
-    rw [← hB, mul_assoc, mul_assoc, mul_assoc, mul_assoc]
-    congr 1
-    rw [mul_comm 2, mul_assoc, mul_assoc]
+    simp only [taylor_two_aux f x d₁ d₂, ← hB_deriv, add_assoc, D_add_sq, ← mul_assoc,
+      Fin.isValue, add_right_inj] at hB
+    rw [← hB, mul_assoc, mul_assoc, mul_assoc, mul_assoc, mul_comm 2, mul_assoc, mul_assoc]
     simp
   rw [hB _ δ.2, add_assoc, hB_deriv]
   congr 2
-  rw [((cancel_d (fun _ ↦ cancel_d (fun _ ↦ this _ _))).symm : ∂∂f x = B 1 * 2), mul_assoc,
-    mul_comm ((δ : R) ^ 2), mul_assoc]
-  congr
-  simp
+  simp [((cancel_d (fun _ ↦ cancel_d (fun _ ↦ this _ _))).symm : ∂∂f x = B 1 * 2), mul_assoc,
+    mul_comm ((δ : R) ^ 2)]
 
 end SDG
