@@ -7,6 +7,7 @@ namespace SDG
 open IsKockLawvere
 
 variable {R : Type*} [CommRing R] [IsKockLawvere R]
+
 theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
     f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 := by
   let g_x : 𝔻 R 2 → R := fun d ↦ f (x + d)
