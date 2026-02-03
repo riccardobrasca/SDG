@@ -37,6 +37,11 @@ lemma D_add_sq (d₁ d₂ : D R) : (d₁ + d₂ : R) ^ 2 = 2 * d₁ * d₂ :=
   calc (d₁ + d₂ : R) ^ 2 = d₁ ^ 2 + d₂ ^ 2 + 2 * d₁ * d₂ := by ring
                        _ = _ := by simp
 
+lemma mem_𝔻_of_mem_D_add_mem_D (d₁ d₂ : D R) : (d₁ + d₂ : R) ∈ 𝔻 R 2 :=
+  calc
+    (d₁ + d₂ : R) ^ 3 = d₁ ^ 2 * (d₁ + 3 * d₂) + d₂ ^ 2 * (3 * d₁ + d₂) := by ring
+                    _ = 0 := by simp
+
 lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
     (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ := by
   calc (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ * 2 * ⅟2 := by rw [D_add_sq]; ring
