@@ -65,12 +65,6 @@ open Finset
 
 variable {n : ℕ} {M : Type*} [CommMonoid M] {A : Type*} [AddCommMonoid A]
 
-@[to_additive (attr := simp)]
-theorem prod_univ_two (f : Fin 2 → M) : ∏ i : Fin 2, f i = f 0 * f 1 := by
-  delta Finset.prod
-  delta Multiset.prod
-  simp [show (Finset.univ : Finset (Fin 2)).val = 0 ::ₘ {1} from rfl]
-
 @[to_additive]
 theorem prod_ofFn (f : Fin n → M) : (List.ofFn f).prod = ∏ i, f i := by
   simp only [prod_eq_multiset_prod, Fin.univ_val_map, Multiset.prod_coe]
@@ -98,6 +92,20 @@ theorem sum_univ_succ (f : Fin (n + 1) → A) :
 theorem prod_univ_succ (f : Fin (n + 1) → M) :
     ∏ i, f i = f 0 * ∏ i : Fin n, f i.succ := by
   rw [Fintype_prod_eq_prod, Fintype_prod_eq_prod, Fin.prod_succ]
+
+@[to_additive (attr := simp)]
+theorem prod_univ_zero (f : Fin 0 → M) : ∏ i : Fin 0, f i = 1 := by
+  rfl
+
+@[to_additive (attr := simp) sum_univ_one]
+theorem prod_univ_one (f : Fin 1 → M) : ∏ i : Fin 1, f i = f 0 := by
+  rw [prod_univ_succ]
+  exact mul_one _
+
+@[to_additive (attr := simp)]
+theorem prod_univ_two (f : Fin 2 → M) : ∏ i : Fin 2, f i = f 0 * f 1 := by
+  rw [prod_univ_succ, prod_univ_one]
+  rfl
 
 end Fin
 
