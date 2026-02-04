@@ -2,6 +2,7 @@ import SDG.Linters.choice
 
 import Mathlib.Algebra.Order.Group.Nat
 import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Nat.Choose.Sum
 
 namespace SDG
 
@@ -48,19 +49,55 @@ theorem nodup_finRange (n) : (finRange n).Nodup := by
 instance Fin.fintype (n : ℕ) : Fintype (Fin n) :=
   ⟨⟨finRange n, nodup_finRange n⟩, List.mem_finRange⟩
 
+theorem Fin.univ_def (n : ℕ) : (Finset.univ : Finset (Fin n)) = ⟨finRange n, nodup_finRange n⟩ :=
+  rfl
+
+@[simp] theorem Fin.univ_val_map {α : Type*} {n : ℕ} (f : Fin n → α) :
+    Finset.univ.val.map f = List.ofFn f := by
+  simp [List.ofFn_eq_map, univ_def]
 
 end List
 section BigOperators
 
 namespace Fin
 
-variable {n : ℕ} {M : Type*} [CommMonoid M]
+open Finset
+
+variable {n : ℕ} {M : Type*} [CommMonoid M] {A : Type*} [AddCommMonoid A]
 
 @[to_additive (attr := simp)]
 theorem prod_univ_two (f : Fin 2 → M) : ∏ i : Fin 2, f i = f 0 * f 1 := by
   delta Finset.prod
   delta Multiset.prod
   simp [show (Finset.univ : Finset (Fin 2)).val = 0 ::ₘ {1} from rfl]
+
+@[to_additive]
+theorem prod_ofFn (f : Fin n → M) : (List.ofFn f).prod = ∏ i, f i := by
+  simp only [prod_eq_multiset_prod, Fin.univ_val_map, Multiset.prod_coe]
+
+@[to_additive]
+theorem prod_univ_def (f : Fin n → M) : ∏ i, f i = ((List.finRange n).map f).prod := by
+  rw [← List.ofFn_eq_map, prod_ofFn]
+
+attribute [to_additive existing] Fin.prod
+
+theorem Fintype_sum_eq_sum (f : Fin n → A) :
+    ∑ i, f i = Fin.sum f := by
+  rw [Fin.sum_eq_sum_map_finRange, ← Fin.sum_univ_def]
+
+@[to_additive existing]
+theorem Fintype_prod_eq_prod (f : Fin n → M) :
+    ∏ i, f i = Fin.prod f := by
+  rw [Fin.prod_eq_prod_map_finRange, ← Fin.prod_univ_def]
+
+theorem sum_univ_succ (f : Fin (n + 1) → A) :
+    ∑ i, f i = f 0 + ∑ i : Fin n, f i.succ := by
+  rw [Fintype_sum_eq_sum, Fintype_sum_eq_sum, Fin.sum_succ]
+
+@[to_additive existing]
+theorem prod_univ_succ (f : Fin (n + 1) → M) :
+    ∏ i, f i = f 0 * ∏ i : Fin n, f i.succ := by
+  rw [Fintype_prod_eq_prod, Fintype_prod_eq_prod, Fin.prod_succ]
 
 end Fin
 

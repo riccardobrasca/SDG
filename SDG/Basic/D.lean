@@ -1,10 +1,12 @@
+import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
+
 import SDG.Basic.Defs
 
 -- things that have to be removed to avoid the axiom of choice
 attribute [-instance] Subsemigroup.instCompleteLattice
 namespace SDG
 
-open DualNumber Function
+open DualNumber Function BigOperators Nat
 
 variable {R : Type*} [CommRing R] {k : ℕ}
 
@@ -41,6 +43,52 @@ lemma mem_𝔻_of_mem_D_add_mem_D (d₁ d₂ : D R) : (d₁ + d₂ : R) ∈ 𝔻
   calc
     (d₁ + d₂ : R) ^ 3 = d₁ ^ 2 * (d₁ + 3 * d₂) + d₂ ^ 2 * (3 * d₁ + d₂) := by ring
                     _ = 0 := by simp
+
+open Multiset Finset
+
+theorem mem_D_add_pow {x : R} (hx : x ∈ D R) (y : R) : ∀ k, (x + y) ^ (k + 1) =
+  (k + 1) • x * y ^ k + y ^ (k + 1)
+| 0 => by simp
+| n + 1 => by
+  rw [pow_succ, mem_D_add_pow hx]
+  simp only [nsmul_eq_mul, cast_add, cast_one]
+  calc _ = y ^ (n + 2) + y ^ (n + 1) * x + (n + 1) * x * y ^ (n + 1) +
+    (n + 1) * x ^ 2 * y ^ n := by ring
+       _ = _ := by simp [D_mem_iff.1 hx]; ring
+
+theorem mem_D_add_pow' {x : R} (hx : x ∈ D R) (y : R) : ∀ k, (x + y) ^ (k + 1) =
+  (k + 1) • x * y ^ k + y ^ (k + 1)
+| 0 => by simp
+| n + 1 => by
+  rw [pow_succ, mem_D_add_pow hx]
+  simp only [nsmul_eq_mul, cast_add, cast_one]
+  calc _ = y ^ (n + 2) + y ^ (n + 1) * x + (n + 1) * x * y ^ (n + 1) +
+    (n + 1) * x ^ 2 * y ^ n := by ring
+       _ = _ := by simp [D_mem_iff.1 hx]; ring
+
+lemma mem_D_add_pow_of_le {k : ℕ} {q : ℕ} (h : q ≤ k) (b : Fin k → D R) : (∑ i, (b i : R)) ^ q =
+    q ! • ((map (fun d ↦ (b d).1) (univ : Finset (Fin k)).1).esymm q) := by
+  sorry
+
+lemma mem_D_sum_pow_succ : ∀ {k : ℕ} (b : Fin k → D R), (∑ i, (b i : R)) ^ (k + 1) = 0
+| 0 => fun b ↦ by
+  rw [zero_add, pow_one]
+  exact sum_empty
+| n + 1 => fun b ↦ by
+  rw [Fin.sum_univ_succ, mem_D_add_pow (b 0).2, mem_D_sum_pow_succ, mul_zero, zero_add, pow_succ,
+    mem_D_sum_pow_succ, zero_mul]
+
+lemma mem_D_sum_pow_of_gt {k : ℕ} {q : ℕ} (h : k < q) (b : Fin k → D R) :
+    (∑ i, (b i : R)) ^ q = 0 := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_lt h
+  rw [show k + n + 1 = k + 1 + n by ring, pow_add, mem_D_sum_pow_succ, zero_mul]
+
+lemma mem_D_sum_pow {k : ℕ} (q : ℕ) (b : Fin k → D R) : (∑ i, (b i : R)) ^ q =
+    if q ≤ k then q ! • ((map (fun d ↦ (b d).1) (univ : Finset (Fin k)).1).esymm q) else 0 := by
+  rcases le_or_gt q k with h | h
+  · simp [h, mem_D_add_pow_of_le, -Fin.univ_val_map]
+  · have : ¬(q ≤ k) := fun H ↦ (lt_self_iff_false k).1 (lt_of_lt_of_le h H)
+    simp [this, mem_D_sum_pow_of_gt h]
 
 lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
     (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ := by
