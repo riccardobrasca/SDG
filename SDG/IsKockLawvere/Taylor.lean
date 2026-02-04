@@ -51,9 +51,15 @@ match k with
     Function.iterate_zero, id_eq, pow_zero, mul_one, inv_zero_factorial, mul_one]
 | k + 1 => by
   set δ₁ : R := ∑ i : Fin k, (d i.succ) with hδ₁
-  set δ : R := ∑ n, d n with hδ
-  rw [hδ, sum_univ_succ, add_comm (d 0 : R), ← add_assoc, taylor_one f, taylor_k_aux k f,
-    taylor_k_aux k ∂f, add_comm _ (d 0 : R), ← sum_univ_succ (fun n ↦ (d n : R)), ← hδ, ← hδ₁]
-  sorry
+  let δ : R := ∑ n, d n
+  calc f (x + δ) = f (x + ∑ n, (d n : R)) := by rfl
+    _ = f (x + δ₁ + d 0) := by rw [sum_univ_succ, add_comm (d 0 : R), ← add_assoc]
+    _ = f (x + δ₁) + ∂f (x + δ₁) * d 0 := by rw [taylor_one f]
+    _ = ∑ n : Fin (k + 1), ∂^[n] f x * δ₁ ^ (n : ℕ) * ⅟(n ! : R) + ∂f (x + δ₁) * d 0 := by
+      rw [taylor_k_aux k f]
+    _ = ∑ n : Fin (k + 1), ∂^[n] f x * δ₁ ^ (n : ℕ) * ⅟(n ! : R) +
+      (∑ n : Fin (k + 1), ∂^[n.succ] f x * δ₁ ^ (n : ℕ) * ⅟(n ! : R)) * d 0 := by
+      rw [taylor_k_aux k ∂f]; rfl
+    _ = ∑ n : Fin (k + 2), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R) := by sorry
 
 end SDG
