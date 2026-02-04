@@ -1,12 +1,24 @@
 import SDG.IsKockLawvere_one.Deriv
+import SDG.Basic.FactorialInv
 
 attribute [-instance] Fin.fintype
 
 namespace SDG
 
-open IsKockLawvere
+open IsKockLawvere Nat
 
 variable {R : Type*} [CommRing R] [IsKockLawvere R]
+
+theorem taylor_two_aux [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
+    letI δ : R := d₁ + d₂
+    f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 :=
+  calc f (x + (d₁ + d₂)) = f (x + d₁ + d₂) := by rw [add_assoc]
+       _ = f (x + d₁) + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
+       _ = f x + ∂f x * d₁ + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
+       _ = f x + ∂f x * d₁ + (∂f x + ∂∂f x * d₁) * d₂ := by rw [taylor_one ∂f]
+       _ = f x + (d₁ + d₂) * ∂f x + d₁ * d₂ * ∂∂f x := by ring
+       _ = f x + (d₁ + d₂) * ∂f x + ((d₁ + d₂) ^ 2 * ⅟2) * ∂∂f x := by rw [D_add_sq_dvd_two]
+       _ = _ := by ring
 
 theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
     f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 := by
@@ -28,5 +40,20 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
   congr 2
   simp [((cancel_d (fun _ ↦ cancel_d (fun _ ↦ this _ _))).symm : ∂∂f x = B 1 * 2), mul_assoc,
     mul_comm ((δ : R) ^ 2)]
+
+open Fin in
+theorem taylor_k_aux (k : ℕ) [Divisible R] (f : R → R) (x : R) (d : Fin k → D R) :
+    letI δ : R := ∑ n, d n
+    f (x + δ) = ∑ n : Fin (k + 1), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R) :=
+match k with
+| 0 => by
+  rw [zero_add, sum_univ_zero, add_zero, Fin.sum_univ_one, Fin.val_eq_zero,
+    Function.iterate_zero, id_eq, pow_zero, mul_one, inv_zero_factorial, mul_one]
+| k + 1 => by
+  set δ₁ : R := ∑ i : Fin k, (d i.succ) with hδ₁
+  set δ : R := ∑ n, d n with hδ
+  rw [hδ, sum_univ_succ, add_comm (d 0 : R), ← add_assoc, taylor_one f, taylor_k_aux k f,
+    taylor_k_aux k ∂f, add_comm _ (d 0 : R), ← sum_univ_succ (fun n ↦ (d n : R)), ← hδ, ← hδ₁]
+  sorry
 
 end SDG
