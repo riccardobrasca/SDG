@@ -60,6 +60,8 @@ instance : FunLike (Derivation R (R → R) (R → R)) (R → R) (R → R) where
 
 notation3:max "∂" f:max => deriv f
 
+notation3:max "∂^[" n "]" => Nat.iterate deriv n
+
 lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + ∂f 0 * d :=
   derivFun_spec ..
 
