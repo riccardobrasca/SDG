@@ -107,6 +107,33 @@ theorem prod_univ_two (f : Fin 2 → M) : ∏ i : Fin 2, f i = f 0 * f 1 := by
   rw [prod_univ_succ, prod_univ_one]
   rfl
 
+@[to_additive (attr := simp)]
+theorem prod_cons_one (f : Fin n → M) :
+    (∏ i : Fin n.succ, (Fin.cons 1 f : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
+  rw [prod_univ_succ]
+  simp
+
+theorem sum_univ_succAbove_last (f : Fin (n + 1) → A) :
+    ∑ i, f i = f (Fin.last n) + ∑ i : Fin n, f (((Fin.last n)).succAbove i) := by
+  simp only [Fin.succAbove_last, Fintype_sum_eq_sum, Fin.sum_eq_sum_map_finRange,
+    List.finRange_succ_last, List.map_append, List.map_map, List.map_cons, List.map_nil,
+    List.sum_append, List.sum_cons, List.sum_nil, add_zero, add_comm]
+  rfl
+
+@[to_additive existing]
+theorem prod_univ_succAbove_last (f : Fin (n + 1) → M) :
+    ∏ i, f i = f (Fin.last n) * ∏ i : Fin n, f (((Fin.last n)).succAbove i) := by
+  simp only [Fin.succAbove_last, Fintype_prod_eq_prod, Fin.prod_eq_prod_map_finRange,
+    List.finRange_succ_last, List.map_append, List.map_map, List.map_cons, List.map_nil,
+    List.prod_append, List.prod_cons, List.prod_nil, mul_one, mul_comm]
+  rfl
+
+@[to_additive (attr := simp)]
+theorem prod_snoc_one (f : Fin n → M) :
+    (∏ i : Fin n.succ, (Fin.snoc f 1 : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
+  rw [Fin.prod_univ_succAbove_last]
+  simp
+
 end Fin
 
 end BigOperators
