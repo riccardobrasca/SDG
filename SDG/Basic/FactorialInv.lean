@@ -1,4 +1,6 @@
-import Mathlib
+import Mathlib.Algebra.Group.Invertible.Defs
+import Mathlib.Data.Nat.Cast.Basic
+import Mathlib.Data.Nat.Factorial.Basic
 
 import SDG.Linters.choice
 
