@@ -18,8 +18,6 @@ def α : DualNumber R →ₐ[R] (D R → R) :=
 
 variable [IsKockLawvere_one R]
 
-open IsKockLawvere_one
-
 lemma injective_α : Injective (α (R := R)) := by
   intro ⟨x, y⟩ ⟨z, t⟩ h
   have hxz := congr_fun h 0
@@ -30,7 +28,7 @@ lemma injective_α : Injective (α (R := R)) := by
 
 lemma surjective_α : Surjective (α (R := R)) := by
   intro f
-  obtain ⟨b, hb, unique⟩ := isKockLawvere_one f
+  obtain ⟨b, hb, unique⟩ := IsKockLawvere_one.isKockLawvere_one f
   use ⟨f 0, b⟩
   ext d
   simp [hb d]
