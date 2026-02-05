@@ -46,32 +46,22 @@ lemma mem_𝔻_of_mem_D_add_mem_D (d₁ d₂ : D R) : (d₁ + d₂ : R) ∈ 𝔻
 
 open Multiset Finset
 
-theorem mem_D_add_pow {x : R} (hx : x ∈ D R) (y : R) : ∀ k, (x + y) ^ (k + 1) =
-  (k + 1) • x * y ^ k + y ^ (k + 1)
+theorem mem_D_add_pow (x : D R) (y : R) : ∀ (k : ℕ), (x + y) ^ (k + 1) =
+  (↑(k + 1) : R) * x * y ^ k + y ^ (k + 1)
 | 0 => by simp
 | n + 1 => by
-  rw [pow_succ, mem_D_add_pow hx]
-  simp only [nsmul_eq_mul, cast_add, cast_one]
+  rw [pow_succ, mem_D_add_pow x]
+  simp only [cast_add, cast_one]
   calc _ = y ^ (n + 2) + y ^ (n + 1) * x + (n + 1) * x * y ^ (n + 1) +
     (n + 1) * x ^ 2 * y ^ n := by ring
-       _ = _ := by simp [D_mem_iff.1 hx]; ring
-
-theorem mem_D_add_pow' {x : R} (hx : x ∈ D R) (y : R) : ∀ k, (x + y) ^ (k + 1) =
-  (k + 1) • x * y ^ k + y ^ (k + 1)
-| 0 => by simp
-| n + 1 => by
-  rw [pow_succ, mem_D_add_pow hx]
-  simp only [nsmul_eq_mul, cast_add, cast_one]
-  calc _ = y ^ (n + 2) + y ^ (n + 1) * x + (n + 1) * x * y ^ (n + 1) +
-    (n + 1) * x ^ 2 * y ^ n := by ring
-       _ = _ := by simp [D_mem_iff.1 hx]; ring
+       _ = _ := by simp; ring
 
 lemma mem_D_sum_pow_succ : ∀ {k : ℕ} (b : Fin k → D R), (∑ i, (b i : R)) ^ (k + 1) = 0
 | 0 => fun b ↦ by
   rw [zero_add, pow_one]
   exact sum_empty
 | n + 1 => fun b ↦ by
-  rw [Fin.sum_univ_succ, mem_D_add_pow (b 0).2, mem_D_sum_pow_succ, mul_zero, zero_add, pow_succ,
+  rw [Fin.sum_univ_succ, mem_D_add_pow, mem_D_sum_pow_succ, mul_zero, zero_add, pow_succ,
     mem_D_sum_pow_succ, zero_mul]
 
 lemma mem_D_sum_pow_of_gt {k : ℕ} {q : ℕ} (h : k < q) (b : Fin k → D R) :
