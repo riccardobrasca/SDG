@@ -59,4 +59,4 @@ jobs:
           restore-keys: LakeBuild-
 
       - name: Build project
-        run: ~/.elan/bin/lake build Project
+        run: ~/.elan/bin/lake build SDG
