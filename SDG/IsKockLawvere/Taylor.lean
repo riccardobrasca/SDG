@@ -47,7 +47,7 @@ theorem taylor_k_aux (k : ℕ) [Divisible R] (f : R → R) (x : R) (d : Fin k �
     f (x + δ) = ∑ n : Fin (k + 1), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R) :=
 match k with
 | 0 => by
-  rw [zero_add, sum_univ_zero, add_zero, Fin.sum_univ_one, Fin.val_eq_zero,
+  rw [zero_add, sum_univ_zero, add_zero, sum_univ_one, Fin.val_eq_zero,
     Function.iterate_zero, id_eq, pow_zero, mul_one, inv_zero_factorial, mul_one]
 | k + 1 => by
   set δ : R := ∑ i : Fin k, (d i.succ) with hδ
@@ -65,13 +65,21 @@ match k with
   ext n
   rcases Decidable.eq_or_ne n 0 with rfl | h
   · simp
-  rcases (Fin.eq_castSucc_or_eq_last n).symm with rfl | h
+  rcases (Fin.eq_castSucc_or_eq_last n).symm with rfl | ⟨m', rfl⟩
   · simp only [succ_eq_add_one, Fin.snoc_last, Fin.val_succ, Function.iterate_succ,
     Function.comp_apply, Fin.cons_last, Fin.val_last, zero_add, mul_assoc]
-    rw [hδδ₁, mem_D_add_pow (d 0).2, nsmul_eq_mul, mem_D_sum_pow_succ, add_zero,
+    rw [hδδ₁, mem_D_add_pow, mem_D_sum_pow_succ, add_zero,
       mul_comm (↑(k + 1) : R), mul_assoc, mul_assoc, mul_comm (↑(k + 1) : R), mul_assoc,
-      succ_mul_inv_factorial_succ R k]
+      succ_mul_inv_factorial_succ]
     ring
-  sorry
+  obtain ⟨m, hm⟩ := Fin.eq_succ_of_ne_zero h
+  simp only [succ_eq_add_one, Fin.snoc_castSucc, Fin.val_succ, Function.iterate_succ,
+    Function.comp_apply, Fin.val_castSucc]
+  simp only [hm, Fin.cons_succ, mul_assoc, ← Fin.val_castSucc m', ← Function.iterate_succ_apply,
+    Fin.val_succ, ← mul_add]
+  rw [hδδ₁, mem_D_add_pow, pow_succ, mul_comm _ (δ ^ m.1), ← mul_add, mul_assoc, ← mul_add,
+    mul_assoc, add_mul, add_comm _ (δ * _), mul_comm (↑(m.1 + 1) : R), mul_assoc,
+    mul_comm (↑(m.1 + 1) : R), succ_mul_inv_factorial_succ]
+  ring
 
 end SDG
