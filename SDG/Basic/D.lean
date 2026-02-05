@@ -1,12 +1,10 @@
-import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
+import Mathlib.Tactic.Zify
+import Mathlib.Tactic.Ring
 
 import SDG.Basic.Defs
-
--- things that have to be removed to avoid the axiom of choice
-attribute [-instance] Subsemigroup.instCompleteLattice
 namespace SDG
 
-open DualNumber Function BigOperators Nat
+open Function BigOperators Nat
 
 variable {R : Type*} [CommRing R] {k : ℕ}
 

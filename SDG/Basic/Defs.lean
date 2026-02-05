@@ -1,11 +1,8 @@
-import Mathlib.Algebra.DualNumber
-import Mathlib.RingTheory.Derivation.Basic
+import Mathlib.Algebra.Module.NatInt
+import Mathlib.Algebra.Group.Subsemigroup.Defs
 
 import SDG.Axiom.UniqueChoice
 import SDG.Axiom.Fin
-
--- things that have to be removed to avoid the axiom of choice
-attribute [-instance] Fin.fintype
 
 open BigOperators
 

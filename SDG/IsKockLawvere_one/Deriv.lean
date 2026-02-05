@@ -1,9 +1,9 @@
+import Mathlib.RingTheory.Derivation.Basic
+
 import SDG.Basic.D
 import SDG.IsKockLawvere_one.Basic
 
 namespace SDG
-
-open DualNumber Function
 
 variable {R : Type*} [CommRing R]
 
@@ -87,9 +87,9 @@ theorem deriv_mul (f g : R → R) : ∂(f * g) = ∂f * g + f * ∂g := by
 
 theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
   refine derivative_unique (fun d ↦ ?_)
-  calc (f ∘ g) (x + d) = f (g x + ∂g x * d) := by rw [comp_apply, taylor_one g]
+  calc (f ∘ g) (x + d) = f (g x + ∂g x * d) := by rw [Function.comp_apply, taylor_one g]
        _ = f (g x + (⟨_, D_mul_mem _ d.2⟩ : D R)) := by rfl
-       _ = (f ∘ g) x + (∂f (g x) * ∂g x) * d := by rw [taylor_one f, comp_apply]; ring
+       _ = (f ∘ g) x + (∂f (g x) * ∂g x) * d := by rw [taylor_one f, Function.comp_apply]; ring
 
 theorem deriv_inv (f : R → R) [Invertible f] : ∂⅟f = -⅟f ^ 2 * ∂f := by
   simp [deriv.leibniz_invOf f]

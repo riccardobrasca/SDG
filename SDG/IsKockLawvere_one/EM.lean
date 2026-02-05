@@ -17,7 +17,7 @@ theorem NoEM : False := by
   by_contra h
   refine one_ne_zero (α := R) ?_
   have : 1 = b * d := by simpa [g, h] using hb ⟨d, hd⟩
-  calc 1 = 1 ^ 2 := by ring
+  calc 1 = 1 ^ 2 := by rw [one_pow]
        _ = (b * d) ^ 2 := by simp [this]
        _ = 0 := by simp [mul_pow, D_mem_iff.1 hd]
 

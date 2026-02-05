@@ -1,4 +1,8 @@
-import SDG.IsKockLawvere_one.Deriv
+import Mathlib.Algebra.DualNumber
+import Mathlib.Algebra.Algebra.Pi
+
+import SDG.Basic.D
+import SDG.IsKockLawvere_one.Basic
 
 namespace SDG
 

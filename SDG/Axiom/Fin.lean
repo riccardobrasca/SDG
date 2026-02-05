@@ -1,8 +1,8 @@
 import SDG.Linters.choice
 
 import Mathlib.Algebra.Order.Group.Nat
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.Nat.Choose.Sum
+import Mathlib.Data.List.FinRange
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 namespace SDG
 
