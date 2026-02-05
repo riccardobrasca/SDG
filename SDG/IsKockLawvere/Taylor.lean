@@ -50,16 +50,30 @@ match k with
   rw [zero_add, sum_univ_zero, add_zero, Fin.sum_univ_one, Fin.val_eq_zero,
     Function.iterate_zero, id_eq, pow_zero, mul_one, inv_zero_factorial, mul_one]
 | k + 1 => by
-  set δ₁ : R := ∑ i : Fin k, (d i.succ) with hδ₁
-  let δ : R := ∑ n, d n
-  calc f (x + δ) = f (x + ∑ n, (d n : R)) := by rfl
-    _ = f (x + δ₁ + d 0) := by rw [sum_univ_succ, add_comm (d 0 : R), ← add_assoc]
-    _ = f (x + δ₁) + ∂f (x + δ₁) * d 0 := by rw [taylor_one f]
-    _ = ∑ n : Fin (k + 1), ∂^[n] f x * δ₁ ^ (n : ℕ) * ⅟(n ! : R) + ∂f (x + δ₁) * d 0 := by
-      rw [taylor_k_aux k f]
-    _ = ∑ n : Fin (k + 1), ∂^[n] f x * δ₁ ^ (n : ℕ) * ⅟(n ! : R) +
-      (∑ n : Fin (k + 1), ∂^[n.succ] f x * δ₁ ^ (n : ℕ) * ⅟(n ! : R)) * d 0 := by
-      rw [taylor_k_aux k ∂f]; rfl
-    _ = ∑ n : Fin (k + 2), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R) := by sorry
+  set δ : R := ∑ i : Fin k, (d i.succ) with hδ
+  set δ₁ : R := ∑ n, d n with hδ₁
+  have hδδ₁ : δ₁ = d 0 + δ := by simp [δ₁, δ, sum_univ_succ]
+  calc f (x + δ₁) = f (x + ∑ n, (d n : R)) := by rfl
+    _ = f (x + δ + d 0) := by rw [sum_univ_succ, add_comm (d 0 : R), ← add_assoc]
+    _ = f (x + δ) + ∂f (x + δ) * d 0 := by rw [taylor_one f]
+    _ = ∑ n : Fin (k + 1), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R) +
+      (∑ n : Fin (k + 1), ∂^[n.succ] f x * δ ^ (n : ℕ) * ⅟(n ! : R)) * d 0 := by
+      rw [taylor_k_aux k f, taylor_k_aux k ∂f]; rfl
+  rw [Finset.sum_mul, ← sum_snoc_zero, ← sum_cons_zero (fun i ↦ _ * (d 0 : R)),
+    ← Finset.sum_add_distrib]
+  congr 1
+  ext n
+  rcases Decidable.eq_or_ne n 0 with rfl | h
+  · simp
+  rcases (Fin.eq_castSucc_or_eq_last n).symm with rfl | h
+  · simp only [succ_eq_add_one, Fin.snoc_last, Fin.val_succ, Function.iterate_succ,
+    Function.comp_apply, Fin.cons_last, Fin.val_last, zero_add, mul_assoc]
+    congr 1
+    rw [hδδ₁, mem_D_add_pow (d 0).2, nsmul_eq_mul, mem_D_sum_pow_succ, add_zero,
+      mul_comm (↑(k + 1) : R), mul_assoc, mul_assoc, mul_comm (↑(k + 1) : R), mul_assoc,
+      succ_mul_inv_factorial_succ R k]
+    ring
+  sorry
+--    _ = ∑ n : Fin (k + 2), ∂^[n] f x * δ₁ ^ (n : ℕ) * ⅟(n ! : R) := by sorry
 
 end SDG

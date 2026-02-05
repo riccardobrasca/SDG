@@ -24,4 +24,7 @@ lemma inv_zero_factorial : ⅟(0! : R) = 1 := by
   have : Invertible (1 : R) := invertibleOne
   simp
 
+lemma succ_mul_inv_factorial_succ (k : ℕ) : ⅟↑(k + 1)! * (↑(k + 1)) = ⅟(k ! : R) := by
+  sorry
+
 end SDG
