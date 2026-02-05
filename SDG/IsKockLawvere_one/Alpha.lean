@@ -13,7 +13,8 @@ variable {R : Type*} [CommRing R]
 def α : DualNumber R →ₐ[R] (D R → R) :=
   lift ⟨⟨Algebra.ofId _ _, (↑)⟩, coe_sq _, fun _ ↦ Commute.all _ _⟩
 
-@[simp] lemma α_apply (a b : R) (d : D R) : α ⟨a, b⟩ d = a + b * d := by
+@[simp]
+lemma α_apply (a b : R) (d : D R) : α ⟨a, b⟩ d = a + b * d := by
   simp [α, lift_apply_apply, mul_comm]
 
 variable [IsKockLawvere_one R]
