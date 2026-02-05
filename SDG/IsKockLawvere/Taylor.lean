@@ -68,12 +68,10 @@ match k with
   rcases (Fin.eq_castSucc_or_eq_last n).symm with rfl | h
   · simp only [succ_eq_add_one, Fin.snoc_last, Fin.val_succ, Function.iterate_succ,
     Function.comp_apply, Fin.cons_last, Fin.val_last, zero_add, mul_assoc]
-    congr 1
     rw [hδδ₁, mem_D_add_pow (d 0).2, nsmul_eq_mul, mem_D_sum_pow_succ, add_zero,
       mul_comm (↑(k + 1) : R), mul_assoc, mul_assoc, mul_comm (↑(k + 1) : R), mul_assoc,
       succ_mul_inv_factorial_succ R k]
     ring
   sorry
---    _ = ∑ n : Fin (k + 2), ∂^[n] f x * δ₁ ^ (n : ℕ) * ⅟(n ! : R) := by sorry
 
 end SDG
