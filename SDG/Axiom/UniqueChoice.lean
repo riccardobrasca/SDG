@@ -46,7 +46,7 @@ axiom axiom_unique_choice (h : ∃! (_ : α), True) : α
 
 lemma unique_subtype (h : ∃! a, P a) : ∃! (_ : {a // P a}), True := by
   obtain ⟨a, h1, h2⟩ := h
-  exact ⟨⟨a, h1⟩, by trivial, fun y _ ↦ Subtype.ext (h2 _ y.2)⟩
+  exact ⟨⟨a, h1⟩, trivial, fun y _ ↦ Subtype.ext (h2 _ y.2)⟩
 
 /-- Given a property `P : α → Prop` such that `h : ∃! a, P a`, then `unique_choice h` gives the
 unique `a : α` such that `P a`. -/
