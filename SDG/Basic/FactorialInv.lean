@@ -26,6 +26,11 @@ lemma inv_zero_factorial : ⅟(0! : R) = 1 := by
   have : Invertible (1 : R) := invertibleOne
   simp
 
+@[simp]
+lemma inv_one_factorial : ⅟(1! : R) = 1 := by
+  have : Invertible (1 : R) := invertibleOne
+  simp
+
 lemma succ_mul_inv_factorial_succ (k : ℕ) : ⅟↑(k + 1)! * (↑(k + 1)) = ⅟(k ! : R) := by
   simp [invOf_mul_eq_iff_eq_mul_left, factorial_succ]
 
