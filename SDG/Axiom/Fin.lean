@@ -75,21 +75,16 @@ theorem prod_univ_def (f : Fin n → M) : ∏ i, f i = ((List.finRange n).map f)
   rw [← List.ofFn_eq_map, prod_ofFn]
 
 attribute [to_additive existing] Fin.prod
+set_option linter.existingAttributeWarning false in
+attribute [to_additive (attr := simp) existing] Fin.prod_eq_prod_map_finRange
+attribute [to_additive existing] Fin.prod_succ
 
-theorem Fintype_sum_eq_sum (f : Fin n → A) :
-    ∑ i, f i = Fin.sum f := by
-  rw [Fin.sum_eq_sum_map_finRange, ← Fin.sum_univ_def]
-
-@[to_additive existing]
+@[to_additive]
 theorem Fintype_prod_eq_prod (f : Fin n → M) :
     ∏ i, f i = Fin.prod f := by
   rw [Fin.prod_eq_prod_map_finRange, ← Fin.prod_univ_def]
 
-theorem sum_univ_succ (f : Fin (n + 1) → A) :
-    ∑ i, f i = f 0 + ∑ i : Fin n, f i.succ := by
-  rw [Fintype_sum_eq_sum, Fintype_sum_eq_sum, Fin.sum_succ]
-
-@[to_additive existing]
+@[to_additive]
 theorem prod_univ_succ (f : Fin (n + 1) → M) :
     ∏ i, f i = f 0 * ∏ i : Fin n, f i.succ := by
   rw [Fintype_prod_eq_prod, Fintype_prod_eq_prod, Fin.prod_succ]
@@ -114,14 +109,7 @@ theorem prod_cons_one (f : Fin n → M) :
   rw [prod_univ_succ]
   simp
 
-theorem sum_univ_succAbove_last (f : Fin (n + 1) → A) :
-    ∑ i, f i = f (Fin.last n) + ∑ i : Fin n, f (((Fin.last n)).succAbove i) := by
-  simp only [Fin.succAbove_last, Fintype_sum_eq_sum, Fin.sum_eq_sum_map_finRange,
-    List.finRange_succ_last, List.map_append, List.map_map, List.map_cons, List.map_nil,
-    List.sum_append, List.sum_cons, List.sum_nil, add_zero, add_comm]
-  rfl
-
-@[to_additive existing]
+@[to_additive]
 theorem prod_univ_succAbove_last (f : Fin (n + 1) → M) :
     ∏ i, f i = f (Fin.last n) * ∏ i : Fin n, f (((Fin.last n)).succAbove i) := by
   simp only [Fin.succAbove_last, Fintype_prod_eq_prod, Fin.prod_eq_prod_map_finRange,
