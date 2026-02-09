@@ -45,7 +45,7 @@ lemma mem_𝔻_of_mem_D_add_mem_D (d₁ d₂ : D R) : (d₁ + d₂ : R) ∈ 𝔻
 open Multiset Finset
 
 theorem mem_D_add_pow (x : D R) (y : R) : ∀ (k : ℕ), (x + y) ^ (k + 1) =
-  (↑(k + 1) : R) * x * y ^ k + y ^ (k + 1)
+  ((k + 1) : R) * x * y ^ k + y ^ (k + 1)
 | 0 => by simp
 | n + 1 => by
   rw [pow_succ, mem_D_add_pow x]
