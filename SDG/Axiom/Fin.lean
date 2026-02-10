@@ -163,14 +163,12 @@ theorem prod_trunc {a b : ℕ} (f : Fin (a + b) → M) (hf : ∀ j : Fin b, f (F
   rw [prod_univ_add, Fintype.prod_eq_one _ hf, mul_one]
 
 @[to_additive]
-theorem prod_castLe_of_eq_one {a b : ℕ} (h : a < b) (f : Fin b → M)
-    (hf : ∀ i, ⟨a, Nat.lt_of_succ_le h⟩ ≤ i → f i = 1) : ∏ i, f i = ∏ i, f (Fin.castLE h.le i) := by
-  rcases Nat.exists_eq_add_of_le h.le with ⟨k, rfl⟩
+theorem prod_castLe_of_eq_one {a b : ℕ} (h : a ≤ b) (f : Fin b → M)
+    (hf : ∀ i, a ≤ i.1 → f i = 1) : ∏ i, f i = ∏ i, f (Fin.castLE h i) := by
+  rcases Nat.exists_eq_add_of_le h with ⟨k, rfl⟩
   rw [prod_univ_add]
   convert mul_one _
-  refine Finset.prod_eq_one (fun i _ ↦ hf _ ?_)
-  rw [Fin.le_def, Fin.val_natAdd,]
-  exact Nat.le_add_right ..
+  exact Finset.prod_eq_one (fun i _ ↦ hf _ (Nat.le_add_right ..))
 
 end Fin
 
