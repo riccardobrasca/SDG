@@ -1,8 +1,10 @@
-import SDG.Linters.choice
-
 import Mathlib.Algebra.Order.Group.Nat
 import Mathlib.Data.List.FinRange
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.DepRewrite
+
+import SDG.Linters.choice
 
 namespace SDG
 
@@ -112,7 +114,7 @@ theorem prod_cons (f : Fin n → M) (m : M) :
 @[to_additive]
 theorem prod_cons_one (f : Fin n → M) :
     (∏ i : Fin n.succ, (Fin.cons 1 f : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
-  simp
+  simp [-_root_.Fin.prod_cons]
 
 @[to_additive]
 theorem prod_univ_succAbove_last (f : Fin (n + 1) → M) :
@@ -131,7 +133,34 @@ theorem prod_snoc (f : Fin n → M) (m : M) :
 @[to_additive]
 theorem prod_snoc_one (f : Fin n → M) :
     (∏ i : Fin n.succ, (Fin.snoc f 1 : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
-  simp
+  simp [-_root_.Fin.prod_snoc]
+
+@[to_additive]
+theorem prod_natAdd_zero : ∀ a (f : Fin (0 + a) → M), ∏ i, f i = ∏ i, f (Fin.natAdd 0 i)
+| 0 => by simp [-univ_eq_empty]
+| (a + 1) => fun f ↦ by
+  rw! (castMode := .all) [← add_assoc, prod_univ_succ, prod_univ_succ, prod_natAdd_zero]
+  rfl
+
+@[to_additive]
+theorem prod_univ_add : ∀ a b (f : Fin (a + b) → M), (∏ i : Fin (a + b), f i) =
+    (∏ i : Fin a, f (Fin.castAdd b i)) * ∏ i : Fin b, f (Fin.natAdd a i)
+| 0, b => fun f ↦ by simp [-univ_eq_empty, prod_natAdd_zero]
+| a, 0 => fun f ↦ by simp [-univ_eq_empty]
+| a + 1, b + 1 => fun f ↦ by
+  rw! (castMode := .all) [← add_assoc, prod_univ_succAbove_last (n := a + 1 + b),
+    prod_univ_succAbove_last (n := b), ← mul_assoc, mul_comm (∏ i, f (Fin.castAdd (b + 1) i)),
+    mul_assoc]
+  congr 1
+  rw [prod_univ_add (a + 1)]
+  congr 1
+  · simp; rfl
+  · simp
+
+@[to_additive]
+theorem prod_trunc {a b : ℕ} (f : Fin (a + b) → M) (hf : ∀ j : Fin b, f (Fin.natAdd a j) = 1) :
+    (∏ i : Fin (a + b), f i) = ∏ i : Fin a, f (Fin.castAdd b i) := by
+  rw [prod_univ_add, Fintype.prod_eq_one _ hf, mul_one]
 
 end Fin
 
