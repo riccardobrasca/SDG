@@ -82,18 +82,15 @@ attribute [to_additive (attr := simp) existing] Fin.prod_eq_prod_map_finRange
 attribute [to_additive existing] Fin.prod_succ
 
 @[to_additive]
-theorem Fintype_prod_eq_prod (f : Fin n → M) :
-    ∏ i, f i = Fin.prod f := by
+theorem Fintype_prod_eq_prod (f : Fin n → M) : ∏ i, f i = Fin.prod f := by
   rw [Fin.prod_eq_prod_map_finRange, ← Fin.prod_univ_def]
 
 @[to_additive]
-theorem prod_univ_succ (f : Fin (n + 1) → M) :
-    ∏ i, f i = f 0 * ∏ i : Fin n, f i.succ := by
+theorem prod_univ_succ (f : Fin (n + 1) → M) : ∏ i, f i = f 0 * ∏ i : Fin n, f i.succ := by
   rw [Fintype_prod_eq_prod, Fintype_prod_eq_prod, Fin.prod_succ]
 
 @[to_additive (attr := simp)]
-theorem prod_univ_zero (f : Fin 0 → M) : ∏ i : Fin 0, f i = 1 := by
-  rfl
+theorem prod_univ_zero (f : Fin 0 → M) : ∏ i : Fin 0, f i = 1 := rfl
 
 @[to_additive (attr := simp) sum_univ_one]
 theorem prod_univ_one (f : Fin 1 → M) : ∏ i : Fin 1, f i = f 0 := by
