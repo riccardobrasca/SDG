@@ -22,12 +22,12 @@ instance (n : ℕ) : Invertible (n ! : R) :=
   Divisible.divisible (factorial_ne_zero n)
 
 @[simp]
-lemma inv_zero_factorial : ⅟(0! : R) = 1 := by
+lemma inv_factorial_zero : ⅟(0! : R) = 1 := by
   have : Invertible (1 : R) := invertibleOne
   simp
 
 @[simp]
-lemma inv_one_factorial : ⅟(1! : R) = 1 := by
+lemma inv_factorial_one : ⅟(1! : R) = 1 := by
   have : Invertible (1 : R) := invertibleOne
   simp
 
