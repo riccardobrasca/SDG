@@ -58,14 +58,17 @@ lemma mem_D_sum_pow_succ : ∀ {k : ℕ} (b : Fin k → D R), (∑ i, (b i : R))
 | 0 => fun b ↦ by
   rw [zero_add, pow_one]
   exact sum_empty
-| n + 1 => fun b ↦ by
+| k + 1 => fun b ↦ by
   rw [Fin.sum_univ_succ, mem_D_add_pow, mem_D_sum_pow_succ, mul_zero, zero_add, pow_succ,
     mem_D_sum_pow_succ, zero_mul]
 
-lemma mem_D_sum_pow_of_gt {k : ℕ} {q : ℕ} (h : k < q) (b : Fin k → D R) :
-    (∑ i, (b i : R)) ^ q = 0 := by
-  obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_lt h
-  rw [show k + n + 1 = k + 1 + n by ring, pow_add, mem_D_sum_pow_succ, zero_mul]
+open Nat in
+lemma mem_D_sum_pow : ∀ {k : ℕ} (b : Fin k → D R), (∑ i, (b i : R)) ^ k = (k ! : R) * ∏ i, (b i).1
+| 0 => by simp [-univ_eq_empty]
+| k + 1 => fun b ↦ by
+  rw [Fin.sum_univ_succ, mem_D_add_pow, mem_D_sum_pow_succ, add_zero, mem_D_sum_pow,
+    Fin.prod_univ_succ, factorial_succ, cast_mul]
+  ring
 
 lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
     (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ := by
