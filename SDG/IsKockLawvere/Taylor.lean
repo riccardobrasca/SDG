@@ -114,8 +114,8 @@ theorem taylor_k_aux' [Divisible R] (k : ℕ) (f : R → R) (x : R) (B : Fin (k 
       Function.comp_apply, Fin.val_succ, Fin.val_castLE] at HB
     rw [mem_D_sum_pow D, mul_comm ((i + 2)! : R), mul_assoc, mul_assoc, mul_invOf_self',
       mul_one] at HB
-    rw [HB, mul_comm (∏ i, (D i).1), mul_assoc]
-    rfl
+    rw [HB, mul_comm (∏ i, (D i).1)]
+    exact mul_assoc ..
   · congr
     ext j
     have := taylor_k_aux' k f x B hB ⟨j.succ, lt_trans j.succ.isLt hi⟩
