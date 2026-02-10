@@ -104,9 +104,14 @@ theorem prod_univ_two (f : Fin 2 → M) : ∏ i : Fin 2, f i = f 0 * f 1 := by
   rfl
 
 @[to_additive (attr := simp)]
+theorem prod_cons (f : Fin n → M) (m : M) :
+    (∏ i : Fin n.succ, (Fin.cons m f : Fin n.succ → M) i) = m * ∏ i : Fin n, f i := by
+  rw [prod_univ_succ]
+  simp
+
+@[to_additive]
 theorem prod_cons_one (f : Fin n → M) :
     (∏ i : Fin n.succ, (Fin.cons 1 f : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
-  rw [prod_univ_succ]
   simp
 
 @[to_additive]
@@ -118,9 +123,14 @@ theorem prod_univ_succAbove_last (f : Fin (n + 1) → M) :
   rfl
 
 @[to_additive (attr := simp)]
+theorem prod_snoc (f : Fin n → M) (m : M) :
+    (∏ i : Fin n.succ, (Fin.snoc f m : Fin n.succ → M) i) = m * ∏ i : Fin n, f i := by
+  rw [Fin.prod_univ_succAbove_last]
+  simp
+
+@[to_additive]
 theorem prod_snoc_one (f : Fin n → M) :
     (∏ i : Fin n.succ, (Fin.snoc f 1 : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
-  rw [Fin.prod_univ_succAbove_last]
   simp
 
 end Fin
