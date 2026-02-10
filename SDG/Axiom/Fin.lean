@@ -1,7 +1,7 @@
 import Mathlib.Algebra.Order.Group.Nat
 import Mathlib.Data.List.FinRange
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Tactic.DepRewrite
 
 import SDG.Linters.choice
@@ -114,7 +114,7 @@ theorem prod_cons (f : Fin n → M) (m : M) :
 @[to_additive]
 theorem prod_cons_one (f : Fin n → M) :
     (∏ i : Fin n.succ, (Fin.cons 1 f : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
-  simp [-_root_.Fin.prod_cons]
+  simp
 
 @[to_additive]
 theorem prod_univ_succAbove_last (f : Fin (n + 1) → M) :
@@ -133,7 +133,7 @@ theorem prod_snoc (f : Fin n → M) (m : M) :
 @[to_additive]
 theorem prod_snoc_one (f : Fin n → M) :
     (∏ i : Fin n.succ, (Fin.snoc f 1 : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
-  simp [-_root_.Fin.prod_snoc]
+  simp
 
 @[to_additive]
 theorem prod_natAdd_zero : ∀ a (f : Fin (0 + a) → M), ∏ i, f i = ∏ i, f (Fin.natAdd 0 i)

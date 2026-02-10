@@ -1,5 +1,6 @@
 import Mathlib.Tactic.Zify
 import Mathlib.Tactic.Ring
+import Mathlib.Data.Nat.Factorial.Basic
 
 import SDG.Basic.Defs
 namespace SDG
