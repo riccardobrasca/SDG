@@ -7,17 +7,6 @@ open IsKockLawvere Nat
 
 variable {R : Type*} [CommRing R] [IsKockLawvere R]
 
-theorem taylor_two_aux [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
-    letI δ : R := d₁ + d₂
-    f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 :=
-  calc f (x + (d₁ + d₂)) = f (x + d₁ + d₂) := by rw [add_assoc]
-       _ = f (x + d₁) + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
-       _ = f x + ∂f x * d₁ + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
-       _ = f x + ∂f x * d₁ + (∂f x + ∂∂f x * d₁) * d₂ := by rw [taylor_one ∂f]
-       _ = f x + (d₁ + d₂) * ∂f x + d₁ * d₂ * ∂∂f x := by ring
-       _ = f x + (d₁ + d₂) * ∂f x + ((d₁ + d₂) ^ 2 * ⅟2) * ∂∂f x := by rw [D_add_sq_dvd_two]
-       _ = _ := by ring
-
 theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
     f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 := by
   let g_x : 𝔻 R 2 → R := fun d ↦ f (x + d)
