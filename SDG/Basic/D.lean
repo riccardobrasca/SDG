@@ -48,11 +48,11 @@ open Multiset Finset
 theorem mem_D_add_pow (x : D R) (y : R) : ∀ (k : ℕ), (x + y) ^ (k + 1) =
   (↑(k + 1) : R) * x * y ^ k + y ^ (k + 1)
 | 0 => by simp
-| n + 1 => by
+| k + 1 => by
   rw [pow_succ, mem_D_add_pow x]
   simp only [cast_add, cast_one]
-  calc _ = y ^ (n + 2) + y ^ (n + 1) * x + (n + 1) * x * y ^ (n + 1) +
-    (n + 1) * x ^ 2 * y ^ n := by ring
+  calc _ = y ^ (k + 2) + y ^ (k + 1) * x + (k + 1) * x * y ^ (k + 1) +
+    (k + 1) * x ^ 2 * y ^ k := by ring
        _ = _ := by simp; ring
 
 lemma mem_D_sum_pow_succ : ∀ {k : ℕ} (b : Fin k → D R), (∑ i, (b i : R)) ^ (k + 1) = 0
