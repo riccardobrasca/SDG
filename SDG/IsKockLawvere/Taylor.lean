@@ -126,13 +126,13 @@ theorem taylor_k [Divisible R] (f : R → R) (x : R) : ∀ (k : ℕ) (δ : 𝔻 
 | 0 => by simp [-factorial_zero]
 | k + 1 => fun Δ ↦ by
   let g_x : 𝔻 R (k + 1) → R := fun d ↦ f (x + d)
-  obtain ⟨B, hB, -⟩ := isKockLawvere (k + 1) g_x
-  simp only [coe_zero, add_zero, Subtype.forall, Subsemigroup.mem_mk, Set.mem_setOf_eq, g_x] at hB
-  rw [hB _ Δ.2, Fin.sum_univ_succ (n := k + 1), Fin.val_zero, Function.iterate_zero, id_eq,
+  obtain ⟨b, hb, -⟩ := isKockLawvere (k + 1) g_x
+  simp only [coe_zero, add_zero, Subtype.forall, Subsemigroup.mem_mk, Set.mem_setOf_eq, g_x] at hb
+  rw [hb _ Δ.2, Fin.sum_univ_succ (n := k + 1), Fin.val_zero, Function.iterate_zero, id_eq,
     pow_zero, mul_one, inv_factorial_zero, mul_one, add_right_inj]
   congr
   ext i
-  rw [← taylor_k_aux' k f x B (fun d ↦ hB _ d.2) i, mul_assoc, mul_assoc, mul_comm ((i.succ)! : R)]
+  rw [← taylor_k_aux' k f x b (fun d ↦ hb _ d.2) i, mul_assoc, mul_assoc, mul_comm ((i.succ)! : R)]
   simp
 
 end SDG
