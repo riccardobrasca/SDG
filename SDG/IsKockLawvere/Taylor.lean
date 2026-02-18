@@ -40,9 +40,9 @@ match k with
     Function.iterate_zero, id_eq, pow_zero, mul_one, inv_factorial_zero, mul_one]
 | k + 1 => by
   set δ : R := ∑ i : Fin k, (d i.succ) with hδ
-  set δ' : R := ∑ n, d n with hδ'
-  have hδδ' : δ' = d 0 + δ := by simp [δ', δ, sum_univ_succ]
-  calc f (x + δ') = f (x + ∑ n, (d n : R)) := by rfl
+  set Δ : R := ∑ n, d n with hΔ
+  have hδΔ : Δ = d 0 + δ := by simp [Δ, δ, sum_univ_succ]
+  calc f (x + Δ) = f (x + ∑ n, (d n : R)) := by rfl
     _ = f (x + δ + d 0) := by rw [sum_univ_succ, add_comm (d 0 : R), ← add_assoc]
     _ = f (x + δ) + ∂f (x + δ) * d 0 := by rw [taylor_one f]
     _ = ∑ n : Fin (k + 1), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R) +
@@ -57,7 +57,7 @@ match k with
   rcases (Fin.eq_castSucc_or_eq_last n).symm with rfl | ⟨m', rfl⟩
   · simp only [succ_eq_add_one, Fin.snoc_last, Fin.val_succ, Function.iterate_succ,
     Function.comp_apply, Fin.cons_last, Fin.val_last, zero_add, mul_assoc]
-    rw [hδδ', mem_D_add_pow, mem_D_sum_pow_succ, add_zero,
+    rw [hδΔ, mem_D_add_pow, mem_D_sum_pow_succ, add_zero,
       mul_comm (↑(k + 1) : R), mul_assoc, mul_assoc, mul_comm (↑(k + 1) : R), mul_assoc,
       succ_mul_inv_factorial_succ]
     ring
@@ -66,7 +66,7 @@ match k with
     Function.comp_apply, Fin.val_castSucc]
   simp only [hm, Fin.cons_succ, mul_assoc, ← Fin.val_castSucc m', ← Function.iterate_succ_apply,
     Fin.val_succ, ← mul_add]
-  rw [hδδ', mem_D_add_pow, pow_succ, mul_comm _ (δ ^ m.1), ← mul_add, mul_assoc, ← mul_add,
+  rw [hδΔ, mem_D_add_pow, pow_succ, mul_comm _ (δ ^ m.1), ← mul_add, mul_assoc, ← mul_add,
     mul_assoc, add_mul, add_comm _ (δ * _), mul_comm (↑(m.1 + 1) : R), mul_assoc,
     mul_comm (↑(m.1 + 1) : R), succ_mul_inv_factorial_succ]
   ring
