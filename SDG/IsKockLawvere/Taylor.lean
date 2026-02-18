@@ -121,14 +121,14 @@ decreasing_by rw [Fin.sizeOf, Fin.sizeOf, Nat.lt_add_one_iff]
               exact succ_le_succ j.2
 
 set_option backward.isDefEq.respectTransparency false in
-theorem taylor_k [Divisible R] : ∀ (k : ℕ) (f : R → R) (x : R) (δ : 𝔻 R k),
+theorem taylor_k [Divisible R] (f : R → R) (x : R) : ∀ (k : ℕ) (δ : 𝔻 R k),
     f (x + δ) = ∑ n : Fin (k + 1), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R)
 | 0 => by simp [-factorial_zero]
-| k + 1 => fun f x δ ↦ by
+| k + 1 => fun Δ ↦ by
   let g_x : 𝔻 R (k + 1) → R := fun d ↦ f (x + d)
   obtain ⟨B, hB, -⟩ := isKockLawvere (k + 1) g_x
   simp only [coe_zero, add_zero, Subtype.forall, Subsemigroup.mem_mk, Set.mem_setOf_eq, g_x] at hB
-  rw [hB _ δ.2, Fin.sum_univ_succ (n := k + 1), Fin.val_zero, Function.iterate_zero, id_eq,
+  rw [hB _ Δ.2, Fin.sum_univ_succ (n := k + 1), Fin.val_zero, Function.iterate_zero, id_eq,
     pow_zero, mul_one, inv_factorial_zero, mul_one, add_right_inj]
   congr
   ext i
