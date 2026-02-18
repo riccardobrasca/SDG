@@ -114,8 +114,8 @@ theorem taylor_two_aux [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D
        _ = f (x + d₁) + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
        _ = f x + ∂f x * d₁ + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
        _ = f x + ∂f x * d₁ + (∂f x + ∂∂f x * d₁) * d₂ := by rw [taylor_one ∂f]
-       _ = f x + (d₁ + d₂) * ∂f x + d₁ * d₂ * ∂∂f x := by ring
-       _ = f x + (d₁ + d₂) * ∂f x + ((d₁ + d₂) ^ 2 * ⅟2) * ∂∂f x := by rw [D_add_sq_dvd_two]
+       _ = f x + ∂f x * (d₁ + d₂) + ∂∂f x * (d₁ * d₂) := by ring
+       _ = f x + ∂f x * (d₁ + d₂) + ∂∂f x * ((d₁ + d₂) ^ 2 * ⅟2) := by rw [D_add_sq_dvd_two]
        _ = _ := by ring
 
 end IsKockLawvere
