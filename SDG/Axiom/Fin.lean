@@ -143,7 +143,7 @@ theorem prod_natAdd_zero : ∀ a (f : Fin (0 + a) → M), ∏ i, f i = ∏ i, f 
 theorem prod_univ_add : ∀ a b (f : Fin (a + b) → M), (∏ i : Fin (a + b), f i) =
     (∏ i : Fin a, f (Fin.castAdd b i)) * ∏ i : Fin b, f (Fin.natAdd a i)
 | 0, b => fun f ↦ by simp [-univ_eq_empty, prod_natAdd_zero]
-| a, 0 => fun f ↦ by simp [-univ_eq_empty]
+| a, 0 => fun f ↦ by simp [-univ_eq_empty]; rfl
 | a + 1, b + 1 => fun f ↦ by
   rw! (castMode := .all) [← add_assoc, prod_univ_succAbove_last (n := a + 1 + b),
     prod_univ_succAbove_last (n := b), ← mul_assoc, mul_comm (∏ i, f (Fin.castAdd (b + 1) i)),

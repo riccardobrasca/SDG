@@ -74,7 +74,7 @@ lemma mem_D_sum_pow : ∀ {k : ℕ} (b : Fin k → D R), (∑ i, (b i : R)) ^ k 
 lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
     (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ := by
   calc (d₁ + d₂ : R) ^ 2 * ⅟2 = d₁ * d₂ * 2 * ⅟2 := by rw [D_add_sq]; ring
-    _ = d₁ * d₂ := by simp
+    _ = d₁ * d₂ := by simp [mul_assoc]
 
 variable (R) in
 lemma coe_sq : ((↑) : D R → R) * (↑) = 0 := by

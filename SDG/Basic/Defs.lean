@@ -55,7 +55,7 @@ instance [IsKockLawvere R] : IsKockLawvere_one R where
     refine ⟨b 0, by simpa using hb, fun b' hb' ↦ ?_⟩
     specialize hbunique (fun _ ↦ b')
     simp only [Finset.univ_unique, Fin.default_eq_zero, Fin.isValue, Fin.val_eq_zero, zero_add,
-      pow_one, Finset.sum_const, Finset.card_singleton, one_smul, Subtype.forall,
+      pow_one, Finset.sum_const, Finset.card_singleton, Subtype.forall,
       Subsemigroup.mem_mk, Nat.reduceAdd, Set.mem_setOf_eq] at hbunique
     rw [← hbunique (by simpa using hb')]
 
