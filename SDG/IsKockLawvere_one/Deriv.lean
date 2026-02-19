@@ -91,6 +91,10 @@ theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g 
        _ = f (g x + (⟨_, D_mul_mem _ d.2⟩ : D R)) := by rfl
        _ = (f ∘ g) x + (∂f (g x) * ∂g x) * d := by rw [taylor_one f, Function.comp_apply]; ring
 
+theorem chain_rulefun (f g : R → R) : ∂(f ∘ g) = ∂f ∘ g * ∂g := by
+  ext x
+  simp [chain_rule]
+
 theorem deriv_inv (f : R → R) [Invertible f] : ∂⅟f = -⅟f ^ 2 * ∂f :=
   deriv.leibniz_invOf f
 
@@ -106,6 +110,11 @@ theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R
     ext x
     simp
     ring
+
+theorem deriv_equiv (f : R ≃ R) (y : R) : ∂↑f⁻¹ y * ∂f (f⁻¹ y) = 1 := by
+  have : ∂ (f.invFun ∘ f) = 1 := by simp
+  rw [chain_rulefun, funext_iff] at this
+  simpa using this (f.invFun y)
 
 theorem taylor_two_aux [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
     letI δ : R := d₁ + d₂
