@@ -90,10 +90,10 @@ theorem taylor_k_aux' [Divisible R] (k : ℕ) (f : R → R) (x : R) (b : Fin (k 
   simp
 | (Fin.mk (succ n) hn) => by
   refine cancel_d_fun (n + 2) (fun d ↦ ?_)
-  set δ := ∑ n, (d n).1 with hd_def
+  set δ := ∑ n, (d n).1 with hδ_def
   have hb_deriv := taylor_k_aux_zero k f x b hb
   have Hb := hb ⟨δ, 𝔻_le (succ_le_of_lt hn) (mem_D_sum_pow_succ d)⟩
-  rw [taylor_k_aux f, ← hd_def, Fin.sum_univ_succ (n := n + 2), Fin.val_zero, Function.iterate_zero,
+  rw [taylor_k_aux f, ← hδ_def, Fin.sum_univ_succ (n := n + 2), Fin.val_zero, Function.iterate_zero,
     id_eq, pow_zero, mul_one, inv_factorial_zero, mul_one, add_right_inj, SDG.Fin.sum_univ_succ
       (n := k), Fin.val_zero, zero_add, pow_one, hb_deriv, SDG.Fin.sum_univ_succ (n := n + 1),
       Fin.val_succ, Fin.val_zero, zero_add, Function.iterate_one, pow_one, inv_factorial_one,
