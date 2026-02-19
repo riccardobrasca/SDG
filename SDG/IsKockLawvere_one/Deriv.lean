@@ -7,7 +7,7 @@ namespace SDG
 
 variable {R : Type*} [CommRing R]
 
-section IsKockLawvere
+section IsKockLawvere_one
 
 variable [IsKockLawvere_one R]
 
@@ -128,6 +128,6 @@ theorem taylor_two_aux [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D
        _ = f x + ∂f x * (d₁ + d₂) + ∂∂f x * ((d₁ + d₂) ^ 2 * ⅟2) := by rw [D_add_sq_dvd_two]
        _ = _ := by ring
 
-end IsKockLawvere
+end IsKockLawvere_one
 
 end SDG
