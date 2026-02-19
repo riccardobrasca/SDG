@@ -111,10 +111,11 @@ theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R
     simp
     ring
 
-theorem deriv_equiv (f : R ≃ R) (y : R) : ∂↑f⁻¹ y * ∂f (f⁻¹ y) = 1 := by
+theorem deriv_equiv (f : R ≃ R) : ∂↑f⁻¹ * ∂f ∘ ↑f⁻¹ = 1 := by
+  ext x
   have : ∂ (f.invFun ∘ f) = 1 := by simp
   rw [chain_rulefun, funext_iff] at this
-  simpa using this (f.invFun y)
+  simpa using this (f.invFun x)
 
 theorem taylor_two_aux [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
     letI δ : R := d₁ + d₂
