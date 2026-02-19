@@ -1,4 +1,5 @@
 import SDG.Axiom.Fin
+import SDG.Axiom.Function
 import SDG.Axiom.UniqueChoice
 import SDG.Basic.D
 import SDG.Basic.Defs
@@ -8,4 +9,5 @@ import SDG.IsKockLawvere_one.Alpha
 import SDG.IsKockLawvere_one.Basic
 import SDG.IsKockLawvere_one.Deriv
 import SDG.IsKockLawvere_one.EM
+import SDG.IsKockLawvere_one.PartialDeriv
 import SDG.Linters.choice
