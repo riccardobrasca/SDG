@@ -82,35 +82,35 @@ theorem taylor_k_aux_zero (k : ℕ) (f : R → R) (x : R) (B : Fin (k + 1) → R
   · simp
 
 set_option backward.isDefEq.respectTransparency false in
-theorem taylor_k_aux' [Divisible R] (k : ℕ) (f : R → R) (x : R) (B : Fin (k + 1) → R)
-    (hB : ∀ (d : (𝔻 R (k + 1))), f (x + d) = f x + ∑ i, B i * d ^ (i.1 + 1)) :
-    ∀ (i : Fin (k + 1)), B i * i.succ ! = ∂^[i.succ] f x
+theorem taylor_k_aux' [Divisible R] (k : ℕ) (f : R → R) (x : R) (b : Fin (k + 1) → R)
+    (hb : ∀ (d : (𝔻 R (k + 1))), f (x + d) = f x + ∑ i, b i * d ^ (i.1 + 1)) :
+    ∀ (i : Fin (k + 1)), b i * i.succ ! = ∂^[i.succ] f x
 | 0 => by
-  rw [taylor_k_aux_zero k f x B hB]
+  rw [taylor_k_aux_zero k f x b hb]
   simp
 | (Fin.mk (succ i) hi) => by
   refine cancel_d_fun (i + 2) (fun D ↦ ?_)
   set d := ∑ n, (D n).1 with hd_def
-  have hB_deriv := taylor_k_aux_zero k f x B hB
-  have HB := hB ⟨d, 𝔻_le (succ_le_of_lt hi) (mem_D_sum_pow_succ D)⟩
+  have hb_deriv := taylor_k_aux_zero k f x b hb
+  have Hb := hb ⟨d, 𝔻_le (succ_le_of_lt hi) (mem_D_sum_pow_succ D)⟩
   rw [taylor_k_aux f, ← hd_def, Fin.sum_univ_succ (n := i + 2), Fin.val_zero, Function.iterate_zero,
     id_eq, pow_zero, mul_one, inv_factorial_zero, mul_one, add_right_inj, SDG.Fin.sum_univ_succ
-      (n := k), Fin.val_zero, zero_add, pow_one, hB_deriv, SDG.Fin.sum_univ_succ (n := i + 1),
+      (n := k), Fin.val_zero, zero_add, pow_one, hb_deriv, SDG.Fin.sum_univ_succ (n := i + 1),
       Fin.val_succ, Fin.val_zero, zero_add, Function.iterate_one, pow_one, inv_factorial_one,
       mul_one, add_right_inj, Fin.sum_castLe_of_eq_zero (le_of_lt_succ hi) _
       (fun _ h ↦ by convert mul_zero _; exact 𝔻_le (succ_le_succ h) (mem_D_sum_pow_succ D)),
-      Fin.sum_univ_succAbove_last (n := i), Fin.sum_univ_succAbove_last (n := i)] at HB
-  replace HB := (eq_iff_eq_of_add_eq_add HB).mpr ?_
+      Fin.sum_univ_succAbove_last (n := i), Fin.sum_univ_succAbove_last (n := i)] at Hb
+  replace Hb := (eq_iff_eq_of_add_eq_add Hb).mpr ?_
   · simp only [succ_eq_add_one, Fin.succ_mk, Function.iterate_succ, Function.comp_apply]
     simp only [Fin.succ_last, succ_eq_add_one, Fin.val_last, Function.iterate_succ,
-      Function.comp_apply, Fin.val_succ, Fin.val_castLE] at HB
+      Function.comp_apply, Fin.val_succ, Fin.val_castLE] at Hb
     rw [mem_D_sum_pow D, mul_comm ((i + 2)! : R), mul_assoc, mul_assoc, mul_invOf_self',
-      mul_one] at HB
-    rw [HB, mul_comm (∏ i, (D i).1)]
+      mul_one] at Hb
+    rw [Hb, mul_comm (∏ i, (D i).1)]
     exact mul_assoc ..
   · congr
     ext j
-    have := taylor_k_aux' k f x B hB ⟨j.succ, lt_trans j.succ.isLt hi⟩
+    have := taylor_k_aux' k f x b hb ⟨j.succ, lt_trans j.succ.isLt hi⟩
     simp only [Fin.succAbove_last, Fin.val_succ, Fin.val_castSucc, Function.iterate_succ,
       Function.comp_apply, succ_eq_add_one, Fin.castLE_castSucc, Fin.val_castLE]
     simp only [Fin.val_succ, Fin.succ_mk, Function.iterate_succ, Function.comp_apply] at this
