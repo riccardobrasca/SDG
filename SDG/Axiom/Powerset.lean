@@ -8,43 +8,7 @@ namespace SDG
 
 variable {α β : Type*}
 
-namespace List
-
-theorem Nodup.pmap {p : α → Prop} {f : ∀ a, p a → β} {l : List α} {H}
-    (hf : ∀ a ha b hb, f a ha = f b hb → a = b) (h : Nodup l) : List.Nodup (pmap f l H) :=
-  List.Pairwise.pmap h H fun _ _ _ _ hxy hEq ↦ hxy (hf _ _ _ _ hEq)
-
-end List
-
 namespace Multiset
-
-theorem sublists_perm_sublists' (l : List α) : sublists l ~ sublists' l := by
-  rw [← map_get_finRange l, sublists_map, sublists'_map]
-  apply Perm.map
-  apply (perm_ext_iff_of_nodup _ _).mpr
-  · simp
-  · exact nodup_sublists.mpr (SDG.List.nodup_finRange _)
-  · exact (nodup_sublists'.mpr (SDG.List.nodup_finRange _))
-
-theorem powersetAux_perm_powersetAux' {l : List α} : powersetAux l ~ powersetAux' l := by
-  rw [powersetAux_eq_map_coe]; exact (sublists_perm_sublists' _).map _
-
-theorem powersetAux_perm {l₁ l₂ : List α} (p : l₁ ~ l₂) : powersetAux l₁ ~ powersetAux l₂ :=
-  powersetAux_perm_powersetAux'.trans <|
-    (powerset_aux'_perm p).trans powersetAux_perm_powersetAux'.symm
-
-def powerset (s : Multiset α) : Multiset (Multiset α) :=
-  Quot.liftOn s
-    (fun l => (powersetAux l : Multiset (Multiset α)))
-    (fun _ _ h => Quot.sound (powersetAux_perm h))
-
-@[simp]
-theorem powerset_coe' (l : List α) : @powerset α l = ((sublists' l).map (↑) : List (Multiset α)) :=
-  Quot.sound powersetAux_perm_powersetAux'
-
-@[simp]
-theorem mem_powerset {s t : Multiset α} : s ∈ powerset t ↔ s ≤ t :=
-  Quotient.inductionOn₂ s t <| by simp [Subperm, and_comm]
 
 theorem eq_nil_iff_forall_not_mem {l : List α} : l = [] ↔ ∀ a, a ∉ l := by
   cases l <;> simp [-not_or]
@@ -93,8 +57,8 @@ end Multiset
 namespace Finset
 
 def powerset (s : Finset α) : Finset (Finset α) :=
-  ⟨((SDG.Multiset.powerset s.1).pmap Finset.mk) fun _t h => nodup_of_le
-    (SDG.Multiset.mem_powerset.1 h) s.nodup,
+  ⟨((Multiset.powerset s.1).pmap Finset.mk) fun _t h => nodup_of_le
+    (Multiset.mem_powerset.1 h) s.nodup,
     SDG.Multiset.Nodup.pmap (fun _a _ha _b _hb => congr_arg Finset.val)
       (Multiset.Nodup.powerset s.nodup)⟩
 

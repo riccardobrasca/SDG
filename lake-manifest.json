@@ -25,7 +25,7 @@
    "type": "git",
    "subDir": null,
    "scope": "",
-   "rev": "de8feed0ae08229840e8a967cb6bda74fb483ff0",
+   "rev": "97048cad535979b8d8cb8098e2b998057f0c7208",
    "name": "mathlib",
    "manifestFile": "lake-manifest.json",
    "inputRev": "RB/constructive",
