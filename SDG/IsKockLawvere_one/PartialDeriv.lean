@@ -4,7 +4,6 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 import SDG.Basic.D
 import SDG.IsKockLawvere_one.Basic
 import SDG.Axiom.Function
-import SDG.Axiom.Powerset
 
 open Function SDG.IsKockLawvere_one SDG.Function
 
