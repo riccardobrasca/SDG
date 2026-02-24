@@ -15,7 +15,7 @@ warn.sorry = false
 [[require]]
 name = "mathlib"
 git = "https://github.com/riccardobrasca/mathlib4.git"
-rev = "less_choice"
+rev = "v4.29.0-rc2-less-choice"
 
 [[lean_lib]]
 name = "SDG"

@@ -61,7 +61,7 @@ theorem prod_snoc_one (f : Fin n → M) :
 
 @[to_additive]
 theorem prod_natAdd_zero : ∀ a (f : Fin (0 + a) → M), ∏ i, f i = ∏ i, f (Fin.natAdd 0 i)
-| 0 => by simp [-univ_eq_empty]
+| 0 => by simp
 | (a + 1) => fun f ↦ by
   rw! (castMode := .all) [← add_assoc, prod_univ_succ, prod_univ_succ, prod_natAdd_zero]
   rfl
@@ -69,17 +69,14 @@ theorem prod_natAdd_zero : ∀ a (f : Fin (0 + a) → M), ∏ i, f i = ∏ i, f 
 @[to_additive]
 theorem prod_univ_add : ∀ a b (f : Fin (a + b) → M), (∏ i : Fin (a + b), f i) =
     (∏ i : Fin a, f (Fin.castAdd b i)) * ∏ i : Fin b, f (Fin.natAdd a i)
-| 0, b => fun f ↦ by simp [-univ_eq_empty, prod_natAdd_zero]
-| a, 0 => fun f ↦ by simp [-univ_eq_empty]; rfl
+| 0, b => fun f ↦ by simp [prod_natAdd_zero]
+| a, 0 => fun f ↦ by simp
 | a + 1, b + 1 => fun f ↦ by
   rw! (castMode := .all) [← add_assoc, prod_univ_succAbove_last (n := a + 1 + b),
     prod_univ_succAbove_last (n := b), ← mul_assoc, mul_comm (∏ i, f (Fin.castAdd (b + 1) i)),
     mul_assoc]
-  congr 1
-  rw [prod_univ_add (a + 1)]
-  congr 1
-  · simp; rfl
-  · simp
+  simp [prod_univ_add (a + 1)]
+  rfl
 
 @[to_additive]
 theorem prod_trunc {a b : ℕ} (f : Fin (a + b) → M) (hf : ∀ j : Fin b, f (Fin.natAdd a j) = 1) :
