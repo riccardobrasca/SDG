@@ -7,7 +7,6 @@ open IsKockLawvere Nat
 
 variable {R : Type*} [CommRing R] [IsKockLawvere R]
 
-set_option backward.isDefEq.respectTransparency false in
 theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
     f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 := by
   let g_x : 𝔻 R 2 → R := fun d ↦ f (x + d)
@@ -81,7 +80,6 @@ theorem taylor_k_aux_zero (k : ℕ) (f : R → R) (x : R) (B : Fin (k + 1) → R
     exact 𝔻_le (Nat.le_add_left ..) d.2
   · simp
 
-set_option backward.isDefEq.respectTransparency false in
 theorem taylor_k_aux' [Divisible R] (k : ℕ) (f : R → R) (x : R) (b : Fin (k + 1) → R)
     (hb : ∀ (d : (𝔻 R (k + 1))), f (x + d) = f x + ∑ i, b i * d ^ (i.1 + 1)) :
     ∀ (i : Fin (k + 1)), b i * i.succ ! = ∂^[i.succ] f x
@@ -120,7 +118,6 @@ theorem taylor_k_aux' [Divisible R] (k : ℕ) (f : R → R) (x : R) (b : Fin (k 
 decreasing_by rw [Fin.sizeOf, Fin.sizeOf, Nat.lt_add_one_iff]
               exact succ_le_succ j.2
 
-set_option backward.isDefEq.respectTransparency false in
 theorem taylor_k [Divisible R] (f : R → R) (x : R) : ∀ (k : ℕ) (δ : 𝔻 R k),
     f (x + δ) = ∑ n : Fin (k + 1), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R)
 | 0 => by simp [-factorial_zero]

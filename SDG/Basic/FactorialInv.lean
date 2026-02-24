@@ -21,19 +21,16 @@ variable [Divisible R]
 instance (n : ℕ) : Invertible (n ! : R) :=
   Divisible.divisible (factorial_ne_zero n)
 
-set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma inv_factorial_zero : ⅟(0! : R) = 1 := by
   have : Invertible (1 : R) := invertibleOne
   simp
 
-set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma inv_factorial_one : ⅟(1! : R) = 1 := by
   have : Invertible (1 : R) := invertibleOne
   simp
 
-set_option backward.isDefEq.respectTransparency false in
 lemma succ_mul_inv_factorial_succ (k : ℕ) : ⅟↑(k + 1)! * (↑(k + 1)) = ⅟(k ! : R) := by
   simp [invOf_mul_eq_iff_eq_mul_left, factorial_succ]
 
