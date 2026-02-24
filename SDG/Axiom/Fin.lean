@@ -40,19 +40,12 @@ theorem prod_univ_one (f : Fin 1 → M) : ∏ i : Fin 1, f i = f 0 := by
 
 @[to_additive (attr := simp)]
 theorem prod_univ_two (f : Fin 2 → M) : ∏ i : Fin 2, f i = f 0 * f 1 := by
-  rw [prod_univ_succ, prod_univ_one]
-  rfl
-
-@[to_additive (attr := simp)]
-theorem prod_cons (f : Fin n → M) (m : M) :
-    (∏ i : Fin n.succ, (Fin.cons m f : Fin n.succ → M) i) = m * ∏ i : Fin n, f i := by
-  rw [prod_univ_succ]
   simp
 
 @[to_additive]
 theorem prod_cons_one (f : Fin n → M) :
     (∏ i : Fin n.succ, (Fin.cons 1 f : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
-  simp [-_root_.Fin.prod_cons]
+  simp
 
 @[to_additive]
 theorem prod_univ_succAbove_last (f : Fin (n + 1) → M) :
@@ -62,16 +55,10 @@ theorem prod_univ_succAbove_last (f : Fin (n + 1) → M) :
     List.prod_append, List.prod_cons, List.prod_nil, mul_one, mul_comm]
   rfl
 
-@[to_additive (attr := simp)]
-theorem prod_snoc (f : Fin n → M) (m : M) :
-    (∏ i : Fin n.succ, (Fin.snoc f m : Fin n.succ → M) i) = m * ∏ i : Fin n, f i := by
-  rw [Fin.prod_univ_succAbove_last]
-  simp
-
 @[to_additive]
 theorem prod_snoc_one (f : Fin n → M) :
     (∏ i : Fin n.succ, (Fin.snoc f 1 : Fin n.succ → M) i) = ∏ i : Fin n, f i := by
-  simp [-_root_.Fin.prod_snoc]
+  simp
 
 @[to_additive]
 theorem prod_natAdd_zero : ∀ a (f : Fin (0 + a) → M), ∏ i, f i = ∏ i, f (Fin.natAdd 0 i)
@@ -84,7 +71,7 @@ theorem prod_natAdd_zero : ∀ a (f : Fin (0 + a) → M), ∏ i, f i = ∏ i, f 
 theorem prod_univ_add : ∀ a b (f : Fin (a + b) → M), (∏ i : Fin (a + b), f i) =
     (∏ i : Fin a, f (Fin.castAdd b i)) * ∏ i : Fin b, f (Fin.natAdd a i)
 | 0, b => fun f ↦ by simp [-univ_eq_empty, prod_natAdd_zero]
-| a, 0 => fun f ↦ by simp [-univ_eq_empty]
+| a, 0 => fun f ↦ by simp [-univ_eq_empty]; rfl
 | a + 1, b + 1 => fun f ↦ by
   rw! (castMode := .all) [← add_assoc, prod_univ_succAbove_last (n := a + 1 + b),
     prod_univ_succAbove_last (n := b), ← mul_assoc, mul_comm (∏ i, f (Fin.castAdd (b + 1) i)),

@@ -17,7 +17,7 @@ lemma cancel_d_fun {b₁ b₂ : R} : ∀ (k : ℕ),
 | 0 => fun h ↦ by simpa only [Fin.prod_univ_zero, mul_one] using h 0
 | k + 1 => fun h ↦ by
   refine cancel_d_fun k (fun D ↦ cancel_d (fun d ↦ ?_))
-  rw [mul_assoc, mul_assoc, mul_comm _ d.1, ← Fin.prod_snoc]
+  rw [mul_assoc, mul_assoc, ← Fin.prod_snoc]
   have := h (Fin.snoc (fun i ↦ D i) d)
   convert this with i _ i <;>
   rcases Fin.eq_castSucc_or_eq_last i with ⟨j, rfl⟩ | rfl <;>
