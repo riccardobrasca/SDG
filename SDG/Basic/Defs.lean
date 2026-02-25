@@ -2,7 +2,7 @@ import Mathlib.Algebra.Module.NatInt
 import Mathlib.Algebra.Group.Subsemigroup.Defs
 
 import SDG.Axiom.UniqueChoice
-import SDG.Axiom.Fin
+import SDG.ForMathlib.Fin
 
 open BigOperators
 

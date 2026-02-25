@@ -3,9 +3,8 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 
 import SDG.Basic.D
 import SDG.IsKockLawvere_one.Basic
-import SDG.Axiom.Function
 
-open Function SDG.IsKockLawvere_one SDG.Function
+open Function SDG.IsKockLawvere_one
 
 namespace SDG
 
@@ -22,9 +21,9 @@ lemma partial_deriv_propr : ∀ (x : Fin n → R), ∃! b, ∀ (d : D R),
   obtain ⟨b, hb, hbunique⟩ := isKockLawvere_one g
   refine ⟨b, fun d ↦ ?_, fun b₁ hb₁ ↦ hbunique b₁ (fun d ↦ ?_)⟩
   · convert hb d
-    rw [coe_zero, add_zero, SDG.Function.update_eq_self]
+    rw [coe_zero, add_zero, update_eq_self]
   · convert hb₁ d
-    rw [coe_zero, add_zero, SDG.Function.update_eq_self]
+    rw [coe_zero, add_zero, update_eq_self]
 
 noncomputable def partial_derivFun : (Fin n → R) → R :=
   unique_choice_fun (partial_deriv_propr i f)
@@ -92,7 +91,7 @@ theorem partial_deriv_comm (i j : Fin n) : ∂[i](∂[j]f) x = ∂[j](∂[i]f) x
   have hx₂i : x₂ i = x i := by rcases Decidable.eq_or_ne j i <;> simp_all [x₂]
   have h₁ : f (update x₁ j (x j + d₂)) = f x₁ + ∂[j]f x₁ * d₂ := hx₁j ▸ partial_taylor_one ..
   have h₂ : f (update x₂ i (x i + d₁)) = f x₂ + ∂[i]f x₂ * d₁ := hx₂i ▸ partial_taylor_one ..
-  have hEq : f x₁ + ∂[j]f x₁ * d₂ = f x₂ + ∂[i]f x₂ * d₁ := by rw [← h₁, update_update_comm x H, h₂]
+  have hEq : f x₁ + ∂[j]f x₁ * d₂ = f x₂ + ∂[i]f x₂ * d₁ := by rw [← h₁, update_comm  H, h₂]
   rw [partial_taylor_one i f, partial_taylor_one j f, partial_taylor_one i ∂[j]f,
     partial_taylor_one j ∂[i]f] at hEq
   ring_nf at hEq

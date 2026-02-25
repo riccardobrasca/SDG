@@ -1,9 +1,8 @@
-import SDG.Axiom.Fin
-import SDG.Axiom.Function
 import SDG.Axiom.UniqueChoice
 import SDG.Basic.D
 import SDG.Basic.Defs
 import SDG.Basic.FactorialInv
+import SDG.ForMathlib.Fin
 import SDG.IsKockLawvere.Taylor
 import SDG.IsKockLawvere_one.Alpha
 import SDG.IsKockLawvere_one.Basic

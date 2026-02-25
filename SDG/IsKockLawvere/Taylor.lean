@@ -1,6 +1,7 @@
 import SDG.IsKockLawvere_one.Deriv
 import SDG.Basic.FactorialInv
 
+open Fin
 namespace SDG
 
 open IsKockLawvere Nat
@@ -11,9 +12,9 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
     f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 := by
   let g_x : 𝔻 R 2 → R := fun d ↦ f (x + d)
   obtain ⟨b, hb, -⟩ := isKockLawvere 2 g_x
-  simp only [coe_zero, add_zero, Fin.sum_univ_two, Fin.isValue, Fin.coe_ofNat_eq_mod,
-    Nat.zero_mod, zero_add, pow_one, Nat.mod_succ, Nat.reduceAdd, Subtype.forall,
-    Subsemigroup.mem_mk, Set.mem_setOf_eq, g_x] at hb
+  simp only [coe_zero, add_zero, sum_univ_two, Fin.isValue, coe_ofNat_eq_mod, Nat.zero_mod,
+    zero_add, pow_one, Nat.mod_succ, Nat.reduceAdd, Subtype.forall, Subsemigroup.mem_mk,
+    Set.mem_setOf_eq, g_x] at hb
   have hB_deriv : ∂f x = b 0 := derivative_unique
     (fun d ↦ by simpa using hb _ (𝔻_le (by decide) d.2))
   have : ∀ (d₁ d₂ : D R), b 1 * 2 * d₁ * d₂ = ∂∂f x * d₁ * d₂ := by
@@ -29,13 +30,12 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
     mul_comm ((δ : R) ^ 2)]
 
 set_option backward.isDefEq.respectTransparency false in
-open Fin in
 theorem taylor_k_aux {k : ℕ} [Divisible R] (f : R → R) (x : R) (d : Fin k → D R) :
     letI δ : R := ∑ n, d n
     f (x + δ) = ∑ n : Fin (k + 1), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R) :=
 match k with
 | 0 => by
-  rw [zero_add, sum_univ_zero, add_zero, sum_univ_one, Fin.val_eq_zero,
+  rw [zero_add, sum_univ_zero, add_zero, sum_univ_one, val_eq_zero,
     Function.iterate_zero, id_eq, pow_zero, mul_one, inv_factorial_zero, mul_one]
 | k + 1 => by
   set δ : R := ∑ i : Fin k, (d i.succ) with hδ
@@ -53,18 +53,18 @@ match k with
   ext n
   rcases Decidable.eq_or_ne n 0 with rfl | h
   · simp
-  rcases (Fin.eq_castSucc_or_eq_last n).symm with rfl | ⟨m', rfl⟩
-  · simp only [succ_eq_add_one, Fin.snoc_last, Fin.val_succ, Function.iterate_succ,
-    Function.comp_apply, Fin.cons_last, Fin.val_last, zero_add, mul_assoc]
+  rcases (eq_castSucc_or_eq_last n).symm with rfl | ⟨m', rfl⟩
+  · simp only [succ_eq_add_one, snoc_last, val_succ, Function.iterate_succ,
+    Function.comp_apply, cons_last, val_last, zero_add, mul_assoc]
     rw [hδΔ, mem_D_add_pow, mem_D_sum_pow_succ, add_zero,
       mul_comm (↑(k + 1) : R), mul_assoc, mul_assoc, mul_comm (↑(k + 1) : R), mul_assoc,
       succ_mul_inv_factorial_succ]
     ring
-  obtain ⟨m, hm⟩ := Fin.eq_succ_of_ne_zero h
-  simp only [succ_eq_add_one, Fin.snoc_castSucc, Fin.val_succ, Function.iterate_succ,
-    Function.comp_apply, Fin.val_castSucc]
-  simp only [hm, Fin.cons_succ, mul_assoc, ← Fin.val_castSucc m', ← Function.iterate_succ_apply,
-    Fin.val_succ, ← mul_add]
+  obtain ⟨m, hm⟩ := eq_succ_of_ne_zero h
+  simp only [succ_eq_add_one, snoc_castSucc, val_succ, Function.iterate_succ,
+    Function.comp_apply, val_castSucc]
+  simp only [hm, cons_succ, mul_assoc, ← val_castSucc m', ← Function.iterate_succ_apply,
+    val_succ, ← mul_add]
   rw [hδΔ, mem_D_add_pow, pow_succ, mul_comm _ (δ ^ m.1), ← mul_add, mul_assoc, ← mul_add,
     mul_assoc, add_mul, add_comm _ (δ * _), mul_comm (↑(m.1 + 1) : R), mul_assoc,
     mul_comm (↑(m.1 + 1) : R), succ_mul_inv_factorial_succ]
@@ -73,7 +73,7 @@ match k with
 theorem taylor_k_aux_zero (k : ℕ) (f : R → R) (x : R) (B : Fin (k + 1) → R)
     (hB : ∀ (d : (𝔻 R (k + 1))), f (x + d) = f x + ∑ i, B i * d ^ (i.1 + 1)) : B 0 = ∂f x := by
   refine (derivative_unique (fun d ↦ ?_)).symm
-  rw [hB ⟨d, 𝔻_le (Nat.le_add_left ..) d.2⟩, add_right_inj, Fin.sum_univ_succ]
+  rw [hB ⟨d, 𝔻_le (Nat.le_add_left ..) d.2⟩, add_right_inj, sum_univ_succ]
   convert add_zero _
   · refine Finset.sum_eq_zero (fun i _ ↦ ?_)
     convert mul_zero _
@@ -86,22 +86,22 @@ theorem taylor_k_aux' [Divisible R] (k : ℕ) (f : R → R) (x : R) (b : Fin (k 
 | 0 => by
   rw [taylor_k_aux_zero k f x b hb]
   simp
-| (Fin.mk (succ n) hn) => by
+| (Fin.mk (Nat.succ n) hn) => by
   refine cancel_d_fun (n + 2) (fun d ↦ ?_)
   set δ := ∑ n, (d n).1 with hδ_def
   have hb_deriv := taylor_k_aux_zero k f x b hb
   have Hb := hb ⟨δ, 𝔻_le (succ_le_of_lt hn) (mem_D_sum_pow_succ d)⟩
-  rw [taylor_k_aux f, ← hδ_def, Fin.sum_univ_succ (n := n + 2), Fin.val_zero, Function.iterate_zero,
-    id_eq, pow_zero, mul_one, inv_factorial_zero, mul_one, add_right_inj, SDG.Fin.sum_univ_succ
-      (n := k), Fin.val_zero, zero_add, pow_one, hb_deriv, SDG.Fin.sum_univ_succ (n := n + 1),
-      Fin.val_succ, Fin.val_zero, zero_add, Function.iterate_one, pow_one, inv_factorial_one,
-      mul_one, add_right_inj, Fin.sum_castLe_of_eq_zero (le_of_lt_succ hn) _
+  rw [taylor_k_aux f, ← hδ_def, sum_univ_succ (n := n + 2), val_zero, Function.iterate_zero,
+    id_eq, pow_zero, mul_one, inv_factorial_zero, mul_one, add_right_inj, sum_univ_succ
+      (n := k), val_zero, zero_add, pow_one, hb_deriv, sum_univ_succ (n := n + 1),
+      val_succ, val_zero, zero_add, Function.iterate_one, pow_one, inv_factorial_one,
+      mul_one, add_right_inj, sum_castLe_of_eq_zero (le_of_lt_succ hn) _
       (fun _ h ↦ by convert mul_zero _; exact 𝔻_le (succ_le_succ h) (mem_D_sum_pow_succ d)),
-      Fin.sum_univ_succAbove_last (n := n), Fin.sum_univ_succAbove_last (n := n)] at Hb
+      sum_univ_succAbove _ (last n), sum_univ_succAbove _ (last n)] at Hb
   replace Hb := (eq_iff_eq_of_add_eq_add Hb).mpr ?_
-  · simp only [succ_eq_add_one, Fin.succ_mk, Function.iterate_succ, Function.comp_apply]
-    simp only [Fin.succ_last, succ_eq_add_one, Fin.val_last, Function.iterate_succ,
-      Function.comp_apply, Fin.val_succ, Fin.val_castLE] at Hb
+  · simp only [succ_eq_add_one, succ_mk, Function.iterate_succ, Function.comp_apply]
+    simp only [succ_last, succ_eq_add_one, val_last, Function.iterate_succ,
+      Function.comp_apply, val_succ, val_castLE] at Hb
     rw [mem_D_sum_pow d, mul_comm ((n + 2)! : R), mul_assoc, mul_assoc, mul_invOf_self',
       mul_one] at Hb
     rw [Hb, mul_comm (∏ i, (d i).1)]
@@ -109,13 +109,13 @@ theorem taylor_k_aux' [Divisible R] (k : ℕ) (f : R → R) (x : R) (b : Fin (k 
   · congr
     ext j
     have := taylor_k_aux' k f x b hb ⟨j.succ, lt_trans j.succ.isLt hn⟩
-    simp only [Fin.succAbove_last, Fin.val_succ, Fin.val_castSucc, Function.iterate_succ,
-      Function.comp_apply, succ_eq_add_one, Fin.castLE_castSucc, Fin.val_castLE]
-    simp only [Fin.val_succ, Fin.succ_mk, Function.iterate_succ, Function.comp_apply] at this
+    simp only [succAbove_last, val_succ, val_castSucc, Function.iterate_succ,
+      Function.comp_apply, succ_eq_add_one, castLE_castSucc, val_castLE]
+    simp only [val_succ, succ_mk, Function.iterate_succ, Function.comp_apply] at this
     rw [← this, mul_assoc, mul_assoc, mul_comm (δ ^ (j.1 + 1 + 1))]
     simp
     rfl
-decreasing_by rw [Fin.sizeOf, Fin.sizeOf, Nat.lt_add_one_iff]
+decreasing_by rw [Fin.sizeOf, Fin.sizeOf, Nat.succ_lt_succ_iff]
               exact succ_le_succ j.2
 
 theorem taylor_k [Divisible R] (f : R → R) (x : R) : ∀ (k : ℕ) (δ : 𝔻 R k),
@@ -125,7 +125,7 @@ theorem taylor_k [Divisible R] (f : R → R) (x : R) : ∀ (k : ℕ) (δ : 𝔻 
   let g_x : 𝔻 R (k + 1) → R := fun d ↦ f (x + d)
   obtain ⟨b, hb, -⟩ := isKockLawvere (k + 1) g_x
   simp only [coe_zero, add_zero, Subtype.forall, Subsemigroup.mem_mk, Set.mem_setOf_eq, g_x] at hb
-  rw [hb _ Δ.2, Fin.sum_univ_succ (n := k + 1), Fin.val_zero, Function.iterate_zero, id_eq,
+  rw [hb _ Δ.2, sum_univ_succ (n := k + 1), val_zero, Function.iterate_zero, id_eq,
     pow_zero, mul_one, inv_factorial_zero, mul_one, add_right_inj]
   congr
   ext i
