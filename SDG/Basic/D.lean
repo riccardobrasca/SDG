@@ -1,8 +1,10 @@
 import Mathlib.Tactic.Zify
 import Mathlib.Tactic.Ring
 import Mathlib.Data.Nat.Factorial.Basic
+import Mathlib.Algebra.BigOperators.Fin
 
 import SDG.Basic.Defs
+
 namespace SDG
 
 open Function BigOperators Nat

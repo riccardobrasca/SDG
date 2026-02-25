@@ -3,7 +3,9 @@
     ["Mathlib.Init"],
   "SDG.Axiom.UniqueChoice":
     ["SDG.Linters.choice"],
-  "SDG.Axiom.Fin":
+  "SDG.ForMathlib.Fin":
+    ["SDG.Linters.choice"],
+  "SDG.Basic.FactorialInv":
     ["SDG.Linters.choice"],
   "SDG.Basic.D":
     ["Mathlib.Tactic.Ring"]

@@ -1,3 +1,5 @@
+import Mathlib.Algebra.BigOperators.Fin
+
 import SDG.Basic.Defs
 
 namespace SDG

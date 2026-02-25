@@ -1,5 +1,6 @@
 import SDG.IsKockLawvere_one.Deriv
 import SDG.Basic.FactorialInv
+import SDG.ForMathlib.Fin
 
 open Fin
 namespace SDG

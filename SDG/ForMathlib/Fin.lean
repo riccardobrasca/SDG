@@ -1,8 +1,3 @@
-import Mathlib.Algebra.Order.Group.Nat
-import Mathlib.Data.List.FinRange
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Tactic.DepRewrite
 import Mathlib.Algebra.BigOperators.Fin
 
 import SDG.Linters.choice

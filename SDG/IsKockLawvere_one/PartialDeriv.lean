@@ -1,5 +1,4 @@
 import Mathlib.RingTheory.Derivation.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 
 import SDG.Basic.D
 import SDG.IsKockLawvere_one.Basic

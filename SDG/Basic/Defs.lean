@@ -1,8 +1,9 @@
 import Mathlib.Algebra.Module.NatInt
 import Mathlib.Algebra.Group.Subsemigroup.Defs
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 import SDG.Axiom.UniqueChoice
-import SDG.ForMathlib.Fin
 
 open BigOperators
 
