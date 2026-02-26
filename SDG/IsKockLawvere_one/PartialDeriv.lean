@@ -1,9 +1,10 @@
 import Mathlib.RingTheory.Derivation.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 
 import SDG.Basic.D
 import SDG.IsKockLawvere_one.Basic
 
-open Function SDG.IsKockLawvere_one
+open Function SDG.IsKockLawvere_one Finset
 
 namespace SDG
 
@@ -104,244 +105,70 @@ theorem partial_deriv_proj_self (i : Fin n) : ∂[i](fun x : Fin n → R ↦ x i
 theorem partial_deriv_proj_ne {i j : Fin n} (hij : i ≠ j) : ∂[i](fun x : Fin n → R ↦ x j) = 0 :=
   funext fun _ ↦ partial_derivative_unique i (fun d ↦ by simp [hij.symm])
 
-theorem foo (τ : D R × D R → R) : ∃ (a₀ a₁ a₂ a₃ : R), ∀ (d₁ d₂ : D R),
-    τ ⟨d₁, d₂⟩ = a₀ + a₁ * d₁ + a₂ * d₂ + a₃ * d₁ * d₂ := by
-  let h₁ : ∀ d₂ : D R, ∃! b : R, ∀ d₁ : D R,
-      τ ⟨d₁, d₂⟩ = τ ⟨0, d₂⟩ + b * d₁ := fun d₂ ↦
-    isKockLawvere_one (fun d₁ : D R ↦ τ ⟨d₁, d₂⟩)
-  let b : D R → R := unique_choice_fun h₁
-  have hb : ∀ d₂ d₁, τ ⟨d₁, d₂⟩ = τ ⟨0, d₂⟩ + b d₂ * d₁ := by
-    intro d₂ d₁
-    exact unique_choice_fun_spec h₁ d₂ d₁
-  obtain ⟨a₂, ha₂, ha₂uniq⟩ := isKockLawvere_one (fun d₂ : D R ↦ τ ⟨0, d₂⟩)
-  obtain ⟨a₃, ha₃, ha₃uniq⟩ := isKockLawvere_one b
-  refine ⟨τ ⟨0, 0⟩, b 0, a₂, a₃, ?_⟩
-  intro d₁ d₂
-  have hb0 : τ ⟨d₁, d₂⟩ = τ ⟨0, d₂⟩ + b d₂ * d₁ := hb d₂ d₁
-  have h0d₂ : τ ⟨0, d₂⟩ = τ ⟨0, 0⟩ + a₂ * d₂ := by simpa using ha₂ d₂
-  have hbd₂ : b d₂ = b 0 + a₃ * d₂ := ha₃ d₂
-  calc τ ⟨d₁, d₂⟩ = τ ⟨0, d₂⟩ + b d₂ * d₁ := hb0
-    _ = (τ ⟨0, 0⟩ + a₂ * d₂) + (b 0 + a₃ * d₂) * d₁ := by rw [h0d₂, hbd₂]
-    _ = τ ⟨0, 0⟩ + b 0 * d₁ + a₂ * d₂ + a₃ * d₁ * d₂ := by ring
-
-lemma foo_coeff_unique {a₀ a₁ a₂ a₃ b₀ b₁ b₂ b₃ : R}
-    (h : ∀ d₁ d₂ : D R,
-      a₀ + a₁ * d₁ + a₂ * d₂ + a₃ * d₁ * d₂ =
-      b₀ + b₁ * d₁ + b₂ * d₂ + b₃ * d₁ * d₂) :
-    a₀ = b₀ ∧ a₁ = b₁ ∧ a₂ = b₂ ∧ a₃ = b₃ := by
-  have ha₀ : a₀ = b₀ := by
-    simpa [coe_zero] using h 0 0
-  have ha₁ : a₁ = b₁ := by
-    refine cancel_d (fun d₁ ↦ ?_)
-    have hd := h d₁ 0
-    have hd' : a₀ + a₁ * d₁ = a₀ + b₁ * d₁ := by
-      simpa [ha₀, coe_zero] using hd
-    exact add_left_cancel hd'
-  have ha₂ : a₂ = b₂ := by
-    refine cancel_d (fun d₂ ↦ ?_)
-    have hd := h 0 d₂
-    have hd' : a₀ + a₂ * d₂ = a₀ + b₂ * d₂ := by
-      simpa [ha₀, coe_zero] using hd
-    exact add_left_cancel hd'
-  have hmul : ∀ d₁ d₂ : D R, a₃ * d₁ * d₂ = b₃ * d₁ * d₂ := by
-    intro d₁ d₂
-    have hd := h d₁ d₂
-    simpa [ha₀, ha₁, ha₂] using hd
-  have ha₃ : a₃ = b₃ := by
-    refine cancel_d (fun d₂ ↦ ?_)
-    refine cancel_d (fun d₁ ↦ ?_)
-    simpa [mul_assoc, mul_comm, mul_left_comm] using hmul d₁ d₂
-  exact ⟨ha₀, ha₁, ha₂, ha₃⟩
-
-theorem foo_unique (τ : D R × D R → R) :
-    ∃! a : R × R × R × R, ∀ (d₁ d₂ : D R),
-      τ ⟨d₁, d₂⟩ = a.1 + a.2.1 * d₁ + a.2.2.1 * d₂ + a.2.2.2 * d₁ * d₂ := by
-  obtain ⟨a₀, a₁, a₂, a₃, hτ⟩ := foo τ
-  refine ⟨(a₀, a₁, a₂, a₃), ?_, ?_⟩
-  · simpa using hτ
-  · intro a ha
-    rcases a with ⟨b₀, b₁, b₂, b₃⟩
-    have hEq : ∀ d₁ d₂ : D R,
-        a₀ + a₁ * d₁ + a₂ * d₂ + a₃ * d₁ * d₂ =
-        b₀ + b₁ * d₁ + b₂ * d₂ + b₃ * d₁ * d₂ := by
-      intro d₁ d₂
-      exact (hτ d₁ d₂).symm.trans (ha d₁ d₂)
-    rcases foo_coeff_unique hEq with ⟨hb₀, hb₁, hb₂, hb₃⟩
-    simp [hb₀, hb₁, hb₂, hb₃]
-
-/-- Recursive coefficients for polynomial expansions on `(Fin k → D R)`. -/
-def CubeCoeff : ℕ → Type _
-  | 0 => R
-  | k + 1 => CubeCoeff k × CubeCoeff k
-
-/-- Evaluation of recursive coefficients on a `k`-tuple of first-order infinitesimals. -/
-def CubeCoeff.eval : ∀ {k : ℕ}, CubeCoeff (R := R) k → (Fin k → D R) → R
-  | 0, c, _ => c
-  | _ + 1, (c₀, c₁), d =>
-      CubeCoeff.eval c₀ (fun i ↦ d i.succ) + CubeCoeff.eval c₁ (fun i ↦ d i.succ) * d 0
-
-theorem cubeCoeff_exists : ∀ (k : ℕ) (τ : (Fin k → D R) → R),
-    ∃ c : CubeCoeff (R := R) k, ∀ d, τ d = CubeCoeff.eval c d
-  | 0, τ => by
-      let d0 : Fin 0 → D R := fun i ↦ Fin.elim0 i
-      refine ⟨τ d0, ?_⟩
-      intro d
-      have hd : d = d0 := by
-        funext i
-        exact Fin.elim0 i
-      simp [CubeCoeff.eval, d0, hd]
-  | k + 1, τ => by
-      let τ0 : (Fin k → D R) → R := fun d ↦ τ (Fin.cons 0 d)
-      let h₁ : ∀ d : Fin k → D R, ∃! b : R, ∀ d₀ : D R,
-          τ (Fin.cons d₀ d) = τ (Fin.cons 0 d) + b * d₀ := fun d ↦
-        isKockLawvere_one (fun d₀ : D R ↦ τ (Fin.cons d₀ d))
-      let τ1 : (Fin k → D R) → R := unique_choice_fun h₁
-      have hτ1 : ∀ d d₀, τ (Fin.cons d₀ d) = τ (Fin.cons 0 d) + τ1 d * d₀ := by
-        intro d d₀
-        exact unique_choice_fun_spec h₁ d d₀
-      obtain ⟨c₀, hc₀⟩ := cubeCoeff_exists k τ0
-      obtain ⟨c₁, hc₁⟩ := cubeCoeff_exists k τ1
-      refine ⟨(c₀, c₁), ?_⟩
-      intro d
-      let rest : Fin k → D R := fun i ↦ d i.succ
-      have hcons : d = Fin.cons (d 0) (fun i ↦ d i.succ) := by
-        ext i
-        rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩ <;> simp
-      have hsplit : τ (Fin.cons (d 0) rest) = τ (Fin.cons 0 rest) + τ1 rest * d 0 := by
-        simpa [rest] using hτ1 rest (d 0)
-      have hτ0 : τ (Fin.cons 0 rest) = CubeCoeff.eval c₀ rest := by
-        simpa [τ0] using hc₀ rest
-      have hτ1' : τ1 rest = CubeCoeff.eval c₁ rest := by
-        simpa [τ1] using hc₁ rest
-      calc
-        τ d = τ (Fin.cons (d 0) rest) := congrArg τ hcons
-        _ = τ (Fin.cons 0 rest) + τ1 rest * d 0 := hsplit
-        _ = CubeCoeff.eval c₀ rest + CubeCoeff.eval c₁ rest * d 0 := by
-              rw [hτ0, hτ1']
-        _ = CubeCoeff.eval (R := R) (k := k + 1) (c₀, c₁) d := by
-              rfl
-
-theorem cubeCoeff_eval_injective : ∀ {k : ℕ} {c c' : CubeCoeff (R := R) k},
-    (∀ d, CubeCoeff.eval c d = CubeCoeff.eval c' d) → c = c'
-  | 0, c, c', h => by
-      have h0 := h (fun i : Fin 0 ↦ Fin.elim0 i)
-      simpa [CubeCoeff.eval] using h0
-  | k + 1, (c₀, c₁), (c₀', c₁'), h => by
-      have h0 : ∀ d, CubeCoeff.eval c₀ d = CubeCoeff.eval c₀' d := by
-        intro d
-        simpa [CubeCoeff.eval] using h (Fin.cons 0 d)
-      have hc₀ : c₀ = c₀' := cubeCoeff_eval_injective h0
-      have h1 : ∀ d, CubeCoeff.eval c₁ d = CubeCoeff.eval c₁' d := by
-        intro d
-        refine cancel_d (fun d₀ ↦ ?_)
-        have hd := h (Fin.cons d₀ d)
-        simpa [CubeCoeff.eval, hc₀] using hd
-      have hc₁ : c₁ = c₁' := cubeCoeff_eval_injective h1
-      simp [hc₀, hc₁]
-
-theorem bar (τ : (Fin n → D R) → R) : ∃ (a : Finset (Fin n) → R), ∀ (d : Fin n → D R),
-    τ d = ∑ H, a H * ∏ j ∈ H, (d j : R)  := by
-  induction n with
-  | zero =>
-      refine ⟨fun _ ↦ τ Fin.elim0, fun d ↦ ?_⟩
-      have hd : d = Fin.elim0 := funext fun i ↦ Fin.elim0 i
-      have hH : ∀ (H : Finset (Fin 0)), H = ∅ := fun H ↦ Finset.ext fun i ↦ Fin.elim0 i
-      have : Unique (Finset (Fin 0)) := ⟨inferInstance, fun H ↦ by simp [hH]⟩
-      simp [hH, hd]
-  | succ n ih =>
-      let τ0 : (Fin n → D R) → R := fun d ↦ τ (Fin.cons 0 d)
-      let h₁ : ∀ d : Fin n → D R, ∃! b : R, ∀ d₀ : D R,
-          τ (Fin.cons d₀ d) = τ (Fin.cons 0 d) + b * d₀ := fun d ↦
-        isKockLawvere_one (fun d₀ : D R ↦ τ (Fin.cons d₀ d))
-      let τ1 : (Fin n → D R) → R := unique_choice_fun h₁
-      have hτ1 : ∀ d d₀, τ (Fin.cons d₀ d) = τ (Fin.cons 0 d) + τ1 d * d₀ := fun d d₀ ↦
-        unique_choice_fun_spec h₁ d d₀
-      obtain ⟨a0, ha0⟩ := ih τ0
-      obtain ⟨a1, ha1⟩ := ih τ1
-      let up : Finset (Fin n) → Finset (Fin (n + 1)) := Finset.map ⟨Fin.succ, Fin.succ_injective n⟩
-      let down : Finset (Fin (n + 1)) → Finset (Fin n) := fun H ↦ {i | i.succ ∈ H}
-      let a : Finset (Fin (n + 1)) → R := fun H ↦if 0 ∈ H then a1 (down H) else a0 (down H)
-      refine ⟨a, fun d ↦ ?_⟩
-      let rest : Fin n → D R := fun i ↦ d i.succ
-      have hcons : d = Fin.cons (d 0) rest := by
-        ext i
-        rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩ <;> simp [rest]
-      have hsplit : τ d = τ (Fin.cons 0 rest) + τ1 rest * d 0 := by
-        rw [hcons]
-        simpa [rest] using hτ1 rest (d 0)
-      have h0 : τ (Fin.cons 0 rest) = ∑ H, a0 H * ∏ j ∈ H, (rest j : R) := ha0 rest
-      have h1 : τ1 rest = ∑ H, a1 H * ∏ j ∈ H, (rest j : R) := ha1 rest
-      have hs : (0 : Fin (n + 1)) ∉ up (Finset.univ : Finset (Fin n)) := by
-        intro h
-        rcases Finset.mem_map.mp h with ⟨i, -, hi⟩
-        exact Fin.succ_ne_zero i hi
-      have huniv : insert (0 : Fin (n + 1)) (up (Finset.univ : Finset (Fin n))) = Finset.univ := by
-        ext i
-        rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩
-        · simp
-        · simp [up]
-      have hup_inj : Function.Injective up := by
-        simpa [up] using (Finset.map_injective ⟨Fin.succ, Fin.succ_injective n⟩)
-      -- have hpow : (up (Finset.univ : Finset (Fin n))).powerset =
-      --     (Finset.univ : Finset (Finset (Fin n))).image up := by
-      --   have hUpImage : (fun H : Finset (Fin n) => H.image Fin.succ) = up := by
-      --     funext H
-      --     simp [up, Finset.map_eq_image]
-      --   calc
-      --     (up (Finset.univ : Finset (Fin n))).powerset
-      --         = (((Finset.univ : Finset (Fin n)).image Fin.succ)).powerset := by
-      --             simp [up, Finset.map_eq_image]
-      --     _ = (Finset.univ : Finset (Finset (Fin n))).image
-      --           (fun H : Finset (Fin n) => H.image Fin.succ) := by
-      --           simpa using
-      --             (Finset.powerset_image (s := (Finset.univ : Finset (Fin n))) (f := Fin.succ))
-      --     _ = (Finset.univ : Finset (Finset (Fin n))).image up := by
-      --           simp [hUpImage]
-      -- have hprod_up : ∀ H : Finset (Fin n),
-      --     (∏ j ∈ up H, (d j : R)) = ∏ j ∈ H, (rest j : R) := by
-      --   intro H
-      --   simp [up, rest]
-      -- let mon : Finset (Fin (n + 1)) → R := fun H => a H * ∏ j ∈ H, (d j : R)
-      -- have hsum_repr :
-      --     (∑ H, a0 H * ∏ j ∈ H, (rest j : R)) +
-      --       (∑ H, a1 H * ∏ j ∈ H, (rest j : R)) * d 0
-      --     =
-      --     (∑ H ∈ (up (Finset.univ : Finset (Fin n))).powerset, mon H)
-      --       +
-      --     (∑ H ∈ (up (Finset.univ : Finset (Fin n))).powerset,
-      --       mon (insert (0 : Fin (n + 1)) H)) := by
-      --   congr 1
-      --   · rw [hpow, Finset.sum_image]
-      --     · simp [mon, a, up, down, hprod_up]
-      --     · intro s hs t ht hst
-      --       exact hup_inj hst
-      --   · rw [hpow, Finset.sum_image]
-      --     · rw [Finset.sum_mul]
-      --       refine Finset.sum_congr rfl ?_
-      --       intro H hH
-      --       have h0not : (0 : Fin (n + 1)) ∉ up H := by
-      --         intro h
-      --         rcases Finset.mem_map.mp h with ⟨i, -, hi⟩
-      --         exact Fin.succ_ne_zero i hi
-      --       simp [mon, a, up, down, hprod_up H, h0not, Finset.prod_insert, mul_comm,
-      --         mul_left_comm]
-      --     · intro s hs t ht hst
-      --       exact hup_inj hst
-      -- calc
-      --   τ d = τ (Fin.cons 0 rest) + τ1 rest * d 0 := hsplit
-      --   _ = (∑ H, a0 H * ∏ j ∈ H, (rest j : R)) +
-      --       (∑ H, a1 H * ∏ j ∈ H, (rest j : R)) * d 0 := by rw [h0, h1]
-      --   _ = (∑ H ∈ (up (Finset.univ : Finset (Fin n))).powerset, mon H)
-      --     + (∑ H ∈ (up (Finset.univ : Finset (Fin n))).powerset,
-      --           mon (insert (0 : Fin (n + 1)) H)) := hsum_repr
-      --   _ = ∑ H ∈ (insert (0 : Fin (n + 1)) (up (Finset.univ : Finset (Fin n)))).powerset,
-      --         mon H := by
-      --       simpa using (Finset.sum_powerset_insert hs mon).symm
-      --   _ = ∑ H, a H * ∏ j ∈ H, (d j : R) := by
-      --     rw [huniv, Finset.powerset_univ]
-      --     simp [mon]
-      --     rfl
-      sorry
+theorem prop41_ex : ∀ n (τ : (Fin n → D R) → R), ∃ (a : Finset (Fin n) → R), ∀ (d : Fin n → D R),
+    τ d = ∑ H, a H * ∏ j ∈ H, (d j : R)
+| 0 => fun τ ↦ ⟨fun _ ↦ τ Fin.elim0, fun d ↦ by
+    rw [← singleton_eq_univ, sum_singleton, prod_empty, mul_one]
+    exact (funext_iff_of_subsingleton d Fin.elim0).2 rfl⟩
+| n + 1 => fun τ ↦ by
+  let τ0 := fun d ↦ τ (Fin.cons 0 d)
+  let h₁ : ∀ d : Fin n → D R, ∃! b : R, ∀ d₀ : D R,
+    τ (Fin.cons d₀ d) = τ (Fin.cons 0 d) + b * d₀ := fun d ↦
+    isKockLawvere_one (fun d₀ : D R ↦ τ (Fin.cons d₀ d))
+  let τ1 := unique_choice_fun h₁
+  have hτ1 : ∀ d d₀, τ (Fin.cons d₀ d) = τ (Fin.cons 0 d) + τ1 d * d₀ := unique_choice_fun_spec h₁
+  obtain ⟨a0, ha0⟩ := prop41_ex _ τ0
+  obtain ⟨a1, ha1⟩ := prop41_ex _ τ1
+  let up := map ⟨Fin.succ, Fin.succ_injective n⟩
+  let down : Finset (Fin (n + 1)) → Finset (Fin n) := fun H ↦ {i | i.succ ∈ H}
+  let a := fun H ↦ if 0 ∈ H then a1 (down H) else a0 (down H)
+  refine ⟨a, fun d ↦ ?_⟩
+  let rest : Fin n → D R := fun i ↦ d i.succ
+  have h0 : τ (Fin.cons 0 rest) = ∑ H, a0 H * ∏ j ∈ H, (rest j : R) := ha0 rest
+  have h1 : τ1 rest = ∑ H, a1 H * ∏ j ∈ H, (rest j : R) := ha1 rest
+  have hs : 0 ∉ up univ := fun h ↦ by
+    rcases mem_map.mp h with ⟨i, -, hi⟩; exact Fin.succ_ne_zero i hi
+  have huniv : insert 0 (up univ) = univ := by
+    ext i; rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩ <;> simp [up]
+  have hup_inj : Function.Injective up := by
+    simpa [up] using (map_injective ⟨Fin.succ, Fin.succ_injective n⟩)
+  have hpow : (up univ).powerset = univ.image up := by
+    have hUpImage : (fun H ↦ H.image Fin.succ) = up := by
+      ext; simp [up, map_eq_image]
+    calc
+      (up univ).powerset = ((univ.image Fin.succ)).powerset := by simp [up, map_eq_image]
+      _ = univ.image (fun H : Finset (Fin n) ↦ H.image Fin.succ) := by
+            simpa using (powerset_image (s := univ) (f := Fin.succ))
+      _ = univ.image up := by simp [hUpImage]
+  have hprod_up : ∀ H : Finset (Fin n), (∏ j ∈ up H, (d j : R)) = ∏ j ∈ H, (rest j : R) :=
+    fun H ↦ by simp [up, rest]
+  let mon : Finset (Fin (n + 1)) → R := fun H ↦ a H * ∏ j ∈ H, (d j : R)
+  have hsum_repr :
+      ∑ H, a0 H * ∏ j ∈ H, (rest j : R) + (∑ H, a1 H * ∏ j ∈ H, (rest j : R)) * d 0 =
+      ∑ H ∈ (up univ).powerset, mon H + ∑ H ∈ (up univ).powerset, mon (insert 0 H) := by
+    congr 1
+    · rw [hpow, sum_image]
+      · simp [mon, a, up, down, hprod_up]
+      · intro s hs t ht hst
+        exact hup_inj hst
+    · rw [hpow, sum_image]
+      · rw [sum_mul]
+        refine sum_congr rfl (fun H hH ↦ ?_)
+        have h0not : 0 ∉ up H := fun h ↦ by
+         rcases mem_map.mp h with ⟨i, -, hi⟩
+         exact Fin.succ_ne_zero i hi
+        simp [mon, a, up, down, hprod_up H, h0not, prod_insert, mul_comm, mul_left_comm]
+      · intro s hs t ht hst
+        exact hup_inj hst
+  have hcons : d = Fin.cons (d 0) rest := by
+    ext i; rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩ <;> simp [rest]
+  calc
+    τ d = τ (Fin.cons 0 rest) + τ1 rest * d 0 := by rw [hcons]; simpa [rest] using hτ1 rest (d 0)
+    _ = ∑ H, a0 H * ∏ j ∈ H, (rest j : R) + (∑ H, a1 H * ∏ j ∈ H, (rest j : R)) * d 0 := by
+      rw [h0, h1]
+    _ = ∑ H ∈ (up univ).powerset, mon H + (∑ H ∈ (up univ).powerset, mon (insert 0 H)) := hsum_repr
+    _ = ∑ H ∈ (insert 0 (up univ)).powerset, mon H := (sum_powerset_insert hs mon).symm
+    _ = ∑ H, a H * ∏ j ∈ H, (d j : R) := by rw [huniv, powerset_univ]
 
 end IsKockLawvere_one
 
