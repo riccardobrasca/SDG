@@ -4,6 +4,7 @@ import SDG.Basic.Defs
 import SDG.Basic.FactorialInv
 import SDG.ForMathlib.Fin
 import SDG.IsKockLawvere.Taylor
+import SDG.IsKockLawvere.TaylorMulti
 import SDG.IsKockLawvere_one.Alpha
 import SDG.IsKockLawvere_one.Basic
 import SDG.IsKockLawvere_one.Deriv
