@@ -62,47 +62,48 @@ instance : FunLike (Derivation R ((Fin n → R) → R) ((Fin n → R) → R))
   coe D := D.toFun
   coe_injective' := DFunLike.coe_injective
 
-notation3:max "∂[" i "]" f:max => partial_deriv i f
+notation3:max "∂_[" i "]" f:max => partial_deriv i f
+notation3:max "∂_[" i "]^[" n "]" f:max => (partial_deriv i)^[n] f
 
 variable (x)
 
-lemma partial_taylor_one (d : D R) : f (update x i (x i + d)) = f x + ∂[i]f x * d :=
+lemma partial_taylor_one (d : D R) : f (update x i (x i + d)) = f x + ∂_[i]f x * d :=
   partial_derivFun_spec ..
 
 variable {f x} in
 lemma partial_derivative_unique {b : R} (hb : ∀ (d : D R), f (update x i (x i + d)) = f x + b * d) :
-    ∂[i]f x = b :=
+    ∂_[i]f x = b :=
   partial_derivFun_unique i  hb
 
 @[simp]
-theorem partial_deriv_const (r : R) : ∂[i](fun _ ↦ r) = 0 :=
+theorem partial_deriv_const (r : R) : ∂_[i](fun _ ↦ r) = 0 :=
   funext fun _ ↦ partial_derivative_unique i (fun d ↦ by simp)
 
 theorem partial_deriv_mul (f g : (Fin n → R) → R) :
-    ∂[i](f * g) = ∂[i]f * g + f * ∂[i]g := by
+    ∂_[i](f * g) = ∂_[i]f * g + f * ∂_[i]g := by
   simp; ring
 
-theorem partial_deriv_comm (i j : Fin n) : ∂[i](∂[j]f) x = ∂[j](∂[i]f) x := by
+theorem partial_deriv_comm (i j : Fin n) : ∂_[i](∂_[j]f) x = ∂_[j](∂_[i]f) x := by
   by_cases H : i = j
   · simp [H]
   refine cancel_d (fun d₁ ↦ cancel_d (fun d₂ ↦ ?_))
   let x₁ := update x i (x i + d₁); let x₂ := update x j (x j + d₂)
   have hx₁j : x₁ j = x j := by rcases Decidable.eq_or_ne j i <;> simp_all [x₁]
   have hx₂i : x₂ i = x i := by rcases Decidable.eq_or_ne j i <;> simp_all [x₂]
-  have h₁ : f (update x₁ j (x j + d₂)) = f x₁ + ∂[j]f x₁ * d₂ := hx₁j ▸ partial_taylor_one ..
-  have h₂ : f (update x₂ i (x i + d₁)) = f x₂ + ∂[i]f x₂ * d₁ := hx₂i ▸ partial_taylor_one ..
-  have hEq : f x₁ + ∂[j]f x₁ * d₂ = f x₂ + ∂[i]f x₂ * d₁ := by rw [← h₁, update_comm  H, h₂]
-  rw [partial_taylor_one i f, partial_taylor_one j f, partial_taylor_one i ∂[j]f,
-    partial_taylor_one j ∂[i]f] at hEq
+  have h₁ : f (update x₁ j (x j + d₂)) = f x₁ + ∂_[j]f x₁ * d₂ := hx₁j ▸ partial_taylor_one ..
+  have h₂ : f (update x₂ i (x i + d₁)) = f x₂ + ∂_[i]f x₂ * d₁ := hx₂i ▸ partial_taylor_one ..
+  have hEq : f x₁ + ∂_[j]f x₁ * d₂ = f x₂ + ∂_[i]f x₂ * d₁ := by rw [← h₁, update_comm  H, h₂]
+  rw [partial_taylor_one i f, partial_taylor_one j f, partial_taylor_one i ∂_[j]f,
+    partial_taylor_one j ∂_[i]f] at hEq
   ring_nf at hEq
   simpa [mul_assoc, mul_comm, mul_left_comm] using hEq
 
 @[simp]
-theorem partial_deriv_proj_self (i : Fin n) : ∂[i](fun x : Fin n → R ↦ x i) = 1 :=
+theorem partial_deriv_proj_self (i : Fin n) : ∂_[i](fun x : Fin n → R ↦ x i) = 1 :=
   funext fun _ ↦ partial_derivative_unique i (fun d ↦ by simp)
 
 @[simp]
-theorem partial_deriv_proj_ne {i j : Fin n} (hij : i ≠ j) : ∂[i](fun x : Fin n → R ↦ x j) = 0 :=
+theorem partial_deriv_proj_ne {i j : Fin n} (hij : i ≠ j) : ∂_[i](fun x : Fin n → R ↦ x j) = 0 :=
   funext fun _ ↦ partial_derivative_unique i (fun d ↦ by simp [hij.symm])
 
 theorem prop41_ex : ∀ n (τ : (Fin n → D R) → R), ∃ (a : Finset (Fin n) → R), ∀ (d : Fin n → D R),
