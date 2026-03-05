@@ -66,7 +66,7 @@ match n with
     · simp [hi]
     · obtain ⟨j, rfl⟩ := exists_castSucc_eq.2 hi
       simp; rfl
-  rw [hg]
+  rw [hg, taylor_k g _ (k (last n))]
   sorry
 
 end SDG
