@@ -58,9 +58,9 @@ instance : FunLike (Derivation R (R → R) (R → R)) (R → R) (R → R) where
   coe D := D.toFun
   coe_injective' D1 D2 h := by cases D1; cases D2; congr; exact DFunLike.coe_injective h
 
-notation3:max "∂" f:max => deriv f
+notation3:max "∂" f:max => derivFun f
 
-notation3:max "∂^[" n "]" => Nat.iterate deriv n
+notation3:max "∂^[" n "]" => Nat.iterate derivFun n
 
 lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + ∂f 0 * d :=
   derivFun_spec ..
@@ -83,7 +83,8 @@ theorem deriv_const (r : R) : ∂(fun _ ↦ r) = 0 := by
   exact derivative_unique (fun d ↦ by simp)
 
 theorem deriv_mul (f g : R → R) : ∂(f * g) = ∂f * g + f * ∂g := by
-  simp; ring
+  change deriv (f * g) = deriv f * g + f * deriv g
+  simp [smul_eq_mul]; ring
 
 theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
   refine derivative_unique (fun d ↦ ?_)
