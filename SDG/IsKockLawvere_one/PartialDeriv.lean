@@ -104,6 +104,27 @@ match k with
   simp only [Function.iterate_succ', Function.comp_def]
   simp [partial_deriv_eq_deriv_snoc_init, partial_deriv_iterate_eq_deriv_snoc_init]
 
+lemma partial_deriv_snoc_castSucc (i : Fin n) (f : (Fin (n + 1) → R) → R)
+    (r : Fin n → R) (c : R) :
+    ∂_[i] (fun x ↦ f (snoc x c)) r = ∂_[i.castSucc] f (snoc r c) := by
+  refine partial_derivative_unique _ (fun d ↦ ?_)
+  convert partial_taylor_one (castSucc i) f (snoc r c) d using 2
+  ext j; rcases eq_castSucc_or_eq_last j with ⟨k, rfl⟩ | rfl
+  · rcases Decidable.eq_or_ne k i with rfl | hki <;>
+    simp_all
+  · simp [Ne.symm (castSucc_ne_last i)]
+
+lemma partial_deriv_iterate_snoc_castSucc (k : ℕ) (i : Fin n) (f : (Fin (n + 1) → R) → R)
+    (r : Fin n → R) (c : R) :
+    ∂_[i]^[k] (fun x ↦ f (snoc x c)) r = ∂_[i.castSucc]^[k] f (snoc r c) :=
+match k with
+| 0 => by simp
+| k + 1 => by
+  simp only [Function.iterate_succ', Function.comp_def]
+  have hk : ∂_[i]^[k] (fun x ↦ f (snoc x c)) = fun r' ↦ ∂_[castSucc i]^[k] f (snoc r' c) :=
+    funext fun r' ↦ partial_deriv_iterate_snoc_castSucc ..
+  rw [hk, partial_deriv_snoc_castSucc]
+
 @[simp]
 theorem partial_deriv_const (r : R) : ∂_[i](fun _ ↦ r) = 0 :=
   funext fun _ ↦ partial_derivative_unique i (fun d ↦ by simp)
