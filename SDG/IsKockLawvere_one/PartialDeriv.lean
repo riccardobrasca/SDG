@@ -88,6 +88,21 @@ lemma partial_deriv_eq_deriv (r : Fin n → R) :
     exact this
   exact add_left_cancel (h1.symm.trans h2)
 
+lemma partial_deriv_eq_deriv_one_var (f : (Fin 1 → R) → R) (x : Fin 1 → R) :
+    ∂_[0] f x = ∂(fun y ↦ f (fun _ ↦ y)) (x 0) := by
+  rw [partial_deriv_eq_deriv]
+  congr; ext; congr; ext i
+  rw [fin_one_eq_zero i]
+  simp
+
+lemma partial_deriv_iterate_eq_deriv_one_var : ∀ k (f : (Fin 1 → R) → R) (x : Fin 1 → R),
+    ∂_[0]^[k] f x = ∂^[k] (fun y ↦ f (fun _ ↦ y)) (x 0)
+| 0 => fun f x ↦ congrArg f (funext fun i ↦ by rw [fin_one_eq_zero i])
+| k + 1 => fun f x ↦ by
+  simp only [Function.iterate_succ', Function.comp_def, partial_deriv_eq_deriv_one_var]
+  congr; ext
+  exact partial_deriv_iterate_eq_deriv_one_var ..
+
 lemma partial_deriv_eq_deriv_snoc_init (f : (Fin (n + 1) → R) → R) (r : Fin (n + 1) → R) :
     ∂_[last n] f r = ∂(fun t ↦ f (snoc (init r) t)) (r (last n)) := by
   convert partial_deriv_eq_deriv .. using 2
@@ -113,6 +128,15 @@ lemma partial_deriv_snoc_castSucc (i : Fin n) (f : (Fin (n + 1) → R) → R)
   · rcases Decidable.eq_or_ne k i with rfl | hki <;>
     simp_all
   · simp [Ne.symm (castSucc_ne_last i)]
+
+lemma partial_deriv_snoc_last (f : (Fin (n + 1) → R) → R) (r : Fin n → R) (c : R) :
+    ∂_[last n] f (snoc r c) = ∂(fun x ↦ f (snoc r x)) c := by
+  rw [partial_deriv_eq_deriv_snoc_init]
+  simp [init_snoc, snoc_last]
+
+lemma partial_deriv_iterate_snoc_last (k : ℕ) (f : (Fin (n + 1) → R) → R) (r : Fin n → R) (c : R) :
+    ∂_[last n]^[k] f (snoc r c) = ∂^[k] (fun x ↦ f (snoc r x)) c := by
+  simp [partial_deriv_iterate_eq_deriv_snoc_init, init_snoc, snoc_last]
 
 lemma partial_deriv_iterate_snoc_castSucc (k : ℕ) (i : Fin n) (f : (Fin (n + 1) → R) → R)
     (r : Fin n → R) (c : R) :
@@ -148,6 +172,21 @@ theorem partial_deriv_comm (i j : Fin n) : ∂_[i](∂_[j]f) x = ∂_[j](∂_[i]
     partial_taylor_one j ∂_[i]f] at hEq
   ring_nf at hEq
   simpa [mul_assoc, mul_comm, mul_left_comm] using hEq
+
+private lemma partial_deriv_comm_iterate_aux (i j : Fin n) (g : (Fin n → R) → R) :
+    ∀ q : ℕ, ∂_[i] (∂_[j]^[q] g) = ∂_[j]^[q] (∂_[i] g)
+| 0 => rfl
+| q + 1 => by
+  simp only [Function.iterate_succ', Function.comp_def]
+  rw [(funext fun y ↦ partial_deriv_comm .. : ∂_[i] _ = _), partial_deriv_comm_iterate_aux]
+
+theorem partial_deriv_iterate_comm (i j : Fin n) (p q : ℕ) :
+    ∂_[i]^[p] (∂_[j]^[q] f) = ∂_[j]^[q] (∂_[i]^[p] f) := by
+  induction p with
+  | zero => rfl
+  | succ p ih =>
+    simpa only [Function.iterate_succ', Function.comp_def, ih] using
+      partial_deriv_comm_iterate_aux ..
 
 @[simp]
 theorem partial_deriv_proj_self (i : Fin n) : ∂_[i](fun x : Fin n → R ↦ x i) = 1 :=
