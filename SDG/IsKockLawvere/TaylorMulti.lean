@@ -108,7 +108,7 @@ example (a₁ a₂ b c d : R) : a₁ * a₂ * b * c * d = (a₁ * a₂) * (b * d
   sorry
 
 theorem taylor_multi : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
-    (r : Fin n → R), f (r + d) = ∑ (α : Iic k), ∂[α]f r * ∏ i, d i * ⅟((α.1 i)! : R)
+    (r : Fin n → R), f (r + d) = ∑ (α : Iic k), ∂[α]f r * ∏ i, (d i) ^ (α.1 i) * ⅟((α.1 i)! : R)
 | 0 => fun k f d r ↦ by
   simp only [univ_eq_attach, mixed_partial_deriv_zero_var, univ_eq_empty, prod_empty, mul_one,
     Finset.sum_const, card_attach, nsmul_eq_mul]
@@ -137,7 +137,7 @@ theorem taylor_multi : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R) (d 
   · rw [mul_comm, prod_univ_castSucc]
     rfl
   rw [prod_univ_castSucc, mul_assoc]
-  congr 1
+  congr 2
   sorry
 
 end SDG
