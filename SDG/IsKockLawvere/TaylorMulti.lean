@@ -136,6 +136,8 @@ theorem taylor_multi : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R) (d 
   congr 1
   · rw [mul_comm, prod_univ_castSucc]
     rfl
+  rw [prod_univ_castSucc, mul_assoc]
+  congr 1
   sorry
 
 end SDG
