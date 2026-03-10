@@ -155,7 +155,7 @@ theorem partial_deriv_const (r : R) : ∂_[i](fun _ ↦ r) = 0 :=
 
 theorem partial_deriv_mul (f g : (Fin n → R) → R) :
     ∂_[i](f * g) = ∂_[i]f * g + f * ∂_[i]g := by
-  change ⇑(partial_deriv i) (f * g) = ⇑(partial_deriv i) f * g + f * ⇑(partial_deriv i) g
+  change (partial_deriv i) (f * g) = (partial_deriv i) f * g + f * (partial_deriv i) g
   simp [smul_eq_mul]; ring
 
 theorem partial_deriv_comm (i j : Fin n) : ∂_[i](∂_[j]f) x = ∂_[j](∂_[i]f) x := by
