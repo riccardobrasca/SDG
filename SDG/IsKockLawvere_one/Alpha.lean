@@ -10,6 +10,7 @@ open DualNumber Function
 
 variable {R : Type*} [CommRing R]
 
+/-- The algebra map from dual numbers to functions on `D R`, sending `⟨a, b⟩` to `d ↦ a + b * d`. -/
 def α : DualNumber R →ₐ[R] (D R → R) :=
   lift ⟨⟨Algebra.ofId _ _, (↑)⟩, coe_sq _, fun _ ↦ Commute.all _ _⟩
 

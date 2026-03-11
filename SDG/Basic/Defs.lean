@@ -11,10 +11,12 @@ namespace SDG
 
 variable (R : Type*) [CommRing R]
 
+/-- The subsemigroup of nilpotent elements of order `k`: `{x : R | x^(k+1) = 0}`. -/
 abbrev 𝔻 (k : ℕ) : Subsemigroup R where
  carrier := {(x : R) | x ^ (k + 1) = 0}
  mul_mem' := fun hx hy ↦ by simp_all [mul_pow]
 
+/-- The first-order infinitesimals: `{x : R | x^2 = 0}`. -/
 abbrev D := 𝔻 R 1
 
 lemma D_eq_𝔻_one : D R = 𝔻 R 1 := rfl
@@ -43,9 +45,13 @@ instance : Zero (𝔻 R k) where
 
 section IsKockLawvere
 
+/-- The Kock-Lawvere axiom for first-order infinitesimals: every `g : D R → R` is uniquely
+of the form `g d = g 0 + b * d` for some `b : R`. -/
 class IsKockLawvere_one extends Nontrivial R where
   isKockLawvere_one : ∀ g : D R → R, ∃! b, ∀ d, g d = g 0 + b * d
 
+/-- The general Kock-Lawvere axiom: every `g : 𝔻 R k → R` is uniquely a polynomial of degree `k`
+in the infinitesimal, i.e. `g d = g 0 + ∑ i, b i * d^(i+1)` for a unique `b : Fin k → R`. -/
 class IsKockLawvere extends Nontrivial R where
   isKockLawvere : ∀ k, ∀ g : 𝔻 R k → R,
     ∃! b : Fin k → R, ∀ d, g d = g 0 + ∑ i, b i * d ^ (i.val + 1)
@@ -66,6 +72,7 @@ open IsKockLawvere_one
 
 variable {R}
 
+/-- The synthetic derivative: the unique `b` such that `f (x + d) = f x + b * d` for all `d : D R`. -/
 noncomputable def deriv_fun (f : R → R) : R → R :=
   unique_choice_fun (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d)))
 

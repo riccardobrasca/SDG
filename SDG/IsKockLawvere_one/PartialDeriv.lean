@@ -27,6 +27,7 @@ lemma partial_deriv_propr : ∀ (x : Fin n → R), ∃! b, ∀ (d : D R),
     rw [coe_zero, add_zero, update_eq_self]
 
 
+/-- The partial derivative of `f : (Fin n → R) → R` with respect to coordinate `i`. -/
 noncomputable def partial_deriv_fun : (Fin n → R) → R :=
   unique_choice_fun (partial_deriv_propr i f)
 
@@ -39,6 +40,7 @@ lemma partial_deriv_fun_unique {b : R} (hb : ∀ (d : D R), f (update x i (x i +
       partial_deriv_fun i f x = b :=
   unique_choice_fun_unique (partial_deriv_propr i f) hb
 
+/-- The partial derivative with respect to coordinate `i` as a `Derivation`. -/
 noncomputable def partial_deriv : Derivation R ((Fin n → R) → R) ((Fin n → R) → R) where
   toFun := partial_deriv_fun i
   map_add' := fun f g ↦ funext fun x ↦ partial_deriv_fun_unique i <| fun d ↦
@@ -64,7 +66,9 @@ instance : FunLike (Derivation R ((Fin n → R) → R) ((Fin n → R) → R))
   coe D := D.toFun
   coe_injective' := DFunLike.coe_injective
 
+/-- Notation for the partial derivative of `f` with respect to coordinate `i`. -/
 notation3:max "∂_[" i "]" f:max => partial_deriv_fun i f
+/-- Notation for the `n`-th iterated partial derivative with respect to coordinate `i`. -/
 notation3:max "∂_[" i "]^[" n "]" f:max => (partial_deriv_fun i)^[n] f
 
 variable (x)

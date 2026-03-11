@@ -13,7 +13,9 @@ variable (R : Type*) [CommRing R]
 example : Invertible (1 : R) := by
   exact invertibleOne
 
+/-- A typeclass asserting that all nonzero natural numbers are invertible in `R`. -/
 class Divisible where
+  /-- Every nonzero natural number is invertible in `R`. -/
   divisible : ∀ {n : ℕ}, n ≠ 0 → Invertible (n : R)
 
 variable [Divisible R]
@@ -21,12 +23,10 @@ variable [Divisible R]
 instance (n : ℕ) : Invertible (n ! : R) :=
   Divisible.divisible (factorial_ne_zero n)
 
-@[simp]
 lemma inv_factorial_zero : ⅟(0! : R) = 1 := by
   have : Invertible (1 : R) := invertibleOne
   simp
 
-@[simp]
 lemma inv_factorial_one : ⅟(1! : R) = 1 := by
   have : Invertible (1 : R) := invertibleOne
   simp

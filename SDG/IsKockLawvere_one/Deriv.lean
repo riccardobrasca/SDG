@@ -26,6 +26,8 @@ lemma deriv_fun_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = 
   have := deriv_fun_taylor_one f x d
   simpa [hr] using this.symm
 
+/-- The synthetic derivative as a `Derivation`,
+i.e. an `R`-linear Leibniz map `(R → R) → (R → R)`. -/
 noncomputable def deriv : Derivation R (R → R) (R → R) where
   toFun := deriv_fun
   map_add' := by
@@ -59,8 +61,10 @@ instance : FunLike (Derivation R (R → R) (R → R)) (R → R) (R → R) where
   coe D := D.toFun
   coe_injective' D1 D2 h := by cases D1; cases D2; congr; exact DFunLike.coe_injective h
 
+/-- Notation for the synthetic derivative `deriv_fun f`. -/
 notation3:max "∂" f:max => deriv_fun f
 
+/-- Notation for the `n`-th iterate of the synthetic derivative. -/
 notation3:max "∂^[" n "]" => Nat.iterate deriv_fun n
 
 lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + ∂f 0 * d :=

@@ -30,6 +30,7 @@ omit [IsKockLawvere_one R] in
 lemma init_R_add_D_fun (k : Fin (m + 1) → ℕ) (d : Π i, 𝔻 R (k i)) (r : Fin (m + 1) → R) :
     init (r + d) = init r + init d := rfl
 
+/-- Left fold operator: iterated partial derivative along coordinate `castLE h i`, applied `k i` times. -/
 noncomputable def Ψl (i : Fin m) := ∂_[castLE h.1 i]^[k i]f
 
 lemma Ψl_def (i : Fin m) : Ψl k f i = ∂_[castLE h.1 i]^[k i]f := rfl
@@ -41,12 +42,16 @@ lemma Ψl_zero (k : Fin (m + 1) → ℕ) (f : (Fin (n + 1) → R) → R) : Ψl k
 lemma Ψl_castSucc (k : Fin (m + 1) → ℕ) (i : Fin m) (f : (Fin (n + 1) → R) → R) :
     Ψl k f i.castSucc = Ψl (init k) f i := rfl
 
+/-- The mixed partial derivative of `f` indexed by `k : Fin m → ℕ`, defined as the left fold
+of iterated partial derivatives `∂_[i]^[k i]` over coordinates `0, …, m-1`. -/
 noncomputable def mixed_partial_deriv : (Fin n → R) → R := foldl m (Ψl k) f
 
+/-- Notation for the mixed partial derivative `mixed_partial_deriv k f`. -/
 notation3:max "∂[" k "]" f:max => mixed_partial_deriv k f
 
 lemma mixed_partial_deriv_def (f : (Fin n → R) → R) : ∂[k] f = foldl m (Ψl k) f := rfl
 
+/-- Right fold operator: iterated partial derivative along coordinate `castLE h i`, applied `k i` times. -/
 noncomputable def Ψr (i : Fin m) (f : (Fin n → R) → R) := ∂_[castLE h.1 i]^[k i]f
 
 lemma Ψr_def (i : Fin m) : Ψr k i f = ∂_[castLE h.1 i]^[k i]f := rfl
@@ -143,10 +148,13 @@ open Pi
 
 variable {T : Type*} {k : Fin (n + 1) → ℕ}
 
+/-- Convert a curried function over the last index and the remaining `Iic (init k)` into
+a function over `Iic k`. -/
 def iic_of_prod (f : (Fin (k (last n) + 1)) → (Iic (init k)) → T) : Iic k → T := fun x ↦
   f ⟨x.1 _, Nat.lt_add_one_iff.mpr ((le_def.1 <| mem_Iic.1 x.2) _)⟩
     ⟨init x.1, mem_Iic.2 (le_def.2 fun i ↦ le_def.1 (mem_Iic.1 x.2) (castSucc i))⟩
 
+/-- Convert a function over `Iic k` into a curried function over the last index and `Iic (init k)`. -/
 def prod_of_iic (f : Iic k → T) : (Fin (k (last n) + 1)) → (Iic (init k)) → T := fun x i ↦
     f ⟨fun j ↦ if h : j = last n then x.1 else i.1 (castPred _ h), by
   refine mem_Iic.2 (fun j ↦ ?_)
@@ -164,6 +172,7 @@ lemma iic_of_prod_of_iic (f : Iic k → T) : iic_of_prod (prod_of_iic f) = f := 
   by_cases h : j = last _ <;>
   simp [h, init]
 
+/-- Equivalence between `Fin (k (last n) + 1) × Iic (init k)` and `Iic k`. -/
 def iic_equiv : Fin (k (last n) + 1) × (Iic (init k)) ≃ (Iic k) where
   toFun p := ⟨fun j ↦ if h : j = last n then p.1.1 else p.2.1 (castPred _ h), by
     refine mem_Iic.2 (fun j ↦ ?_)

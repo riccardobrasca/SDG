@@ -23,7 +23,7 @@ lemma 𝔻_mul_mem {x : R} (y : R) (hx : x ∈ 𝔻 R k) : y * x ∈ 𝔻 R k :=
 lemma 𝔻_mem_mul {x : R} (y : R) (hx : x ∈ 𝔻 R k) : x * y ∈ 𝔻 R k := by
   simp [mul_pow, 𝔻_mem_iff.1 hx]
 
-@[simp] lemma D_sq (x : D R) : (x : R) ^ 2 = 0 :=
+lemma D_sq (x : D R) : (x : R) ^ 2 = 0 :=
   x.2
 
 @[simp] lemma 𝔻_pow (x : 𝔻 R k) : (x : R) ^ (k + 1) = 0 :=

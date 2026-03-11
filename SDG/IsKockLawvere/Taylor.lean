@@ -121,7 +121,7 @@ decreasing_by rw [Fin.sizeOf, Fin.sizeOf, Nat.succ_lt_succ_iff]
 
 theorem taylor_k [Divisible R] (f : R → R) (x : R) : ∀ (k : ℕ) (δ : 𝔻 R k),
     f (x + δ) = ∑ n : Fin (k + 1), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R)
-| 0 => by simp [-factorial_zero]
+| 0 => by simp [-factorial_zero, inv_factorial_zero]
 | k + 1 => fun Δ ↦ by
   let g_x : 𝔻 R (k + 1) → R := fun d ↦ f (x + d)
   obtain ⟨b, hb, -⟩ := isKockLawvere (k + 1) g_x
