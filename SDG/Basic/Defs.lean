@@ -72,7 +72,8 @@ open IsKockLawvere_one
 
 variable {R}
 
-/-- The synthetic derivative: the unique `b` such that `f (x + d) = f x + b * d` for all `d : D R`. -/
+/-- The synthetic derivative: the unique `b` such that `f (x + d) = f x + b * d`
+for all `d : D R`. -/
 noncomputable def deriv_fun (f : R → R) : R → R :=
   unique_choice_fun (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d)))
 
