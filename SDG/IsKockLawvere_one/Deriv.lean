@@ -13,64 +13,65 @@ variable [IsKockLawvere_one R]
 
 open IsKockLawvere_one
 
-lemma derivFun_spec (f : R → R) (d : D R) : f d = f 0 + derivFun f 0 * d := by
-  simpa [derivFun] using unique_choice_fun_spec (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d))) 0 d
+lemma deriv_fun_spec (f : R → R) (d : D R) : f d = f 0 + deriv_fun f 0 * d := by
+  simpa [deriv_fun] using unique_choice_fun_spec (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d))) 0 d
 
-theorem derivFun_taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + derivFun f x * d := by
-  simpa [derivFun] using unique_choice_fun_spec (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d))) x d
+theorem deriv_fun_taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) =
+    f x + deriv_fun f x * d := by
+  simpa [deriv_fun] using unique_choice_fun_spec (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d))) x d
 
-lemma derivFun_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = f x + r * d) :
-    derivFun f x = r := by
+lemma deriv_fun_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = f x + r * d) :
+    deriv_fun f x = r := by
   refine cancel_d (fun d ↦ ?_)
-  have := derivFun_taylor_one f x d
+  have := deriv_fun_taylor_one f x d
   simpa [hr] using this.symm
 
 noncomputable def deriv : Derivation R (R → R) (R → R) where
-  toFun := derivFun
+  toFun := deriv_fun
   map_add' := by
     intro f g
     ext x
-    refine derivFun_unique (fun d ↦ ?_)
-    calc (f + g) (x + d) = (f x + derivFun f x * d) + (g x + derivFun g x * d) := by
-          simp [derivFun_taylor_one f, derivFun_taylor_one g]
-        _ = (f + g) x + (derivFun f + derivFun g) x * d := by simp; ring
+    refine deriv_fun_unique (fun d ↦ ?_)
+    calc (f + g) (x + d) = (f x + deriv_fun f x * d) + (g x + deriv_fun g x * d) := by
+          simp [deriv_fun_taylor_one f, deriv_fun_taylor_one g]
+        _ = (f + g) x + (deriv_fun f + deriv_fun g) x * d := by simp; ring
   map_smul' := by
     intro r f
     ext x
-    refine derivFun_unique (fun d ↦ ?_)
-    calc (r • f) (x + d) = r * (f x + derivFun f x * d) := by simp [derivFun_taylor_one f]
-       _ = (r • f) x + (r * derivFun f x) * d := by simp; ring
+    refine deriv_fun_unique (fun d ↦ ?_)
+    calc (r • f) (x + d) = r * (f x + deriv_fun f x * d) := by simp [deriv_fun_taylor_one f]
+       _ = (r • f) x + (r * deriv_fun f x) * d := by simp; ring
   map_one_eq_zero' := by
     ext x
-    exact derivFun_unique (fun d ↦ by simp)
+    exact deriv_fun_unique (fun d ↦ by simp)
   leibniz' := by
     intro f g
     ext x
-    refine derivFun_unique (fun d ↦ ?_)
+    refine deriv_fun_unique (fun d ↦ ?_)
     simp only [Pi.mul_apply, LinearMap.coe_mk, AddHom.coe_mk, smul_eq_mul, Pi.add_apply]
-    calc f (x + ↑d) * g (x + ↑d) = (f x + derivFun f x * d) * (g x + derivFun g x * d) := by
-          rw [derivFun_taylor_one f, derivFun_taylor_one g]
-         _ = f x * g x + (f x * derivFun g x + derivFun f x * g x) * d +
-            d ^ 2 * derivFun f x * derivFun g x := by ring
-         _ = f x * g x + (f x * derivFun g x + g x * derivFun f x) * d := by simp; ring
+    calc f (x + ↑d) * g (x + ↑d) = (f x + deriv_fun f x * d) * (g x + deriv_fun g x * d) := by
+          rw [deriv_fun_taylor_one f, deriv_fun_taylor_one g]
+         _ = f x * g x + (f x * deriv_fun g x + deriv_fun f x * g x) * d +
+            d ^ 2 * deriv_fun f x * deriv_fun g x := by ring
+         _ = f x * g x + (f x * deriv_fun g x + g x * deriv_fun f x) * d := by simp; ring
 
 instance : FunLike (Derivation R (R → R) (R → R)) (R → R) (R → R) where
   coe D := D.toFun
   coe_injective' D1 D2 h := by cases D1; cases D2; congr; exact DFunLike.coe_injective h
 
-notation3:max "∂" f:max => derivFun f
+notation3:max "∂" f:max => deriv_fun f
 
-notation3:max "∂^[" n "]" => Nat.iterate derivFun n
+notation3:max "∂^[" n "]" => Nat.iterate deriv_fun n
 
 lemma derivative_spec (f : R → R) (d : D R) : f d = f 0 + ∂f 0 * d :=
-  derivFun_spec ..
+  deriv_fun_spec ..
 
 theorem taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) = f x + ∂f x * d :=
-  derivFun_taylor_one ..
+  deriv_fun_taylor_one ..
 
 lemma derivative_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = f x + r * d) :
     ∂f x = r :=
-  derivFun_unique hr
+  deriv_fun_unique hr
 
 @[simp]
 lemma derivative_id : ∂(id : R → R) = 1 := by

@@ -66,7 +66,7 @@ open IsKockLawvere_one
 
 variable {R}
 
-noncomputable def derivFun (f : R → R) : R → R :=
+noncomputable def deriv_fun (f : R → R) : R → R :=
   unique_choice_fun (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d)))
 
 end IsKockLawvere
