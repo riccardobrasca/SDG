@@ -11,7 +11,8 @@ We add in this file the axiom of unique choice, which is a weakening of the axio
 Given a type `α` such that there exists a unique element `a : α`, the axiom of unique choice allows
 to select this element.
 
-The only version we will actually is the fact that, given a property `P : α → β → Prop` such that
+The only version we will actually use is the fact that, given a property
+`P : α → β → Prop` such that
 `(h : ∀ a, ∃! b, P a b)`, there is a function `unique_choice_fun h : α → β` such that
 `∀ a, P a (unique_choice_fun h a)` (see `unique_choice_fun` and `unique_choice_fun_spec`). The
 construction of `unique_choice_fun h` can be done inconditionally in set theory, but in

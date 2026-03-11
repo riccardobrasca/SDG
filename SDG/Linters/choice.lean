@@ -1,5 +1,5 @@
 /-
-This file has been written essentially ba Damiano Testa.
+This file has been written essentially by Damiano Testa.
 -/
 
 import Lean.Util.CollectAxioms

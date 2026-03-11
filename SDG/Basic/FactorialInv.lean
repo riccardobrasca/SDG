@@ -10,9 +10,6 @@ open Nat
 
 variable (R : Type*) [CommRing R]
 
-example : Invertible (1 : R) := by
-  exact invertibleOne
-
 /-- A typeclass asserting that all nonzero natural numbers are invertible in `R`. -/
 class Divisible where
   /-- Every nonzero natural number is invertible in `R`. -/

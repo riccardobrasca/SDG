@@ -26,7 +26,6 @@ lemma partial_deriv_propr : ∀ (x : Fin n → R), ∃! b, ∀ (d : D R),
   · convert hb₁ d
     rw [coe_zero, add_zero, update_eq_self]
 
-
 /-- The partial derivative of `f : (Fin n → R) → R` with respect to coordinate `i`. -/
 noncomputable def partial_deriv_fun : (Fin n → R) → R :=
   unique_choice_fun (partial_deriv_propr i f)
@@ -171,7 +170,7 @@ theorem partial_deriv_comm (i j : Fin n) : ∂_[i](∂_[j]f) x = ∂_[j](∂_[i]
   have hx₂i : x₂ i = x i := by rcases Decidable.eq_or_ne j i <;> simp_all [x₂]
   have h₁ : f (update x₁ j (x j + d₂)) = f x₁ + ∂_[j]f x₁ * d₂ := hx₁j ▸ partial_taylor_one ..
   have h₂ : f (update x₂ i (x i + d₁)) = f x₂ + ∂_[i]f x₂ * d₁ := hx₂i ▸ partial_taylor_one ..
-  have hEq : f x₁ + ∂_[j]f x₁ * d₂ = f x₂ + ∂_[i]f x₂ * d₁ := by rw [← h₁, update_comm  H, h₂]
+  have hEq : f x₁ + ∂_[j]f x₁ * d₂ = f x₂ + ∂_[i]f x₂ * d₁ := by rw [← h₁, update_comm H, h₂]
   rw [partial_taylor_one i f, partial_taylor_one j f, partial_taylor_one i ∂_[j]f,
     partial_taylor_one j ∂_[i]f] at hEq
   ring_nf at hEq
