@@ -224,5 +224,4 @@ theorem taylor_multi (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, �
   intro α
   rfl
 
-
 end SDG
