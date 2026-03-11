@@ -23,9 +23,9 @@ lemma D_eq_𝔻_one : D R = 𝔻 R 1 := rfl
 
 variable {R}
 
-lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := by rfl
+lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := Iff.rfl
 
-lemma 𝔻_mem_iff {x : R} {k : ℕ} : x ∈ 𝔻 R k ↔ x ^ (k + 1) = 0 := by rfl
+lemma 𝔻_mem_iff {x : R} {k : ℕ} : x ∈ 𝔻 R k ↔ x ^ (k + 1) = 0 := Iff.rfl
 
 variable (R) (k : ℕ)
 

@@ -38,8 +38,7 @@ noncomputable def Ψl (i : Fin m) := ∂_[castLE h.1 i]^[k i]f
 lemma Ψl_def (i : Fin m) : Ψl k f i = ∂_[castLE h.1 i]^[k i]f := rfl
 
 @[simp]
-lemma Ψl_zero (k : Fin (m + 1) → ℕ) (f : (Fin (n + 1) → R) → R) : Ψl k f 0 = ∂_[0]^[k 0]f := by
-  rfl
+lemma Ψl_zero (k : Fin (m + 1) → ℕ) (f : (Fin (n + 1) → R) → R) : Ψl k f 0 = ∂_[0]^[k 0]f := rfl
 
 lemma Ψl_castSucc (k : Fin (m + 1) → ℕ) (i : Fin m) (f : (Fin (n + 1) → R) → R) :
     Ψl k f i.castSucc = Ψl (init k) f i := rfl

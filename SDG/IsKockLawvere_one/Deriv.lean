@@ -21,10 +21,8 @@ theorem deriv_fun_taylor_one (f : R → R) (x : R) (d : D R) : f (x + d) =
   simpa [deriv_fun] using unique_choice_fun_spec (fun x ↦ isKockLawvere_one (fun d ↦ f (x + d))) x d
 
 lemma deriv_fun_unique {f : R → R} {r x : R} (hr : ∀ (d : D R), f (x + d) = f x + r * d) :
-    deriv_fun f x = r := by
-  refine cancel_d (fun d ↦ ?_)
-  have := deriv_fun_taylor_one f x d
-  simpa [hr] using this.symm
+    deriv_fun f x = r :=
+  cancel_d (fun d ↦ by simpa [hr] using (deriv_fun_taylor_one f x d).symm)
 
 /-- The synthetic derivative as a `Derivation`,
 i.e. an `R`-linear Leibniz map `(R → R) → (R → R)`. -/

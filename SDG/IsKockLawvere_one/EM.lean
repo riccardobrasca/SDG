@@ -25,7 +25,6 @@ lemma nontrivial_D : Nontrivial (D R) := by
   have := D_neq_zero R
   simp only [Subsemigroup.mem_mk, Set.mem_setOf_eq, not_forall] at this
   obtain ⟨d, hd, hd0⟩ := this
-  obtain ⟨b, hb, hbunique⟩ := isKockLawvere_one (fun _ ↦ (0 : R))
   exact ⟨0, ⟨d, hd⟩, fun h ↦ hd0 <| Subtype.ext_iff.1 h.symm⟩
 
 end SDG

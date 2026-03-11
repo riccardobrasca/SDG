@@ -79,7 +79,7 @@ lemma partial_taylor_one (d : D R) : f (update x i (x i + d)) = f x + ∂_[i]f x
 variable {f x} in
 lemma partial_derivative_unique {b : R} (hb : ∀ (d : D R), f (update x i (x i + d)) = f x + b * d) :
     ∂_[i]f x = b :=
-  partial_deriv_fun_unique i  hb
+  partial_deriv_fun_unique i hb
 
 lemma partial_deriv_eq_deriv (r : Fin n → R) :
     ∂_[i] f r = ∂(fun y ↦ f (Function.update r i y)) (r i) := by
