@@ -197,7 +197,7 @@ lemma sum_prod_eq_sum_iic [AddCommGroup T] (k : Fin (n + 1) → ℕ)
 
 end iic_prod_equiv
 
-theorem taylor_multi_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
+theorem taylor_multi_aux_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
     (r : Fin n → R), f (r + d) = ∑ (α : Iic k), ∂[α.1]f r * ∏ i, (d i) ^ (α.1 i) * ⅟((α.1 i)! : R)
 | 0 => fun k f d r ↦ by
   simp only [univ_eq_attach, mixed_partial_deriv_zero, univ_eq_empty, prod_empty, mul_one,
@@ -216,7 +216,7 @@ theorem taylor_multi_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R)
   have hh : ∀ i, ∂_[last n]^[i] f (snoc (init (r + d)) (r (last n))) = h i (init (r + d)) :=
     fun _ ↦ rfl
   simp_rw [hfg, taylor_k g _ (k (last n)), ← hg, hh, init_R_add_D_fun,]
-  conv => enter [1, 2, x, 1, 1]; exact taylor_multi_aux (init k) ..
+  conv => enter [1, 2, x, 1, 1]; exact taylor_multi_aux_aux (init k) ..
   simp_rw [Finset.sum_mul, sum_prod_eq_sum_iic, iic_of_prod]
   congr
   ext α
@@ -230,10 +230,10 @@ theorem taylor_multi_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R)
   congr 2
   simp [h, partial_deriv_iterate_snoc_last, mixed_partial_deriv_initial]
 
-theorem taylor_multi (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
+theorem taylor_multi_aux (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
     (r : Fin n → R) : f (r + d) =
     ∑ α ∈ Iic k, ∂[α]f r * ∏ i, (d i) ^ (α i) * ⅟((α i)! : R) := by
-  convert taylor_multi_aux k f d r
+  convert taylor_multi_aux_aux k f d r
   rw [Finset.sum_subtype]
   intro α
   rfl
@@ -259,10 +259,10 @@ lemma exists_lt_of_mem_sdiff_Iic {α k : Fin n → ℕ}
   rw [Decidable.not_exists_not] at h
   exact (mem_sdiff.1 H).2 (mem_Iic.2 h)
 
-theorem taylor_multi_final (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
+theorem taylor_multi (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
     (r : Fin n → R) : f (r + d) =
     ∑ α ∈ natFunBoundedSum n (∑ i, k i), ∂[α]f r * ∏ i, (d i) ^ (α i) * ⅟((α i)! : R) := by
-  rw [taylor_multi k f, ← Finset.sum_sdiff (Iic_subset_natFunBoundedSum k)]
+  rw [taylor_multi_aux k f, ← Finset.sum_sdiff (Iic_subset_natFunBoundedSum k)]
   convert (zero_add _).symm
   refine Finset.sum_eq_zero (fun α hα ↦ ?_)
   convert mul_zero _
