@@ -1,5 +1,7 @@
 import Mathlib
 
+import SDG
+
 open Lean Meta Elab Command
 
 namespace ChoiceDeps
@@ -154,118 +156,12 @@ elab_rules : command
 
 end ChoiceDeps
 
-#print axioms List.count_erase
+#print axioms SDG.taylor_multi_final
 
-#print choice_deps_on_choice_dot Multiset.union_add_distrib
-
-/-
-Example:
-  #print choice_deps_on_choice     Finset.univ_eq_empty
-  #print choice_deps_on_choice_dot Nat.instLocallyFiniteOrder  -- paste output into GraphvizOnline
--/
-
--- ============================================================
-namespace NoncomputableDeps
-
-open Lean Meta Elab Command
-
-private abbrev DepSet := Std.HashSet Name
-
-/-- Collect all names used in the type/value of `decl`, minus `decl` itself. -/
-private def directDeps (env : Environment) (decl : Name) : DepSet :=
-  let addExprs (s : DepSet) (e : Expr) : DepSet :=
-    e.getUsedConstants.foldl (init := s) fun acc c => acc.insert c
-  let deps : DepSet := match env.checked.get.find? decl with
-    | some (.axiomInfo  v) => addExprs {} v.type
-    | some (.defnInfo   v) => addExprs (addExprs {} v.type) v.value
-    | some (.thmInfo    v) => addExprs (addExprs {} v.type) v.value
-    | some (.opaqueInfo v) => addExprs (addExprs {} v.type) v.value
-    | some (.ctorInfo   v) => addExprs {} v.type
-    | some (.recInfo    v) => addExprs {} v.type
-    | some (.inductInfo v) =>
-      v.ctors.foldl (init := addExprs {} v.type) fun acc c => acc.insert c
-    | _ => {}
-  deps.erase decl
-
-private def ncDotNode (n : Name) : String := "\"" ++ n.toString ++ "\""
-
-/-- BFS through the direct-dependency graph, collecting every node that
-    `Lean.isNoncomputable` flags as noncomputable.  The root is always
-    included (even when it is computable) so that its noncomputable deps
-    are visible. -/
-def noncomputableDepGraph (env : Environment) (root : Name)
-    : Array Name × NameMap (Array Name) := Id.run do
-  let mut bfsOrder : Array Name           := #[]
-  let mut graph    : NameMap (Array Name) := {}
-  let mut queue    : Array Name           := #[root]
-  let mut qHead    : Nat                  := 0
-  let mut visited  : DepSet              := {}
-  while qHead < queue.size do
-    let current := queue[qHead]!
-    qHead := qHead + 1
-    if visited.contains current then continue
-    visited := visited.insert current
-    bfsOrder := bfsOrder.push current
-    let allDeps := directDeps env current
-    -- Keep only deps that are themselves noncomputable
-    let ncDeps : Array Name :=
-      (allDeps.toArray.qsort Name.quickLt).filter fun d =>
-        d != current && isNoncomputable env d
-    for d in ncDeps do
-      if !visited.contains d then
-        queue := queue.push d
-    graph := graph.insert current ncDeps
-  return (bfsOrder, graph)
-
-/-- Emit a Graphviz DOT string for the noncomputable-dependency graph.
-    * root         → lightblue
-    * leaf nc node → tomato   (noncomputable, no further nc deps)
-    * inner nc node → lightyellow -/
-def formatDot (root : Name) (bfsOrder : Array Name) (graph : NameMap (Array Name)) : String :=
-  let edges : Array String :=
-    bfsOrder.foldl (init := #[]) fun acc n =>
-      ((graph.find? n).getD #[]).foldl (init := acc) fun acc2 d =>
-        acc2.push s!"  {ncDotNode n} -> {ncDotNode d};"
-  let allNodes : Array String :=
-    bfsOrder.foldl (init := #[]) fun acc n =>
-      let isRoot := n == root
-      let ncDeps := (graph.find? n).getD #[]
-      let color  :=
-        if isRoot then "lightblue"
-        else if ncDeps.isEmpty then "tomato"
-        else "lightyellow"
-      acc.push s!"  {ncDotNode n} [style=filled, fillcolor={color}];"
-  let body := (allNodes ++ edges).toList
-  "digraph noncomputable_deps {\n  rankdir=TB;\n  node [fontname=\"Helvetica\", fontsize=10];\n" ++
-    "\n".intercalate body ++
-    "\n}"
-
-syntax (name := printNcDepsDot) "#print " &"noncomputable_deps_dot" ppSpace ident : command
-
-elab_rules : command
-  | `(#print noncomputable_deps_dot $id:ident) => do
-    let targets ← liftCoreM <| realizeGlobalConstWithInfos id
-    let env ← getEnv
-    for target in targets do
-      let (bfsOrder, graph) := noncomputableDepGraph env target
-      -- Check whether anything interesting was found
-      let hasNcDep := bfsOrder.any fun n =>
-        !((graph.find? n).getD #[]).isEmpty ||
-        (n != target && isNoncomputable env n)
-      if !hasNcDep then
-        logInfo m!"{.ofConstName target}: no noncomputable dependencies found"
-      else
-        let dot := formatDot target bfsOrder graph
-        IO.FS.writeFile "graph.dot" dot
-        logInfo m!"DOT graph written to graph.dot\n\n{dot}"
-
-#print axioms Fintype.prod_equiv
-
-#print noncomputable_deps_dot Fintype.prod_equiv
-
-end NoncomputableDeps
+#print choice_deps_on_choice_dot SDG.taylor_multi_final
 
 /-
 Example:
-  #print noncomputable_deps_dot Nat.instLocallyFiniteOrder  -- paste into GraphvizOnline
+  #print choice_deps_on_choice     SDG.taylor_multi_final
+  #print choice_deps_on_choice_dot SDG.taylor_multi_final  -- paste output into GraphvizOnline
 -/
