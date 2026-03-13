@@ -30,7 +30,6 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
   simp [((cancel_d (fun _ ↦ cancel_d (fun _ ↦ this _ _))).symm : ∂∂f x = b 1 * 2), mul_assoc,
     mul_comm ((δ : R) ^ 2)]
 
-set_option backward.isDefEq.respectTransparency false in
 theorem taylor_k_aux {k : ℕ} [Divisible R] (f : R → R) (x : R) (d : Fin k → D R) :
     letI δ : R := ∑ n, d n
     f (x + δ) = ∑ n : Fin (k + 1), ∂^[n] f x * δ ^ (n : ℕ) * ⅟(n ! : R) :=
@@ -59,7 +58,8 @@ match k with
     Function.comp_apply, cons_last, val_last, zero_add, mul_assoc]
     rw [hδΔ, mem_D_add_pow, mem_D_sum_pow_succ, add_zero,
       mul_comm (↑(k + 1) : R), mul_assoc, mul_assoc, mul_comm (↑(k + 1) : R), mul_assoc,
-      succ_mul_inv_factorial_succ]
+      succ_mul_inv_factorial_succ, mul_comm _ (d 0).1]
+    simp [← mul_assoc, mul_invOf_eq_iff_eq_mul_right]
     ring
   obtain ⟨m, hm⟩ := eq_succ_of_ne_zero h
   simp only [succ_eq_add_one, snoc_castSucc, val_succ, Function.iterate_succ,
