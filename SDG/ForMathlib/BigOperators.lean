@@ -1,4 +1,4 @@
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.GroupWithZero.Defs
 
 set_option linter.unusedDecidableInType false
