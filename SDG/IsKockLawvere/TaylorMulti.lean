@@ -234,9 +234,7 @@ theorem taylor_multi_aux (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i
     (r : Fin n → R) : f (r + d) =
     ∑ α ∈ Iic k, ∂[α]f r * ∏ i, (d i) ^ (α i) * ⅟((α i)! : R) := by
   convert taylor_multi_aux_aux k f d r
-  rw [Finset.sum_subtype]
-  intro α
-  rfl
+  rw [Finset.sum_subtype _ (fun _ ↦ by rfl) _]
 
 def natFunBoundedSum (n k : ℕ) : Finset (Fin n → ℕ) :=
     (Fintype.piFinset fun _ ↦ Finset.range (k + 1)).filter (fun α ↦ ∑ i, α i ≤ k)
