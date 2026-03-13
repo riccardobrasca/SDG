@@ -1,4 +1,5 @@
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.GroupWithZero.Defs
 
 set_option linter.unusedDecidableInType false
 
@@ -38,5 +39,9 @@ theorem single_le_prod' [MulLeftMono N] (hf : ∀ i ∈ s, 1 ≤ f i) {a} (h : a
     f a = ∏ i ∈ {a}, f i := (prod_singleton _ _).symm
     _ ≤ ∏ i ∈ s, f i :=
       prod_le_prod_of_subset_of_one_le' (singleton_subset_iff.2 h) fun i hi _ ↦ hf i hi
+
+lemma prod_eq_zero {ι M₀ : Type*} [CommMonoidWithZero M₀] [DecidableEq ι] {f : ι → M₀}
+    {s : Finset ι} {i : ι} (hi : i ∈ s) (h : f i = 0) : ∏ j ∈ s, f j = 0 := by
+  rw [← prod_erase_mul _ _ hi, h, mul_zero]
 
 end SDG.Finset

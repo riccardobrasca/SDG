@@ -246,20 +246,27 @@ lemma mem_natFunBoundedSum {n k : ℕ} {α : Fin n → ℕ} : α ∈ natFunBound
   refine ⟨fun h ↦ h.2, fun h ↦ ⟨fun i ↦ Nat.lt_of_not_ge (fun hi ↦ Nat.not_lt_of_le h ?_), h⟩⟩
   exact Nat.succ_le_iff.1 (le_trans hi (SDG.Finset.single_le_sum (by simp) (mem_univ _)))
 
-lemma foo (k : Fin n → ℕ) : Iic k ⊆ natFunBoundedSum n (∑ i, k i) :=
+lemma Iic_subset_natFunBoundedSum (k : Fin n → ℕ) : Iic k ⊆ natFunBoundedSum n (∑ i, k i) :=
   fun _ hα ↦ mem_natFunBoundedSum.2 <| Finset.sum_le_sum (fun _ _ ↦ Pi.le_def.1 (mem_Iic.1 hα) _)
 
-lemma bar {α k : Fin n → ℕ} (h : α ∈ natFunBoundedSum n (∑ i, k i) \ Iic k) : ∃ i, k i < α i := by
-  sorry
+lemma exists_lt_of_mem_sdiff_Iic {α k : Fin n → ℕ}
+    (H : α ∈ natFunBoundedSum n (∑ i, k i) \ Iic k) : ∃ i, k i < α i := by
+  rw [← Decidable.not_not (p := ∃ i, k i < α i)]
+  intro h
+  replace h : ¬ ∃ i, ¬ k i ≥ α i := fun h1 ↦ h <| by
+    obtain ⟨i, hi⟩ := h1
+    refine ⟨i, by omega⟩
+  rw [Decidable.not_exists_not] at h
+  exact (mem_sdiff.1 H).2 (mem_Iic.2 h)
 
 theorem taylor_multi_final (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
     (r : Fin n → R) : f (r + d) =
     ∑ α ∈ natFunBoundedSum n (∑ i, k i), ∂[α]f r * ∏ i, (d i) ^ (α i) * ⅟((α i)! : R) := by
-  rw [taylor_multi k f, ← Finset.sum_sdiff (foo k)]
+  rw [taylor_multi k f, ← Finset.sum_sdiff (Iic_subset_natFunBoundedSum k)]
   convert (zero_add _).symm
   refine Finset.sum_eq_zero (fun α hα ↦ ?_)
   convert mul_zero _
-  obtain ⟨i, hi⟩ := bar hα
+  obtain ⟨i, hi⟩ := exists_lt_of_mem_sdiff_Iic hα
   refine Finset.prod_eq_zero (mem_univ i) ?_
   convert zero_mul _
   obtain ⟨a, ha⟩ := Nat.exists_eq_add_of_lt hi
