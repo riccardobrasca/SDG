@@ -2,6 +2,7 @@ import SDG.Axiom.UniqueChoice
 import SDG.Basic.D
 import SDG.Basic.Defs
 import SDG.Basic.FactorialInv
+import SDG.ForMathlib.BigOperators
 import SDG.ForMathlib.Fin
 import SDG.IsKockLawvere.Taylor
 import SDG.IsKockLawvere.TaylorMulti

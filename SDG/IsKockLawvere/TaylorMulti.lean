@@ -3,6 +3,7 @@ import Mathlib.Data.Pi.Interval
 
 import SDG.IsKockLawvere.Taylor
 import SDG.IsKockLawvere_one.PartialDeriv
+import SDG.ForMathlib.BigOperators
 
 open Function Finset Nat Fin
 
@@ -236,5 +237,33 @@ theorem taylor_multi (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, �
   rw [Finset.sum_subtype]
   intro α
   rfl
+
+def natFunBoundedSum (n k : ℕ) : Finset (Fin n → ℕ) :=
+    (Fintype.piFinset fun _ ↦ Finset.range (k + 1)).filter (fun α ↦ ∑ i, α i ≤ k)
+
+lemma mem_natFunBoundedSum {n k : ℕ} {α : Fin n → ℕ} : α ∈ natFunBoundedSum n k ↔ ∑ i, α i ≤ k := by
+  simp only [natFunBoundedSum, Finset.mem_filter, Fintype.mem_piFinset, Finset.mem_range]
+  refine ⟨fun h ↦ h.2, fun h ↦ ⟨fun i ↦ Nat.lt_of_not_ge (fun hi ↦ Nat.not_lt_of_le h ?_), h⟩⟩
+  exact Nat.succ_le_iff.1 (le_trans hi (SDG.Finset.single_le_sum (by simp) (mem_univ _)))
+
+lemma foo (k : Fin n → ℕ) : Iic k ⊆ natFunBoundedSum n (∑ i, k i) :=
+  fun _ hα ↦ mem_natFunBoundedSum.2 <| Finset.sum_le_sum (fun _ _ ↦ Pi.le_def.1 (mem_Iic.1 hα) _)
+
+lemma bar {α k : Fin n → ℕ} (h : α ∈ natFunBoundedSum n (∑ i, k i) \ Iic k) : ∃ i, k i < α i := by
+  sorry
+
+theorem taylor_multi_final (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
+    (r : Fin n → R) : f (r + d) =
+    ∑ α ∈ natFunBoundedSum n (∑ i, k i), ∂[α]f r * ∏ i, (d i) ^ (α i) * ⅟((α i)! : R) := by
+  rw [taylor_multi k f, ← Finset.sum_sdiff (foo k)]
+  convert (zero_add _).symm
+  refine Finset.sum_eq_zero (fun α hα ↦ ?_)
+  convert mul_zero _
+  obtain ⟨i, hi⟩ := bar hα
+  refine Finset.prod_eq_zero (mem_univ i) ?_
+  convert zero_mul _
+  obtain ⟨a, ha⟩ := Nat.exists_eq_add_of_lt hi
+  rw [ha, add_right_comm, pow_add]
+  simp
 
 end SDG
