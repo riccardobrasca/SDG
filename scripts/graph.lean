@@ -156,9 +156,9 @@ elab_rules : command
 
 end ChoiceDeps
 
-#print axioms SDG.taylor_multi_final
+#print axioms SDG.taylor_multi
 
-#print choice_deps_on_choice_dot SDG.taylor_multi_final
+#print choice_deps_on_choice_dot SDG.taylor_multi
 
 /-
 Example:
