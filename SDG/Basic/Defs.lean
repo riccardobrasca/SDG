@@ -28,9 +28,9 @@ abbrev D := 𝔻 R 1
 
 variable {R}
 
-@[simp] lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := Iff.rfl
+lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := Iff.rfl
 
-@[simp] lemma 𝔻_mem_iff {x : R} {k : ℕ} : x ∈ 𝔻 R k ↔ x ^ (k + 1) = 0 := Iff.rfl
+lemma 𝔻_mem_iff {x : R} {k : ℕ} : x ∈ 𝔻 R k ↔ x ^ (k + 1) = 0 := Iff.rfl
 
 variable (R) (k : ℕ)
 

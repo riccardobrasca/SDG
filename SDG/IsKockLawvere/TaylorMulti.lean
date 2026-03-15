@@ -184,6 +184,7 @@ theorem taylor_multi_aux (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i
   convert taylor_multi_aux_aux k f d r
   rw [Finset.sum_subtype _ (fun _ ↦ by rfl) _]
 
+/-- The set of functions `Fin n → ℕ` whose values sum to at most `k`. -/
 def nat_fun_bounded_sum (n k : ℕ) : Finset (Fin n → ℕ) :=
     (Fintype.piFinset fun _ ↦ Finset.range (k + 1)).filter (fun α ↦ ∑ i, α i ≤ k)
 

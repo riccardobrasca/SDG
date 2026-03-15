@@ -58,7 +58,7 @@ lemma inv_factorial_smul_succ_iff {R : Type*} [CommRing R] [Algebra ℚ R] {n : 
       factorial_succ, Nat.cast_mul, mul_inv_rev, mul_assoc, inv_mul_cancel₀ hn1, mul_one]
 
 /-- `(n : ℚ)⁻¹ • (n : R) = 1` for `n ≠ 0`, via the algebra map. -/
-lemma inv_natCast_smul_natCast {R : Type*} [CommRing R] [Nontrivial R] [Algebra ℚ R] {n : ℕ}
+lemma inv_natCast_smul_natCast {R : Type*} [CommRing R] [Algebra ℚ R] {n : ℕ}
     (hn : n ≠ 0) : (n : ℚ)⁻¹ • (n : R) = 1 := by
   rw [Algebra.smul_def, ← map_natCast (algebraMap ℚ R) n, ← map_mul, inv_mul_cancel₀
     (Nat.cast_ne_zero.2 hn), map_one]
