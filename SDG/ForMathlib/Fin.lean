@@ -6,6 +6,7 @@ import SDG.Linters.choice
 # Fin product lemmas
 
 Simplification lemmas for products over `Fin n` involving `cons`, `snoc`, and `castLE`.
+These are candidates for upstreaming to Mathlib.
 -/
 
 open Fin
