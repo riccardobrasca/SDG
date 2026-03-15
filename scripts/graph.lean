@@ -127,19 +127,7 @@ def formatDot (root : Name) (bfsOrder : Array Name) (graph : NameMap (Array Name
     "\n".intercalate body ++
     "\n}"
 
-syntax (name := printChoiceDeps) "#print " &"choice_deps_on_choice" ppSpace ident : command
 syntax (name := printChoiceDepsDot) "#print " &"choice_deps_on_choice_dot" ppSpace ident : command
-
-elab_rules : command
-  | `(#print choice_deps_on_choice $id:ident) => do
-    let targets ← liftCoreM <| realizeGlobalConstWithInfos id
-    let env ← getEnv
-    for target in targets do
-      let (bfsOrder, graph) := choiceDependencyGraph env target
-      if graph.isEmpty then
-        logInfo m!"{.ofConstName target}: no dependency on Classical.choice"
-      else
-        logInfo m!"{.ofConstName target}:\n{formatGraph bfsOrder graph}"
 
 elab_rules : command
   | `(#print choice_deps_on_choice_dot $id:ident) => do
@@ -156,12 +144,7 @@ elab_rules : command
 
 end ChoiceDeps
 
-#print axioms SDG.taylor_multi
-
-#print choice_deps_on_choice_dot SDG.taylor_multi
-
 /-
 Example:
-  #print choice_deps_on_choice     SDG.taylor_multi_final
-  #print choice_deps_on_choice_dot SDG.taylor_multi_final  -- paste output into GraphvizOnline
+  #print choice_deps_on_choice_dot SDG.taylor_multi  -- paste output into GraphvizOnline
 -/
