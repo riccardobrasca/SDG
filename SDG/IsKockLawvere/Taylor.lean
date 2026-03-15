@@ -130,7 +130,7 @@ theorem taylor_k_aux' [Algebra ℚ R] (k : ℕ) (f : R → R) (x : R) (b : Fin (
     id_eq, pow_zero, factorial_zero, cast_one, inv_one, one_smul, mul_one, add_right_inj,
       sum_univ_succ (n := k), val_zero, zero_add, pow_one, hb_deriv, sum_univ_succ (n := n + 1),
       val_succ, val_zero, zero_add, Function.iterate_one, pow_one, factorial_one, cast_one,
-      inv_one, one_smul, add_right_inj, sum_castLe_of_eq_zero (le_of_lt_succ hn) _
+      inv_one, one_smul, add_right_inj, sum_castLE_of_eq_zero (le_of_lt_succ hn) _
       (fun _ h ↦ by convert mul_zero _; exact 𝔻_le (succ_le_succ h) (mem_D_sum_pow_succ d)),
       sum_univ_succAbove _ (last n), sum_univ_succAbove _ (last n)] at Hb
   replace Hb := (eq_iff_eq_of_add_eq_add Hb).mpr ?_

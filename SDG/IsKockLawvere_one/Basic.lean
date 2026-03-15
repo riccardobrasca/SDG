@@ -2,6 +2,12 @@ import Mathlib.Algebra.BigOperators.Fin
 
 import SDG.Basic.Defs
 
+/-!
+# Basic consequences of the first-order Kock-Lawvere axiom
+
+Infinitesimal cancellation (`cancel_d`, `cancel_d_fun`) and nontriviality of `D R`.
+-/
+
 namespace SDG
 
 variable {R : Type*} [CommRing R] [IsKockLawvere_one R]
@@ -26,7 +32,7 @@ lemma cancel_d_fun {b₁ b₂ : R} : ∀ (k : ℕ),
   simp
 
 variable (R) in
-lemma D_neq_zero : ¬(∀ d ∈ D R, d = 0) := by
+lemma D_ne_zero : ¬(∀ d ∈ D R, d = 0) := by
   intro h
   obtain ⟨b, hb, hbunique⟩ := isKockLawvere_one (fun _ ↦ (0 : R))
   exact one_ne_zero <| hbunique 0 (by simp) ▸ hbunique 1 (fun ⟨d, hd⟩ ↦ by simp [h _ hd])

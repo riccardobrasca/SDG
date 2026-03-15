@@ -4,6 +4,7 @@ import SDG.Axiom.UniqueChoice
 import SDG.Basic.D
 import SDG.Basic.Defs
 import SDG.ForMathlib.Fin
+import SDG.ForMathlib.PiIic
 import SDG.IsKockLawvere.Taylor
 import SDG.IsKockLawvere.TaylorMulti
 import SDG.IsKockLawvere_one.Basic

@@ -4,6 +4,7 @@ import Mathlib.Data.Pi.Interval
 import SDG.IsKockLawvere.Taylor
 import SDG.IsKockLawvere_one.PartialDeriv
 import SDG.Axiom.BigOperators
+import SDG.ForMathlib.PiIic
 
 open Function Finset Nat Fin
 
@@ -145,58 +146,6 @@ theorem mixed_partial_deriv_initial (k : Fin (n + 1) → ℕ) (f : (Fin (n + 1) 
 
 variable [Algebra ℚ R] [IsKockLawvere R]
 
-section iic_prod_equiv
-
-open Pi
-
-variable {T : Type*} {k : Fin (n + 1) → ℕ}
-
-/-- Convert a curried function over the last index and the remaining `Iic (init k)` into
-a function over `Iic k`. -/
-def iic_of_prod (f : (Fin (k (last n) + 1)) → (Iic (init k)) → T) : Iic k → T := fun x ↦
-  f ⟨x.1 _, Nat.lt_add_one_iff.mpr ((le_def.1 <| mem_Iic.1 x.2) _)⟩
-    ⟨init x.1, mem_Iic.2 (le_def.2 fun i ↦ le_def.1 (mem_Iic.1 x.2) (castSucc i))⟩
-
-/-- Convert a function over `Iic k` into a curried function over the last index and
-`Iic (init k)`. -/
-def prod_of_iic (f : Iic k → T) : (Fin (k (last n) + 1)) → (Iic (init k)) → T := fun x i ↦
-    f ⟨fun j ↦ if h : j = last n then x.1 else i.1 (castPred _ h), by
-  refine mem_Iic.2 (fun j ↦ ?_)
-  by_cases h : j = last _
-  · simp [h]; omega
-  · simpa [init, castSucc_castPred j h, h] using le_def.1 (mem_Iic.1 i.2) _⟩
-
-lemma prod_of_iic_of_prod (f : (Fin (k (last n) + 1)) → (Iic (init k)) → T) :
-    prod_of_iic (iic_of_prod f) = f := by
-  ext x i; refine congr_arg₂ f (Fin.ext ?_) (Subtype.ext (funext fun m ↦ ?_)) <;>
-  simp [init]
-
-lemma iic_of_prod_of_iic (f : Iic k → T) : iic_of_prod (prod_of_iic f) = f := by
-  ext y; refine congr_arg f ?_; ext j
-  by_cases h : j = last _ <;>
-  simp [h, init]
-
-/-- Equivalence between `Fin (k (last n) + 1) × Iic (init k)` and `Iic k`. -/
-def iic_equiv : Fin (k (last n) + 1) × (Iic (init k)) ≃ (Iic k) where
-  toFun p := ⟨fun j ↦ if h : j = last n then p.1.1 else p.2.1 (castPred _ h), by
-    refine mem_Iic.2 (fun j ↦ ?_)
-    by_cases h : j = last _
-    · simp [h]; omega
-    · simpa [init, castSucc_castPred j h, h] using le_def.1 (mem_Iic.1 p.2.2) _⟩
-  invFun y := (⟨y.1 (last n), Nat.lt_add_one_iff.mpr ((le_def.1 <| mem_Iic.1 y.2) _)⟩,
-    ⟨init y.1, mem_Iic.2 (le_def.2 fun i ↦ le_def.1 (mem_Iic.1 y.2) (castSucc i))⟩)
-  left_inv p := Prod.ext (Fin.ext (by simp))
-    (Subtype.ext (funext fun m ↦ by simp [init, castPred_castSucc]))
-  right_inv y := Subtype.ext (funext fun j ↦ by by_cases h : j = last _ <;> simp [h, init])
-
-lemma sum_prod_eq_sum_iic [AddCommGroup T] (k : Fin (n + 1) → ℕ)
-    (f : (Fin (k (last n) + 1)) → (Iic (init k)) → T) : ∑ x, ∑ i, f x i = ∑ i, iic_of_prod f i := by
-  rw [← Finset.sum_product']
-  exact Fintype.sum_equiv iic_equiv _ _ fun p ↦
-    (congr_fun (congr_fun (prod_of_iic_of_prod f) p.1) p.2).symm
-
-end iic_prod_equiv
-
 theorem taylor_multi_aux_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
     (r : Fin n → R), f (r + d) =
       ∑ (α : Iic k), ∂[α.1]f r * ∏ i, ((α.1 i)! : ℚ)⁻¹ • (d i : R) ^ (α.1 i)
@@ -218,7 +167,7 @@ theorem taylor_multi_aux_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) �
     fun _ ↦ rfl
   simp_rw [hfg, taylor_k g _ (k (last n)), ← hg, hh, init_R_add_D_fun,]
   conv => enter [1, 2, x, 1]; exact taylor_multi_aux_aux (init k) ..
-  simp_rw [Finset.sum_mul, sum_prod_eq_sum_iic, iic_of_prod]
+  simp_rw [Finset.sum_mul, sum_prod_eq_sum_Iic, Iic_of_prod]
   congr
   ext α
   rw [mul_rotate _ (∏ _, _), prod_smul, smul_mul_smul, prod_smul, mul_smul_comm, smul_mul_assoc]
@@ -235,19 +184,20 @@ theorem taylor_multi_aux (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i
   convert taylor_multi_aux_aux k f d r
   rw [Finset.sum_subtype _ (fun _ ↦ by rfl) _]
 
-def natFunBoundedSum (n k : ℕ) : Finset (Fin n → ℕ) :=
+def nat_fun_bounded_sum (n k : ℕ) : Finset (Fin n → ℕ) :=
     (Fintype.piFinset fun _ ↦ Finset.range (k + 1)).filter (fun α ↦ ∑ i, α i ≤ k)
 
-lemma mem_natFunBoundedSum {n k : ℕ} {α : Fin n → ℕ} : α ∈ natFunBoundedSum n k ↔ ∑ i, α i ≤ k := by
-  simp only [natFunBoundedSum, Finset.mem_filter, Fintype.mem_piFinset, Finset.mem_range]
+lemma mem_nat_fun_bounded_sum {n k : ℕ} {α : Fin n → ℕ} :
+    α ∈ nat_fun_bounded_sum n k ↔ ∑ i, α i ≤ k := by
+  simp only [nat_fun_bounded_sum, Finset.mem_filter, Fintype.mem_piFinset, Finset.mem_range]
   refine ⟨fun h ↦ h.2, fun h ↦ ⟨fun i ↦ Nat.lt_of_not_ge (fun hi ↦ Nat.not_lt_of_le h ?_), h⟩⟩
   exact Nat.succ_le_iff.1 (le_trans hi (SDG.Finset.single_le_sum (by simp) (mem_univ _)))
 
-lemma Iic_subset_natFunBoundedSum (k : Fin n → ℕ) : Iic k ⊆ natFunBoundedSum n (∑ i, k i) :=
-  fun _ hα ↦ mem_natFunBoundedSum.2 <| Finset.sum_le_sum (fun _ _ ↦ Pi.le_def.1 (mem_Iic.1 hα) _)
+lemma Iic_subset_nat_fun_bounded_sum (k : Fin n → ℕ) : Iic k ⊆ nat_fun_bounded_sum n (∑ i, k i) :=
+  fun _ hα ↦ mem_nat_fun_bounded_sum.2 <| Finset.sum_le_sum (fun _ _ ↦ Pi.le_def.1 (mem_Iic.1 hα) _)
 
 lemma exists_lt_of_mem_sdiff_Iic {α k : Fin n → ℕ}
-    (H : α ∈ natFunBoundedSum n (∑ i, k i) \ Iic k) : ∃ i, k i < α i := by
+    (H : α ∈ nat_fun_bounded_sum n (∑ i, k i) \ Iic k) : ∃ i, k i < α i := by
   rw [← Decidable.not_not (p := ∃ i, k i < α i)]
   intro h
   replace h : ¬ ∃ i, ¬ k i ≥ α i := fun h1 ↦ h <| by
@@ -258,8 +208,8 @@ lemma exists_lt_of_mem_sdiff_Iic {α k : Fin n → ℕ}
 
 theorem taylor_multi (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
     (r : Fin n → R) : f (r + d) =
-    ∑ α ∈ natFunBoundedSum n (∑ i, k i), ∂[α]f r * ∏ i, ((α i)! : ℚ)⁻¹ • (d i : R) ^ (α i) := by
-  rw [taylor_multi_aux k f, ← Finset.sum_sdiff (Iic_subset_natFunBoundedSum k)]
+    ∑ α ∈ nat_fun_bounded_sum n (∑ i, k i), ∂[α]f r * ∏ i, ((α i)! : ℚ)⁻¹ • (d i : R) ^ (α i) := by
+  rw [taylor_multi_aux k f, ← Finset.sum_sdiff (Iic_subset_nat_fun_bounded_sum k)]
   convert (zero_add _).symm
   refine Finset.sum_eq_zero (fun α hα ↦ ?_)
   convert mul_zero _

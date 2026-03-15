@@ -5,6 +5,13 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 import SDG.Axiom.UniqueChoice
 
+/-!
+# Core definitions for Synthetic Differential Geometry
+
+This file defines the subsemigroups `D R` and `𝔻 R k` of nilpotent elements, the Kock-Lawvere
+axioms (`IsKockLawvere_one` and `IsKockLawvere`), and the synthetic derivative `deriv_fun`.
+-/
+
 open BigOperators
 
 namespace SDG
@@ -19,13 +26,11 @@ abbrev 𝔻 (k : ℕ) : Subsemigroup R where
 /-- The first-order infinitesimals: `{x : R | x^2 = 0}`. -/
 abbrev D := 𝔻 R 1
 
-lemma D_eq_𝔻_one : D R = 𝔻 R 1 := rfl
-
 variable {R}
 
-lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := Iff.rfl
+@[simp] lemma D_mem_iff {x : R} : x ∈ D R ↔ x ^ 2 = 0 := Iff.rfl
 
-lemma 𝔻_mem_iff {x : R} {k : ℕ} : x ∈ 𝔻 R k ↔ x ^ (k + 1) = 0 := Iff.rfl
+@[simp] lemma 𝔻_mem_iff {x : R} {k : ℕ} : x ∈ 𝔻 R k ↔ x ^ (k + 1) = 0 := Iff.rfl
 
 variable (R) (k : ℕ)
 

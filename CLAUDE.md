@@ -52,11 +52,10 @@ This is a weak form of choice (unique choice). The `detectClassical` linter (in 
 
 ### One-variable calculus (`SDG/IsKockLawvere_one/`)
 
-- **`Basic.lean`** — `cancel_d` (infinitesimal cancellation), `cancel_d_fun` (iterated version), `D_neq_zero`.
+- **`Basic.lean`** — `cancel_d` (infinitesimal cancellation), `cancel_d_fun` (iterated version), `D_ne_zero`.
 - **`Deriv.lean`** — The derivative `∂f` (notation for `derivFun f`) as a `Derivation R (R→R) (R→R)`. Proves: `taylor_one`, `chain_rule`, `deriv_mul`, `deriv_X_pow`, etc.
-- **`PartialDeriv.lean`** — Partial derivatives `∂_[i]f` for multivariate functions `(Fin n → R) → R`. Proves commutativity of partial derivatives (`partial_deriv_comm`), `partial_taylor_one`, and `prop41_ex` (a representation theorem for functions `(Fin n → D R) → R`).
-- **`Alpha.lean`** — Shows `DualNumber R ≃ (D R → R)` via the algebra map `α`, with injectivity and surjectivity under `IsKockLawvere_one`.
-- **`EM.lean`** — Related results.
+- **`PartialDeriv.lean`** — Partial derivatives `∂_[i]f` for multivariate functions `(Fin n → R) → R`. Proves commutativity of partial derivatives (`partial_deriv_comm`) and `partial_taylor_one`.
+- **`EM.lean`** — Proves that the Kock-Lawvere axiom contradicts classical logic (`false_of_isKockLawvere_one`), and nontriviality of `D R`.
 
 ### Higher-order / multivariate calculus (`SDG/IsKockLawvere/`)
 

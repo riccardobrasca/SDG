@@ -5,26 +5,24 @@ import Mathlib.Algebra.BigOperators.Fin
 
 import SDG.Basic.Defs
 
+/-!
+# Lemmas about nilpotent subsemigroups
+
+Algebraic properties of `D R` and `𝔻 R k`: closure under multiplication, powers, sums of
+nilpotents, and related combinatorial identities involving factorials.
+-/
+
 namespace SDG
 
 open Function BigOperators Nat
 
 variable {R : Type*} [CommRing R] {k : ℕ}
 
-lemma D_mul_mem {x : R} (y : R) (hx : x ∈ D R) : y * x ∈ D R := by
-  simp [mul_pow, D_mem_iff.1 hx]
-
-lemma D_mem_mul {x : R} (y : R) (hx : x ∈ D R) : x * y ∈ D R := by
-  simp [mul_pow, D_mem_iff.1 hx]
-
 lemma 𝔻_mul_mem {x : R} (y : R) (hx : x ∈ 𝔻 R k) : y * x ∈ 𝔻 R k := by
   simp [mul_pow, 𝔻_mem_iff.1 hx]
 
 lemma 𝔻_mem_mul {x : R} (y : R) (hx : x ∈ 𝔻 R k) : x * y ∈ 𝔻 R k := by
   simp [mul_pow, 𝔻_mem_iff.1 hx]
-
-lemma D_sq (x : D R) : (x : R) ^ 2 = 0 :=
-  x.2
 
 @[simp] lemma 𝔻_pow (x : 𝔻 R k) : (x : R) ^ (k + 1) = 0 :=
   x.2

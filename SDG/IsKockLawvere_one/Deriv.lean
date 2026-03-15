@@ -81,10 +81,10 @@ theorem deriv_mul (f g : R → R) : ∂(f * g) = ∂f * g + f * ∂g := by
 theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
   refine derivative_unique (fun d ↦ ?_)
   calc (f ∘ g) (x + d) = f (g x + ∂g x * d) := by rw [Function.comp_apply, taylor_one g]
-       _ = f (g x + (⟨_, D_mul_mem _ d.2⟩ : D R)) := by rfl
+       _ = f (g x + (⟨_, 𝔻_mul_mem _ d.2⟩ : D R)) := by rfl
        _ = (f ∘ g) x + (∂f (g x) * ∂g x) * d := by rw [taylor_one f, Function.comp_apply]; ring
 
-theorem chain_rulefun (f g : R → R) : ∂(f ∘ g) = ∂f ∘ g * ∂g := by
+theorem chain_rule_fun (f g : R → R) : ∂(f ∘ g) = ∂f ∘ g * ∂g := by
   ext x
   simp [chain_rule]
 
@@ -107,7 +107,7 @@ theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R
 theorem deriv_equiv (f : R ≃ R) : ∂↑f⁻¹ * ∂f ∘ ↑f⁻¹ = 1 := by
   ext x
   have : ∂ (f.invFun ∘ f) = 1 := by simp
-  rw [chain_rulefun, funext_iff] at this
+  rw [chain_rule_fun, funext_iff] at this
   simpa using this (f.invFun x)
 
 end IsKockLawvere_one

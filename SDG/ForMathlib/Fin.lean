@@ -19,7 +19,7 @@ theorem prod_snoc_one (f : Fin n → M) :
   simp
 
 @[to_additive]
-theorem prod_castLe_of_eq_one {a b : ℕ} (h : a ≤ b) (f : Fin b → M)
+theorem prod_castLE_of_eq_one {a b : ℕ} (h : a ≤ b) (f : Fin b → M)
     (hf : ∀ i, a ≤ i.1 → f i = 1) : ∏ i, f i = ∏ i, f (Fin.castLE h i) := by
   rcases Nat.exists_eq_add_of_le h with ⟨k, rfl⟩
   rw [prod_univ_add]
