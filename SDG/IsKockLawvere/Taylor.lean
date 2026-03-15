@@ -42,7 +42,6 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
     mul_comm ((δ : R) ^ 2)]
 
 open Nat in
-/-- Relates consecutive factorial scalings: `(n!)⁻¹ • y = ((n+1)!)⁻¹ • x ↔ x = (n+1) * y`. -/
 lemma inv_factorial_smul_succ_iff {R : Type*} [CommRing R] [Algebra ℚ R] {n : ℕ} {x y : R} :
     (n ! : ℚ)⁻¹ • y = ((n + 1)! : ℚ)⁻¹ • x ↔ x = (n + 1) * y := by
   have hfact : (n ! : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.factorial_pos n).ne'
