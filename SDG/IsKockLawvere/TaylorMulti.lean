@@ -3,7 +3,7 @@ import Mathlib.Data.Pi.Interval
 
 import SDG.IsKockLawvere.Taylor
 import SDG.IsKockLawvere_one.PartialDeriv
-import SDG.ForMathlib.BigOperators
+import SDG.Axiom.BigOperators
 
 open Function Finset Nat Fin
 
@@ -221,14 +221,12 @@ theorem taylor_multi_aux_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) �
   simp_rw [Finset.sum_mul, sum_prod_eq_sum_iic, iic_of_prod]
   congr
   ext α
-  rw [mul_rotate _ (∏ _, _), mul_comm (∂[α.1]f r), mul_right_comm, mul_right_comm (∏ _, _), mul_comm
-    (∏ _, _), prod_mul_distrib, mul_comm (∏ _, _), ← mul_assoc, mul_assoc (_ * (∏ _, _)),
-    mul_assoc (_ * (∏ _, _)), prod_mul_distrib, mul_comm (∏ _, _) (∏ _, _), mul_assoc (∏ _, _)]
+  rw [mul_rotate _ (∏ _, _), prod_smul, smul_mul_smul, prod_smul, mul_smul_comm, smul_mul_assoc]
   congr 1
-  · rw [mul_comm, prod_univ_castSucc]
+  · rw [prod_univ_castSucc]
     rfl
-  rw [prod_univ_castSucc, mul_assoc]
-  congr 2
+  rw [mul_comm (∂[α.1]f r), prod_univ_castSucc]
+  congr 1
   simp [h, partial_deriv_iterate_snoc_last, mixed_partial_deriv_initial]
 
 theorem taylor_multi_aux (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))

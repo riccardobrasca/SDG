@@ -1,7 +1,5 @@
-import Mathlib.Tactic.FieldSimp
-
+import SDG.Axiom.Instances
 import SDG.IsKockLawvere_one.Deriv
-import SDG.Basic.FactorialInv
 import SDG.ForMathlib.Fin
 
 open Fin
@@ -31,16 +29,6 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
   congr 2
   simp [((cancel_d (fun _ ↦ cancel_d (fun _ ↦ this _ _))).symm : ∂∂f x = b 1 * 2), mul_assoc,
     mul_comm ((δ : R) ^ 2)]
-
-instance (priority := high) : AddMonoidWithOne ℚ :=
-  Rat.semiring.toNonAssocSemiring.toAddCommMonoidWithOne.toAddMonoidWithOne
-
-instance (priority := high) : InvolutiveInv ℚ where
-  inv_inv := Rat.inv_inv
-
-instance (priority := high) : DivisionMonoid ℚ where
-  mul_inv_rev := Rat.inv_mul_rev
-  inv_eq_of_mul _ _ := Rat.inv_eq_of_mul_eq_one
 
 open Nat in
 lemma key {R : Type*} [CommRing R] [Algebra ℚ R] {n : ℕ} {x y : R} :
