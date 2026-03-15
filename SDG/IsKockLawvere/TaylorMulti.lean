@@ -143,7 +143,7 @@ theorem mixed_partial_deriv_initial (k : Fin (n + 1) → ℕ) (f : (Fin (n + 1) 
     rw [mixed_partial_deriv_succ_eq_init_deriv, ← snoc_init_self r, mixed_partial_deriv_snoc]
   rfl
 
-variable [Divisible R] [IsKockLawvere R]
+variable [Algebra ℚ R] [IsKockLawvere R]
 
 section iic_prod_equiv
 
@@ -198,7 +198,8 @@ lemma sum_prod_eq_sum_iic [AddCommGroup T] (k : Fin (n + 1) → ℕ)
 end iic_prod_equiv
 
 theorem taylor_multi_aux_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
-    (r : Fin n → R), f (r + d) = ∑ (α : Iic k), ∂[α.1]f r * ∏ i, (d i) ^ (α.1 i) * ⅟((α.1 i)! : R)
+    (r : Fin n → R), f (r + d) =
+      ∑ (α : Iic k), ∂[α.1]f r * ∏ i, ((α.1 i)! : ℚ)⁻¹ • (d i : R) ^ (α.1 i)
 | 0 => fun k f d r ↦ by
   simp only [univ_eq_attach, mixed_partial_deriv_zero, univ_eq_empty, prod_empty, mul_one,
     Finset.sum_const, card_attach, nsmul_eq_mul]
@@ -216,7 +217,7 @@ theorem taylor_multi_aux_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) �
   have hh : ∀ i, ∂_[last n]^[i] f (snoc (init (r + d)) (r (last n))) = h i (init (r + d)) :=
     fun _ ↦ rfl
   simp_rw [hfg, taylor_k g _ (k (last n)), ← hg, hh, init_R_add_D_fun,]
-  conv => enter [1, 2, x, 1, 1]; exact taylor_multi_aux_aux (init k) ..
+  conv => enter [1, 2, x, 1]; exact taylor_multi_aux_aux (init k) ..
   simp_rw [Finset.sum_mul, sum_prod_eq_sum_iic, iic_of_prod]
   congr
   ext α
@@ -232,7 +233,7 @@ theorem taylor_multi_aux_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) �
 
 theorem taylor_multi_aux (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
     (r : Fin n → R) : f (r + d) =
-    ∑ α ∈ Iic k, ∂[α]f r * ∏ i, (d i) ^ (α i) * ⅟((α i)! : R) := by
+    ∑ α ∈ Iic k, ∂[α]f r * ∏ i, ((α i)! : ℚ)⁻¹ •(d i : R) ^ (α i) := by
   convert taylor_multi_aux_aux k f d r
   rw [Finset.sum_subtype _ (fun _ ↦ by rfl) _]
 
@@ -259,14 +260,14 @@ lemma exists_lt_of_mem_sdiff_Iic {α k : Fin n → ℕ}
 
 theorem taylor_multi (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
     (r : Fin n → R) : f (r + d) =
-    ∑ α ∈ natFunBoundedSum n (∑ i, k i), ∂[α]f r * ∏ i, (d i) ^ (α i) * ⅟((α i)! : R) := by
+    ∑ α ∈ natFunBoundedSum n (∑ i, k i), ∂[α]f r * ∏ i, ((α i)! : ℚ)⁻¹ • (d i : R) ^ (α i) := by
   rw [taylor_multi_aux k f, ← Finset.sum_sdiff (Iic_subset_natFunBoundedSum k)]
   convert (zero_add _).symm
   refine Finset.sum_eq_zero (fun α hα ↦ ?_)
   convert mul_zero _
   obtain ⟨i, hi⟩ := exists_lt_of_mem_sdiff_Iic hα
   refine Finset.prod_eq_zero (mem_univ i) ?_
-  convert zero_mul _
+  convert smul_zero _
   obtain ⟨a, ha⟩ := Nat.exists_eq_add_of_lt hi
   rw [ha, add_right_comm, pow_add]
   simp
