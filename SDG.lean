@@ -1,8 +1,8 @@
+import SDG.Axiom.BigOperators
 import SDG.Axiom.Instances
 import SDG.Axiom.UniqueChoice
 import SDG.Basic.D
 import SDG.Basic.Defs
-import SDG.ForMathlib.BigOperators
 import SDG.ForMathlib.Fin
 import SDG.IsKockLawvere.Taylor
 import SDG.IsKockLawvere.TaylorMulti
