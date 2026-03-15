@@ -2,6 +2,12 @@ import Mathlib.Algebra.BigOperators.Fin
 
 import SDG.Linters.choice
 
+/-!
+# Fin product lemmas
+
+Simplification lemmas for products over `Fin n` involving `cons`, `snoc`, and `castLE`.
+-/
+
 open Fin
 
 namespace Fin
