@@ -9,6 +9,17 @@ open IsKockLawvere Nat
 
 variable {R : Type*} [CommRing R] [IsKockLawvere R]
 
+private theorem taylor_two_aux [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
+    letI δ : R := d₁ + d₂
+    f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 :=
+  calc f (x + (d₁ + d₂)) = f (x + d₁ + d₂) := by rw [add_assoc]
+       _ = f (x + d₁) + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
+       _ = f x + ∂f x * d₁ + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
+       _ = f x + ∂f x * d₁ + (∂f x + ∂∂f x * d₁) * d₂ := by rw [taylor_one ∂f]
+       _ = f x + ∂f x * (d₁ + d₂) + ∂∂f x * (d₁ * d₂) := by ring
+       _ = f x + ∂f x * (d₁ + d₂) + ∂∂f x * ((d₁ + d₂) ^ 2 * ⅟2) := by rw [D_add_sq_dvd_two]
+       _ = _ := by ring
+
 theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
     f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 := by
   let g_x : 𝔻 R 2 → R := fun d ↦ f (x + d)
@@ -31,7 +42,8 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
     mul_comm ((δ : R) ^ 2)]
 
 open Nat in
-lemma key {R : Type*} [CommRing R] [Algebra ℚ R] {n : ℕ} {x y : R} :
+/-- Relates consecutive factorial scalings: `(n!)⁻¹ • y = ((n+1)!)⁻¹ • x ↔ x = (n+1) * y`. -/
+lemma inv_factorial_smul_succ_iff {R : Type*} [CommRing R] [Algebra ℚ R] {n : ℕ} {x y : R} :
     (n ! : ℚ)⁻¹ • y = ((n + 1)! : ℚ)⁻¹ • x ↔ x = (n + 1) * y := by
   have hfact : (n ! : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.factorial_pos n).ne'
   have hn1 : (↑(n + 1) : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.succ_ne_zero n)
@@ -46,8 +58,9 @@ lemma key {R : Type*} [CommRing R] [Algebra ℚ R] {n : ℕ} {x y : R} :
   · rw [h, show (↑n + 1 : R) * y = (↑(n + 1) : ℚ) • y by simp [Algebra.smul_def], smul_smul,
       factorial_succ, Nat.cast_mul, mul_inv_rev, mul_assoc, inv_mul_cancel₀ hn1, mul_one]
 
-lemma key1 {R : Type*} [CommRing R] [Nontrivial R] [Algebra ℚ R] {n : ℕ} (hn : n ≠ 0) :
-    (n : ℚ)⁻¹ • (n : R) = 1 := by
+/-- `(n : ℚ)⁻¹ • (n : R) = 1` for `n ≠ 0`, via the algebra map. -/
+lemma inv_natCast_smul_natCast {R : Type*} [CommRing R] [Nontrivial R] [Algebra ℚ R] {n : ℕ}
+    (hn : n ≠ 0) : (n : ℚ)⁻¹ • (n : R) = 1 := by
   rw [Algebra.smul_def, ← map_natCast (algebraMap ℚ R) n, ← map_mul, inv_mul_cancel₀
     (Nat.cast_ne_zero.2 hn), map_one]
 
@@ -78,7 +91,7 @@ match k with
     rw [hδΔ, mem_D_add_pow, mem_D_sum_pow_succ, add_zero,
       mul_comm (↑(k + 1) : R), mul_assoc, mul_comm (↑(k + 1) : R)]
     congr
-    simp [key]
+    simp [inv_factorial_smul_succ_iff]
     ring
   obtain ⟨m, hm⟩ := eq_succ_of_ne_zero h
   simp only [succ_eq_add_one, snoc_castSucc, val_succ, Function.iterate_succ,
@@ -90,7 +103,7 @@ match k with
   congr
   rw [← mul_assoc, ← smul_mul_assoc]
   congr 1
-  simp [key]
+  simp [inv_factorial_smul_succ_iff]
   ring
 
 theorem taylor_k_aux_zero (k : ℕ) (f : R → R) (x : R) (B : Fin (k + 1) → R)
@@ -126,7 +139,7 @@ theorem taylor_k_aux' [Algebra ℚ R] (k : ℕ) (f : R → R) (x : R) (b : Fin (
     simp only [succ_last, succ_eq_add_one, val_last, Function.iterate_succ,
       Function.comp_apply, val_succ, val_castLE] at Hb
     rw [mem_D_sum_pow d, mul_comm ((n + 2)! : R), mul_comm _ ((n + 2)! : R), ← smul_mul_assoc,
-      key1 (factorial_ne_zero _), one_mul] at Hb
+      inv_natCast_smul_natCast (factorial_ne_zero _), one_mul] at Hb
     exact Hb ▸ mul_assoc ..
   · congr
     ext j

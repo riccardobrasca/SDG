@@ -48,7 +48,7 @@ This is a weak form of choice (unique choice). The `detectClassical` linter (in 
 
 3. **`SDG/Basic/D.lean`** — Lemmas about `D R` and `𝔻 R k`: membership, products, powers, sums of nilpotents.
 
-4. **`SDG/Basic/FactorialInv.lean`** — The `Divisible R` typeclass (all nonzero naturals are invertible in `R`), plus factorial invertibility lemmas.
+4. **`SDG/Axiom/BigOperators.lean`** — Classical-choice-free re-proofs of four Mathlib `Finset` lemmas (`prod_le_prod'` etc.) that require an explicit `[DecidableEq ι]` constraint.
 
 ### One-variable calculus (`SDG/IsKockLawvere_one/`)
 
@@ -61,7 +61,7 @@ This is a weak form of choice (unique choice). The `detectClassical` linter (in 
 ### Higher-order / multivariate calculus (`SDG/IsKockLawvere/`)
 
 - **`Taylor.lean`** — Taylor theorems: `taylor_one`, `taylor_two`, `taylor_k` (general Taylor expansion `f(x+δ) = Σ ∂^[n]f(x) * δ^n * ⅟(n!)` for `δ : 𝔻 R k`).
-- **`TaylorMulti.lean`** — Multivariate Taylor theorem (work in progress, some `sorry`s). Defines `mixed_partial_deriv k f` (notation `∂[k]f`) via `foldl` of iterated partial derivatives.
+- **`TaylorMulti.lean`** — Multivariate Taylor theorem. Defines `mixed_partial_deriv k f` (notation `∂[k]f`) via `foldl` of iterated partial derivatives.
 
 ### Notation summary
 
@@ -82,4 +82,4 @@ From `lakefile.toml`:
 - `linter.flexible = true` — no rigid tactics (e.g. `exact`) after flexible tactics (e.g. `simp`).
 - `linter.mathlibStandardSet = true` — Mathlib's standard linter set is active.
 - `weak.linter.verbose.detectClassical = true` — warns on use of `Classical.choice`.
-- `warn.sorry = false` — sorry warnings are suppressed (some files have in-progress `sorry`s).
+- `warn.sorry = false` — sorry warnings are suppressed.

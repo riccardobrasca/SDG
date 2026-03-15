@@ -30,32 +30,39 @@ lemma partial_deriv_propr : ∀ (x : Fin n → R), ∃! b, ∀ (d : D R),
 noncomputable def partial_deriv_fun : (Fin n → R) → R :=
   unique_choice_fun (partial_deriv_propr i f)
 
-lemma partial_deriv_fun_spec (d : D R) :
-    f (update x i (x i + d)) = f x + (partial_deriv_fun i f x) * d :=
+/-- Notation for the partial derivative of `f` with respect to coordinate `i`. -/
+notation3:max "∂_[" i "]" f:max => partial_deriv_fun i f
+/-- Notation for the `n`-th iterated partial derivative with respect to coordinate `i`. -/
+notation3:max "∂_[" i "]^[" n "]" f:max => (partial_deriv_fun i)^[n] f
+
+variable (x) in
+lemma partial_taylor_one (d : D R) :
+    f (update x i (x i + d)) = f x + ∂_[i]f x * d :=
   unique_choice_fun_spec (partial_deriv_propr i f) ..
 
 variable {f} in
-lemma partial_deriv_fun_unique {b : R} (hb : ∀ (d : D R), f (update x i (x i + d)) = f x + b * d) :
-      partial_deriv_fun i f x = b :=
+lemma partial_derivative_unique {b : R}
+    (hb : ∀ (d : D R), f (update x i (x i + d)) = f x + b * d) :
+    ∂_[i]f x = b :=
   unique_choice_fun_unique (partial_deriv_propr i f) hb
 
 /-- The partial derivative with respect to coordinate `i` as a `Derivation`. -/
 noncomputable def partial_deriv : Derivation R ((Fin n → R) → R) ((Fin n → R) → R) where
   toFun := partial_deriv_fun i
-  map_add' := fun f g ↦ funext fun x ↦ partial_deriv_fun_unique i <| fun d ↦
+  map_add' := fun f g ↦ funext fun x ↦ partial_derivative_unique i <| fun d ↦
     calc _ = f (update x i (x i + d)) + g (update x i (x i + d)) := by simp
-         _ = (f x + partial_deriv_fun i f x * d) + (g x + partial_deriv_fun i g x * d) := by
-              simp only [partial_deriv_fun_spec]
+         _ = (f x + ∂_[i]f x * d) + (g x + ∂_[i]g x * d) := by
+              simp only [partial_taylor_one]
          _ = (f + g) x + (partial_deriv_fun i f + partial_deriv_fun i g) x * d := by simp; ring
-  map_smul' := fun r f ↦ funext fun x ↦ partial_deriv_fun_unique i <| fun d ↦
+  map_smul' := fun r f ↦ funext fun x ↦ partial_derivative_unique i <| fun d ↦
     calc (r • f) (update x i (x i + d)) = r * f (update x i (x i + d)) := by simp
-      _ = r * (f x + partial_deriv_fun i f x * d) := by rw [partial_deriv_fun_spec i f]
+      _ = r * (f x + ∂_[i]f x * d) := by simp only [partial_taylor_one]
       _ = (r • f) x + (r * partial_deriv_fun i f x) * d := by simp; ring
-  map_one_eq_zero' := funext fun _ ↦ partial_deriv_fun_unique i (by simp)
-  leibniz' := fun f g ↦ funext fun x ↦ partial_deriv_fun_unique i <| fun d ↦
+  map_one_eq_zero' := funext fun _ ↦ partial_derivative_unique i (by simp)
+  leibniz' := fun f g ↦ funext fun x ↦ partial_derivative_unique i <| fun d ↦
     calc f (update x i (x i + d)) * g (update x i (x i + d))
-          = (f x + partial_deriv_fun i f x * d) * (g x + partial_deriv_fun i g x * d) := by
-              simp only [partial_deriv_fun_spec]
+          = (f x + ∂_[i]f x * d) * (g x + ∂_[i]g x * d) := by
+              simp only [partial_taylor_one]
          _ = f x * g x + (f x * partial_deriv_fun i g x + partial_deriv_fun i f x * g x) * d +
             d ^ 2 * partial_deriv_fun i f x * partial_deriv_fun i g x := by ring
          _ = _ := by simp; ring
@@ -65,20 +72,7 @@ instance : FunLike (Derivation R ((Fin n → R) → R) ((Fin n → R) → R))
   coe D := D.toFun
   coe_injective' := DFunLike.coe_injective
 
-/-- Notation for the partial derivative of `f` with respect to coordinate `i`. -/
-notation3:max "∂_[" i "]" f:max => partial_deriv_fun i f
-/-- Notation for the `n`-th iterated partial derivative with respect to coordinate `i`. -/
-notation3:max "∂_[" i "]^[" n "]" f:max => (partial_deriv_fun i)^[n] f
-
 variable (x)
-
-lemma partial_taylor_one (d : D R) : f (update x i (x i + d)) = f x + ∂_[i]f x * d :=
-  partial_deriv_fun_spec ..
-
-variable {f x} in
-lemma partial_derivative_unique {b : R} (hb : ∀ (d : D R), f (update x i (x i + d)) = f x + b * d) :
-    ∂_[i]f x = b :=
-  partial_deriv_fun_unique i hb
 
 lemma partial_deriv_eq_deriv (r : Fin n → R) :
     ∂_[i] f r = ∂(fun y ↦ f (Function.update r i y)) (r i) := by
