@@ -64,19 +64,19 @@ instance : FunLike (Derivation R (R → R) (R → R)) (R → R) (R → R) where
   coe D := D.toFun
   coe_injective' D1 D2 h := by cases D1; cases D2; congr; exact DFunLike.coe_injective h
 
-@[simp]
-lemma derivative_id : ∂(id : R → R) = 1 := by
-  ext x
-  exact derivative_unique (fun d ↦ by simp)
+theorem deriv_mul (f g : R → R) : ∂(f * g) = ∂f * g + f * ∂g := by
+  change deriv (f * g) = deriv f * g + f * deriv g
+  simp [smul_eq_mul]; ring
 
 @[simp]
 theorem deriv_const (r : R) : ∂(fun _ ↦ r) = 0 := by
   ext x
   exact derivative_unique (fun d ↦ by simp)
 
-theorem deriv_mul (f g : R → R) : ∂(f * g) = ∂f * g + f * ∂g := by
-  change deriv (f * g) = deriv f * g + f * deriv g
-  simp [smul_eq_mul]; ring
+@[simp]
+lemma derivative_id : ∂(id : R → R) = 1 := by
+  ext x
+  exact derivative_unique (fun d ↦ by simp)
 
 theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g x := by
   refine derivative_unique (fun d ↦ ?_)
@@ -87,9 +87,6 @@ theorem chain_rule (f g : R → R) (x : R) : ∂(f ∘ g) x = ∂f (g x) * ∂g 
 theorem chain_rule_fun (f g : R → R) : ∂(f ∘ g) = ∂f ∘ g * ∂g := by
   ext x
   simp [chain_rule]
-
-theorem deriv_inv (f : R → R) [Invertible f] : ∂⅟f = -⅟f ^ 2 * ∂f :=
-  deriv.leibniz_invOf f
 
 theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R) ^ (n - 1)
 | 0 => by
@@ -103,6 +100,9 @@ theorem deriv_X_pow : ∀ (n : ℕ), ∂((id : R → R) ^ n) = n * (id : R → R
     ext x
     simp
     ring
+
+theorem deriv_inv (f : R → R) [Invertible f] : ∂⅟f = -⅟f ^ 2 * ∂f :=
+  deriv.leibniz_invOf f
 
 theorem deriv_equiv (f : R ≃ R) : ∂↑f⁻¹ * ∂f ∘ ↑f⁻¹ = 1 := by
   ext x
