@@ -5,8 +5,8 @@ import SDG.Linters.choice
 /-!
 # Fin product lemmas
 
-The following are simplification lemmas for products over `Fin n` involving `cons`, `snoc`, and `castLE`.
-These are candidates for upstreaming to Mathlib.
+The following are simplification lemmas for products over `Fin n` involving `cons`, `snoc`, and
+`castLE`. These are candidates for upstreaming to Mathlib.
 -/
 
 open Fin

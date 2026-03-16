@@ -16,8 +16,8 @@ namespace SDG
 
 variable {n : ℕ} {T : Type*} {k : Fin (n + 1) → ℕ}
 
-/-- The following converts a curried function over the last index and the remaining `Iic (init k)` into
-a function over `Iic k`. -/
+/-- The following converts a curried function over the last index and the remaining `Iic (init k)`
+into a function over `Iic k`. -/
 def Iic_of_prod (f : (Fin (k (last n) + 1)) → (Iic (init k)) → T) : Iic k → T := fun x ↦
   f ⟨x.1 _, Nat.lt_add_one_iff.mpr ((le_def.1 <| mem_Iic.1 x.2) _)⟩
     ⟨init x.1, mem_Iic.2 (le_def.2 fun i ↦ le_def.1 (mem_Iic.1 x.2) (castSucc i))⟩
