@@ -45,7 +45,7 @@ lemma Ψl_zero (k : Fin (m + 1) → ℕ) (f : (Fin (n + 1) → R) → R) : Ψl k
 lemma Ψl_castSucc (k : Fin (m + 1) → ℕ) (i : Fin m) (f : (Fin (n + 1) → R) → R) :
     Ψl k f i.castSucc = Ψl (init k) f i := rfl
 
-/-- The mixed partial derivative of `f` indexed by `k : Fin m → ℕ`, defined as the left fold
+/-- This is the mixed partial derivative of `f` indexed by `k : Fin m → ℕ`, defined as the left fold
 of iterated partial derivatives `∂_[i]^[k i]` over coordinates `0, …, m-1`. -/
 noncomputable def mixed_partial_deriv : (Fin n → R) → R := foldl m (Ψl k) f
 

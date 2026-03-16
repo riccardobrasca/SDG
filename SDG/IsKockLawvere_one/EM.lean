@@ -3,9 +3,9 @@ import SDG.IsKockLawvere_one.Basic
 /-!
 # Incompatibility with classical logic
 
-The first-order Kock-Lawvere axiom is inconsistent with excluded middle:
-`false_of_isKockLawvere_one` derives `False` using `classical`. This shows the axiom system
-lives in a genuinely constructive setting. Also proves nontriviality of `D R`.
+The first order Kock-Lawvere axiom is inconsistent with excluded middle:
+`false_of_isKockLawvere_one` derives `False` using `classical`. This shows that the axiom system
+lives in a genuinely constructive setting, and also proves nontriviality of `D R`.
 -/
 
 set_option linter.detectClassical false

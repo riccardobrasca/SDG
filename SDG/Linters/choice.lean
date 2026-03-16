@@ -9,7 +9,7 @@ import Mathlib.Init
 /-!
 #  The "detectClassical" linter
 
-The "detectClassical" linter emits a warning on declarations that depend on the `Classical.choice`
+The "detectClassical" linter emits a warning on declarations that depend on `Classical.choice`
 and/or `sorryAx`.
 -/
 

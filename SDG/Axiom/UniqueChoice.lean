@@ -15,7 +15,7 @@ The only version we will actually use is the fact that, given a property
 `P : α → β → Prop` such that
 `(h : ∀ a, ∃! b, P a b)`, there is a function `unique_choice_fun h : α → β` such that
 `∀ a, P a (unique_choice_fun h a)` (see `unique_choice_fun` and `unique_choice_fun_spec`). The
-construction of `unique_choice_fun h` can be done inconditionally in set theory, but in
+construction of `unique_choice_fun h` can be done unconditionally in set theory, but in
 Lean's type theory we need an additional axiom.
 
 ## The axiom
