@@ -123,7 +123,7 @@ lemma partial_deriv_snoc_castSucc (i : Fin n) (f : (Fin (n + 1) → R) → R)
   ext j; rcases eq_castSucc_or_eq_last j with ⟨k, rfl⟩ | rfl
   · rcases Decidable.eq_or_ne k i with rfl | hki <;>
     simp_all
-  · simp [Ne.symm (castSucc_ne_last i)]
+  · simp [(castSucc_ne_last i).symm]
 
 lemma partial_deriv_snoc_last (f : (Fin (n + 1) → R) → R) (r : Fin n → R) (c : R) :
     ∂_[last n] f (snoc r c) = ∂(fun x ↦ f (snoc r x)) c := by
