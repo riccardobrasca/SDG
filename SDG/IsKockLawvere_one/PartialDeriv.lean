@@ -31,6 +31,7 @@ noncomputable def partial_deriv_fun : (Fin n → R) → R :=
 
 /-- Notation for the partial derivative of `f` with respect to coordinate `i`. -/
 notation3:max "∂_[" i "]" f:max => partial_deriv_fun i f
+
 /-- Notation for the `n`-th iterated partial derivative with respect to coordinate `i`. -/
 notation3:max "∂_[" i "]^[" n "]" f:max => (partial_deriv_fun i)^[n] f
 
