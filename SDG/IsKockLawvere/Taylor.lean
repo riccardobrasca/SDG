@@ -1,6 +1,10 @@
-import SDG.Axiom.Instances
-import SDG.IsKockLawvere_one.Deriv
-import SDG.ForMathlib.Fin
+module
+
+public import SDG.Axiom.Instances
+public import SDG.IsKockLawvere_one.Deriv
+public import SDG.ForMathlib.Fin
+
+@[expose] public section
 
 open Fin
 namespace SDG

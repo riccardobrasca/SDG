@@ -1,10 +1,14 @@
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.GroupWithZero.Defs
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.GroupWithZero.Defs
 
 /-!
 These declarations have to be reproven since Mathlib's version does not assume `DecidableEq ι` and
 so it depends on the axiom of choice.
 -/
+
+@[expose] public section
 
 set_option linter.unusedDecidableInType false
 

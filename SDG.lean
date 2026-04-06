@@ -1,14 +1,16 @@
-import SDG.Axiom.BigOperators
-import SDG.Axiom.Instances
-import SDG.Axiom.UniqueChoice
-import SDG.Basic.D
-import SDG.Basic.Defs
-import SDG.ForMathlib.Fin
-import SDG.ForMathlib.PiIic
-import SDG.IsKockLawvere.Taylor
-import SDG.IsKockLawvere.TaylorMulti
-import SDG.IsKockLawvere_one.Basic
-import SDG.IsKockLawvere_one.Deriv
-import SDG.IsKockLawvere_one.EM
-import SDG.IsKockLawvere_one.PartialDeriv
-import SDG.Linters.choice
+module
+
+public import SDG.Axiom.BigOperators
+public import SDG.Axiom.Instances
+public import SDG.Axiom.UniqueChoice
+public import SDG.Basic.D
+public import SDG.Basic.Defs
+public import SDG.ForMathlib.Fin
+public import SDG.ForMathlib.PiIic
+public import SDG.IsKockLawvere.Taylor
+public import SDG.IsKockLawvere.TaylorMulti
+public import SDG.IsKockLawvere_one.Basic
+public import SDG.IsKockLawvere_one.Deriv
+public import SDG.IsKockLawvere_one.EM
+public import SDG.IsKockLawvere_one.PartialDeriv
+public import SDG.Linters.choice

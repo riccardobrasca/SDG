@@ -1,7 +1,11 @@
-import Mathlib.RingTheory.Derivation.Basic
+module
 
-import SDG.Basic.D
-import SDG.IsKockLawvere_one.Basic
+public import Mathlib.RingTheory.Derivation.Basic
+
+public import SDG.Basic.D
+public import SDG.IsKockLawvere_one.Basic
+
+@[expose] public section
 
 namespace SDG
 

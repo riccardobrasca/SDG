@@ -1,6 +1,8 @@
-import Mathlib.Data.Pi.Interval
-import Mathlib.Order.Interval.Finset.Nat
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+module
+
+public import Mathlib.Data.Pi.Interval
+public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Equivalence between `Iic k` and a product over the last coordinate
@@ -9,6 +11,8 @@ For `k : Fin (n + 1) → ℕ`, we construct an equivalence between `Iic k` (mult
 by `k`) and the product `Fin (k (last n) + 1) × Iic (init k)`, splitting off the last coordinate.
 This is used to reduce multivariate sums over `Iic k` to iterated sums.
 -/
+
+@[expose] public section
 
 open Fin Pi Finset
 

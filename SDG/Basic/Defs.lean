@@ -1,9 +1,11 @@
-import Mathlib.Algebra.Module.NatInt
-import Mathlib.Algebra.Group.Subsemigroup.Defs
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+module
 
-import SDG.Axiom.UniqueChoice
+public import Mathlib.Algebra.Module.NatInt
+public import Mathlib.Algebra.Group.Subsemigroup.Defs
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+
+public import SDG.Axiom.UniqueChoice
 
 /-!
 # Core definitions for Synthetic Differential Geometry
@@ -11,6 +13,8 @@ import SDG.Axiom.UniqueChoice
 This file defines the subsemigroups `D R` and `𝔻 R k` of nilpotent elements, the Kock-Lawvere
 axioms (`IsKockLawvere_one` and `IsKockLawvere`), and the synthetic derivative `deriv_fun`.
 -/
+
+@[expose] public section
 
 open BigOperators
 

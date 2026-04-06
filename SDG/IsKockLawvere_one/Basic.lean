@@ -1,12 +1,16 @@
-import Mathlib.Algebra.BigOperators.Fin
+module
 
-import SDG.Basic.Defs
+public import Mathlib.Algebra.BigOperators.Fin
+
+public import SDG.Basic.Defs
 
 /-!
 # Basic consequences of the first-order Kock-Lawvere axiom
 
 Infinitesimal cancellation (`cancel_d`, `cancel_d_fun`) and nontriviality of `D R`.
 -/
+
+@[expose] public section
 
 namespace SDG
 

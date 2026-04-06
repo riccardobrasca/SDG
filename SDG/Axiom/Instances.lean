@@ -1,10 +1,14 @@
-import Mathlib.Algebra.Algebra.Tower
-import Mathlib.Algebra.Field.Rat
+module
+
+public import Mathlib.Algebra.Algebra.Tower
+public import Mathlib.Algebra.Field.Rat
 
 /-!
 We add the following instances to short-circuit type class resolution and avoid the introduction of
 the axiom of choice via `GroupWithZero.toDivisionMonoid` and related declarations.
 -/
+
+@[expose] public section
 
 instance (priority := high) : InvolutiveInv ℚ where
   inv_inv := Rat.inv_inv

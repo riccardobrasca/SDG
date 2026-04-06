@@ -1,9 +1,11 @@
-import Mathlib.Tactic.Zify
-import Mathlib.Tactic.Ring
-import Mathlib.Data.Nat.Factorial.Basic
-import Mathlib.Algebra.BigOperators.Fin
+module
 
-import SDG.Basic.Defs
+public import Mathlib.Tactic.Zify
+public import Mathlib.Tactic.Ring
+public import Mathlib.Data.Nat.Factorial.Basic
+public import Mathlib.Algebra.BigOperators.Fin
+
+public import SDG.Basic.Defs
 
 /-!
 # Lemmas about nilpotent subsemigroups
@@ -11,6 +13,8 @@ import SDG.Basic.Defs
 Algebraic properties of `D R` and `𝔻 R k`: closure under multiplication, powers, sums of
 nilpotents, and related combinatorial identities involving factorials.
 -/
+
+@[expose] public section
 
 namespace SDG
 

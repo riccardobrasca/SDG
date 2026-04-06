@@ -1,10 +1,14 @@
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Data.Pi.Interval
+module
 
-import SDG.IsKockLawvere.Taylor
-import SDG.IsKockLawvere_one.PartialDeriv
-import SDG.Axiom.BigOperators
-import SDG.ForMathlib.PiIic
+public import Mathlib.Algebra.Lie.OfAssociative
+public import Mathlib.Data.Pi.Interval
+
+public import SDG.IsKockLawvere.Taylor
+public import SDG.IsKockLawvere_one.PartialDeriv
+public import SDG.Axiom.BigOperators
+public import SDG.ForMathlib.PiIic
+
+@[expose] public section
 
 open Function Finset Nat Fin
 

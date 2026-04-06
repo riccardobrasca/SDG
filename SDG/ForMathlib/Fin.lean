@@ -1,6 +1,8 @@
-import Mathlib.Algebra.BigOperators.Fin
+module
 
-import SDG.Linters.choice
+public import Mathlib.Algebra.BigOperators.Fin
+
+public import SDG.Linters.choice
 
 /-!
 # Fin product lemmas
@@ -8,6 +10,8 @@ import SDG.Linters.choice
 The following are simplification lemmas for products over `Fin n` involving `cons`, `snoc`, and
 `castLE`. These are candidates for upstreaming to Mathlib.
 -/
+
+@[expose] public section
 
 open Fin
 
