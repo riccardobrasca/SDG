@@ -3,8 +3,6 @@ module
 public import SDG.Linters.choice
 public import Mathlib.Data.Subtype
 
-@[expose] public section
-
 variable {α β : Type*} {P : α → Prop}
 
 /-!
@@ -66,6 +64,8 @@ lemma unique_choice_spec (h : ∃! a, P a) : P (unique_choice h) :=
 lemma unique_choice_unique (h : ∃! a, P a) {a : α} (ha : P a) : unique_choice h = a :=
   h.unique (unique_choice_spec h) ha
 
+public section
+
 /-- Given a property `P : α → β → Prop` such that for all `a : α`, there exists a unique `b : β`
 with `P a b`, then `unique_choice_fun h` gives a function `α → β` selecting this unique `b` for
 each `a`. -/
@@ -84,3 +84,5 @@ with `P a b`, then for each `a : α`, if `b : β` satisfies `P a b`, then
 lemma unique_choice_fun_unique {P : α → β → Prop} (h : ∀ a, ∃! b, P a b) {a : α} {b : β}
     (hb : P a b) : unique_choice_fun h a = b :=
   unique_choice_unique (h a) hb
+
+end
