@@ -1,4 +1,9 @@
 /-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
+/-
 This file has been written essentially by Damiano Testa.
 -/
 module

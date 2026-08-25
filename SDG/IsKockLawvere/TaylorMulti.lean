@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
 module
 
 public import Mathlib.Algebra.Lie.OfAssociative
@@ -8,15 +13,21 @@ public import SDG.IsKockLawvere_one.PartialDeriv
 public import SDG.Axiom.BigOperators
 public import SDG.ForMathlib.PiIic
 
+/-!
+# Multivariable Taylor theorem
+-/
+
 @[expose] public section
 
 open Function Finset Nat Fin
 
 namespace SDG
 
-variable {R : Type*} [CommRing R] [IsKockLawvere_one R]
+variable {R : Type*} [CommRing R] {n m : ℕ}
 
-variable {n m : ℕ} [h : Fact (m ≤ n)] (k : Fin m → ℕ)
+section IsKockLawvere_one
+
+variable [IsKockLawvere_one R] [h : Fact (m ≤ n)] (k : Fin m → ℕ)
   (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i)) (r : Fin n → R)
 
 instance : Fact (m + 1 ≤ n + 1) := ⟨Nat.add_le_add_right h.1 1⟩
@@ -99,7 +110,7 @@ private lemma mixed_partial_deriv_comm_partial_deriv_aux :
     ∂[k] (∂_[i] f) = ∂_[i] (∂[k] f)
 | _, 0, _, k, f, i => by simp
 | n + 1, m + 1, hle, k, f, i => by
-  haveI hm : Fact (m ≤ n) := ⟨Nat.le_of_succ_le_succ hle.out⟩
+  have hm : Fact (m ≤ n) := ⟨Nat.le_of_succ_le_succ hle.out⟩
   simpa [mixed_partial_deriv_succ_eq_deriv_init,
     mixed_partial_deriv_comm_partial_deriv_aux (init k) f i] using
     partial_deriv_iterate_comm _ (castLE (Nat.add_le_add_right hm.out 1) (last m)) i (k (last m)) 1
@@ -148,6 +159,8 @@ theorem mixed_partial_deriv_initial (k : Fin (n + 1) → ℕ) (f : (Fin (n + 1) 
     rw [mixed_partial_deriv_succ_eq_init_deriv, ← snoc_init_self r, mixed_partial_deriv_snoc]
   rfl
 
+end IsKockLawvere_one
+
 variable [Algebra ℚ R] [IsKockLawvere R]
 
 theorem taylor_multi_aux_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) → R) (d : Π i, 𝔻 R (k i))
@@ -166,7 +179,7 @@ theorem taylor_multi_aux_aux : ∀ {n} (k : Fin n → ℕ) (f : (Fin n → R) �
     · simp [hi]
     · obtain ⟨j, rfl⟩ := exists_castSucc_eq.2 hi; simp [init]
   have hg : ∀ i, ∂_[last n]^[i] f (snoc (init (r + d)) (r (last n))) = ∂^[i] g (r (last n)) :=
-    fun i ↦ by simpa using partial_deriv_iterate_eq_deriv_snoc_init i f (snoc _ _)
+    fun i ↦ by simpa using! partial_deriv_iterate_eq_deriv_snoc_init i f (snoc _ _)
   have hh : ∀ i, ∂_[last n]^[i] f (snoc (init (r + d)) (r (last n))) = h i (init (r + d)) :=
     fun _ ↦ rfl
   simp_rw [hfg, taylor_k g _ (k (last n)), ← hg, hh, init_R_add_D_fun,]

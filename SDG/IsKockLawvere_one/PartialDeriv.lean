@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
 module
 
 public import Mathlib.RingTheory.Derivation.Basic
@@ -5,6 +10,10 @@ public import Mathlib.RingTheory.Derivation.Basic
 public import SDG.Basic.D
 public import SDG.IsKockLawvere_one.Basic
 public import SDG.IsKockLawvere_one.Deriv
+
+/-!
+# Partial derivatives
+-/
 
 @[expose] public section
 
@@ -74,7 +83,7 @@ noncomputable def partial_deriv : Derivation R ((Fin n → R) → R) ((Fin n →
 instance : FunLike (Derivation R ((Fin n → R) → R) ((Fin n → R) → R))
     ((Fin n → R) → R) ((Fin n → R) → R) where
   coe D := D.toFun
-  coe_injective' := DFunLike.coe_injective
+  coe_injective := DFunLike.coe_injective
 
 variable (x)
 
@@ -114,11 +123,11 @@ lemma partial_deriv_eq_deriv_snoc_init (f : (Fin (n + 1) → R) → R) (r : Fin 
 lemma partial_deriv_iterate_eq_deriv_snoc_init (k : ℕ) (f : (Fin (n + 1) → R) → R)
   (r : Fin (n + 1) → R) :
     ∂_[last n]^[k] f r = ∂^[k] (fun t ↦ f (snoc (init r) t)) (r (last n)) := by
-match k with
-| 0 => simp [snoc_init_self]
-| k + 1 =>
-  simp only [Function.iterate_succ', Function.comp_def]
-  simp [partial_deriv_eq_deriv_snoc_init, partial_deriv_iterate_eq_deriv_snoc_init]
+  match k with
+  | 0 => simp [snoc_init_self]
+  | k + 1 =>
+    simp only [Function.iterate_succ', Function.comp_def]
+    simp [partial_deriv_eq_deriv_snoc_init, partial_deriv_iterate_eq_deriv_snoc_init]
 
 lemma partial_deriv_snoc_castSucc (i : Fin n) (f : (Fin (n + 1) → R) → R)
     (r : Fin n → R) (c : R) :

@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
@@ -34,7 +39,7 @@ theorem prod_castLE_of_eq_one {a b : ℕ} (h : a ≤ b) (f : Fin b → M)
     (hf : ∀ i, a ≤ i.1 → f i = 1) : ∏ i, f i = ∏ i, f (Fin.castLE h i) := by
   rcases Nat.exists_eq_add_of_le h with ⟨k, rfl⟩
   rw [prod_univ_add]
-  convert mul_one _
+  convert! mul_one _
   exact Finset.prod_eq_one (fun i _ ↦ hf _ (Nat.le_add_right ..))
 
 end Fin

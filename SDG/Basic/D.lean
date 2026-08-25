@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
 module
 
 public import Mathlib.Tactic.Zify
@@ -83,7 +88,7 @@ lemma D_add_sq_dvd_two [Invertible (2 : R)] (d₁ d₂ : D R) :
 variable (R) in
 lemma coe_sq : ((↑) : D R → R) * (↑) = 0 := by
   ext d
-  simpa only [← pow_two, Pi.zero_apply] using d.2
+  simpa [sq] using D_mem_iff.1 d.2
 
 variable (R) (k : ℕ) in
 lemma coe_pow : ((↑) : 𝔻 R k → R) ^ (k + 1) = 0 := by

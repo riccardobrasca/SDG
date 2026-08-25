@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
 module
 
 public import Mathlib.Algebra.Module.NatInt
@@ -72,7 +77,7 @@ instance [IsKockLawvere R] : IsKockLawvere_one R where
     specialize hbunique (fun _ ↦ b')
     simp only [Finset.univ_unique, Fin.default_eq_zero, Fin.isValue, Fin.val_eq_zero, zero_add,
       pow_one, Finset.sum_const, Finset.card_singleton, Subtype.forall,
-      Subsemigroup.mem_mk, Nat.reduceAdd, Set.mem_setOf_eq] at hbunique
+      Subsemigroup.mem_mk, Nat.reduceAdd, Set.mem_ofPred_eq] at hbunique
     rw [← hbunique (by simpa using hb')]
 
 variable [IsKockLawvere_one R]

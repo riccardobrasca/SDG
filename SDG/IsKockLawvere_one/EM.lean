@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
 module
 
 public import SDG.IsKockLawvere_one.Basic
@@ -35,7 +40,7 @@ theorem false_of_isKockLawvere_one : False := by
 
 lemma nontrivial_D : Nontrivial (D R) := by
   have := D_ne_zero R
-  simp only [Subsemigroup.mem_mk, Set.mem_setOf_eq, not_forall] at this
+  simp only [Subsemigroup.mem_mk, Set.mem_ofPred_eq, not_forall] at this
   obtain ⟨d, hd, hd0⟩ := this
   exact ⟨0, ⟨d, hd⟩, fun h ↦ hd0 <| Subtype.ext_iff.1 h.symm⟩
 

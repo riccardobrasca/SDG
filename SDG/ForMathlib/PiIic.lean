@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
 module
 
 public import Mathlib.Data.Pi.Interval
@@ -33,7 +38,8 @@ def prod_of_Iic (f : Iic k → T) : (Fin (k (last n) + 1)) → (Iic (init k)) �
   refine mem_Iic.2 (fun j ↦ ?_)
   by_cases h : j = last _
   · simp [h]; omega
-  · simpa [init, castSucc_castPred j h, h] using le_def.1 (mem_Iic.1 i.2) _⟩
+  · simpa [h] using! le_def.1 (mem_Iic.1 i.2) _⟩
+
 
 lemma prod_of_Iic_of_prod (f : (Fin (k (last n) + 1)) → (Iic (init k)) → T) :
     prod_of_Iic (Iic_of_prod f) = f := by
@@ -51,7 +57,7 @@ def Iic_equiv : Fin (k (last n) + 1) × (Iic (init k)) ≃ (Iic k) where
     refine mem_Iic.2 (fun j ↦ ?_)
     by_cases h : j = last _
     · simp [h]; omega
-    · simpa [init, castSucc_castPred j h, h] using le_def.1 (mem_Iic.1 p.2.2) _⟩
+    · simpa [h] using! le_def.1 (mem_Iic.1 p.2.2) _⟩
   invFun y := (⟨y.1 (last n), Nat.lt_add_one_iff.mpr ((le_def.1 <| mem_Iic.1 y.2) _)⟩,
     ⟨init y.1, mem_Iic.2 (le_def.2 fun i ↦ le_def.1 (mem_Iic.1 y.2) (castSucc i))⟩)
   left_inv p := Prod.ext (Fin.ext (by simp))

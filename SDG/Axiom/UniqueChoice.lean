@@ -1,9 +1,12 @@
+/-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
 module
 
 public import SDG.Linters.choice
 public import Mathlib.Data.Subtype
-
-variable {α β : Type*} {P : α → Prop}
 
 /-!
 # The axiom of unique choice.
@@ -42,6 +45,8 @@ Lean's type theory we need an additional axiom.
     exists a unique `b : β` with `P a b`, then for each `a : α`, if `b : β` satisfies `P a b`, then
     `unique_choice_fun h a = b`.
 -/
+
+variable {α β : Type*} {P : α → Prop}
 
 /-- Given a type `α` such that `h : ∃! (_ : α), True`, then `axiom_unique_choice h` gives the
 element. -/

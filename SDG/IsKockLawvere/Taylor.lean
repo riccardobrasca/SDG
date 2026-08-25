@@ -1,8 +1,17 @@
+/-
+Copyright (c) 2026 Riccardo Brasca and Gabriella Clemente. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca, Gabriella Clemente
+-/
 module
 
 public import SDG.Axiom.Instances
 public import SDG.IsKockLawvere_one.Deriv
 public import SDG.ForMathlib.Fin
+
+/-!
+# Taylor's theorem
+-/
 
 @[expose] public section
 
@@ -19,7 +28,7 @@ theorem taylor_two [Invertible (2 : R)] (f : R → R) (x : R) (δ : 𝔻 R 2) :
   obtain ⟨b, hb, -⟩ := isKockLawvere 2 g_x
   simp only [coe_zero, add_zero, sum_univ_two, Fin.isValue, coe_ofNat_eq_mod, Nat.zero_mod,
     zero_add, pow_one, Nat.mod_succ, Nat.reduceAdd, Subtype.forall, Subsemigroup.mem_mk,
-    Set.mem_setOf_eq, g_x] at hb
+    Set.mem_ofPred_eq, g_x] at hb
   have hB_deriv : ∂f x = b 0 := derivative_unique
     (fun d ↦ by simpa using hb _ (𝔻_le (by decide) d.2))
   have : ∀ (d₁ d₂ : D R), b 1 * 2 * d₁ * d₂ = ∂∂f x * d₁ * d₂ := by
@@ -152,7 +161,7 @@ theorem taylor_k [Algebra ℚ R] (f : R → R) (x : R) : ∀ (k : ℕ) (δ : �
 | k + 1 => fun Δ ↦ by
   let g_x : 𝔻 R (k + 1) → R := fun d ↦ f (x + d)
   obtain ⟨b, hb, -⟩ := isKockLawvere (k + 1) g_x
-  simp only [coe_zero, add_zero, Subtype.forall, Subsemigroup.mem_mk, Set.mem_setOf_eq, g_x] at hb
+  simp only [coe_zero, add_zero, Subtype.forall, Subsemigroup.mem_mk, Set.mem_ofPred_eq, g_x] at hb
   rw [hb _ Δ.2, sum_univ_succ (n := k + 1), val_zero, Function.iterate_zero, id_eq,
     pow_zero, factorial_zero, cast_one, inv_one, one_smul, mul_one, add_right_inj]
   congr
