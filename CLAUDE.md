@@ -9,8 +9,8 @@ This is a Lean 4 formalization of **Synthetic Differential Geometry** (SDG), fol
 ## Build Commands
 
 ```bash
-# Get Mathlib cache
-lake exe cache get
+# Get Mathlib cache (NOT plain `lake exe cache get` -- see below)
+./scripts/cache-get.sh
 
 # Build the project
 lake build SDG
@@ -20,6 +20,19 @@ lake exe mk_all
 # or check it is up to date:
 lake exe mk_all --check
 ```
+
+**Never use plain `lake exe cache get` here — it downloads nothing.** Mathlib is
+a branch of a fork (`riccardobrasca/mathlib4`, `less_choice`), so its artifacts
+live in the cache's `forks` container, namespaced per mathlib commit. Run from a
+downstream project, `cache` reads that commit from the *project's* git
+repository rather than from the mathlib package, and probes a namespace that was
+never written. The hashes it asks for are right; only the namespace is wrong.
+
+`scripts/cache-get.sh` supplies the right one (`--scope=<mathlib HEAD>`) and
+forwards its arguments to `lake exe cache`, so `./scripts/cache-get.sh get!`
+forces a re-download. CI does the same via `MATHLIB_CACHE_REPO_SCOPE`, set from
+`lake-manifest.json` in `.github/workflows/build-project.yml`. The "non-default
+scope" security notice both print is expected. See the README for details.
 
 There is no separate test command — building the project IS the test. All files are type-checked by `lake build SDG`.
 

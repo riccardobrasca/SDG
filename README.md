@@ -26,14 +26,46 @@ The project depends on a custom fork of [Mathlib4](https://github.com/riccardobr
 see [here](https://github.com/leanprover-community/mathlib4/pull/35685).
 
 ```bash
-# Get Mathlib cache
-lake exe cache get
+# Get the Mathlib cache -- use this script, not `lake exe cache get`
+./scripts/cache-get.sh
 
 # Build the project
 lake build SDG
 ```
 
 Building the project type-checks all files; there is no separate test command.
+
+### Getting the cache
+
+Use `./scripts/cache-get.sh`. **Plain `lake exe cache get` downloads nothing
+here** and leaves you recompiling the whole of Mathlib, which takes hours.
+
+The reason is that our Mathlib is a branch of a fork. Caches for a fork are
+stored under the Mathlib commit they were built from, and `lake exe cache get`
+works out which commit that is by looking at the git repository of the directory
+it is run in -- which, run from here, is SDG rather than Mathlib. So it looks in
+the wrong place and finds nothing. The script simply tells it the right commit:
+
+```bash
+lake exe cache get --scope=$(git -C .lake/packages/mathlib rev-parse HEAD)
+```
+
+It prints a security notice about reading a cache "at a non-default scope". That
+is expected -- it means you are trusting the fork's own CI, which is where these
+files come from.
+
+The script passes its arguments through to `lake exe cache`, so you can also say:
+
+```bash
+./scripts/cache-get.sh get!                  # re-download everything
+./scripts/cache-get.sh Mathlib.Logic.Pairwise   # just this module and its imports
+```
+
+The cache only ever covers the dependencies (Mathlib, Batteries, Aesop, ...),
+never SDG's own files: those are always compiled locally by `lake build SDG`.
+
+CI does the same thing through the `MATHLIB_CACHE_REPO_SCOPE` environment
+variable; see `.github/workflows/build-project.yml`.
 
 ## File structure
 

@@ -40,6 +40,21 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags
 
+      # Our mathlib is a branch of a fork, so its cache lives in the `forks`
+      # container, which is namespaced per mathlib commit. `lake exe cache get`
+      # takes that namespace from `git rev-parse HEAD` in the working directory
+      # -- here the SDG repository, not mathlib -- and so looks in a namespace
+      # that was never written, and the whole of mathlib gets recompiled.
+      # Setting the namespace explicitly from the pinned mathlib revision is the
+      # documented way to override it. Keep this step before lean-action, which
+      # is what runs `cache get`. See scripts/cache-get.sh for the local
+      # equivalent.
+      - name: Read the mathlib cache namespace from lake-manifest.json
+        run: |
+          rev=$(jq -er '.packages[] | select(.name == "mathlib") | .rev' lake-manifest.json)
+          echo "mathlib revision: $rev"
+          echo "MATHLIB_CACHE_REPO_SCOPE=$rev" >> "$GITHUB_ENV"
+
       - name: Install and configure Lean, and get mathlib cache
         uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
         with:
