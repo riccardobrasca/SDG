@@ -9,6 +9,8 @@ on:
       - 'lean-toolchain'
       - 'lakefile.toml'
       - 'lake-manifest.json'
+      - 'scripts/**'
+      - '.github/workflows/build-project.yml'
   pull_request:
     branches:
       - main
@@ -17,6 +19,8 @@ on:
       - 'lean-toolchain'
       - 'lakefile.toml'
       - 'lake-manifest.json'
+      - 'scripts/**'
+      - '.github/workflows/build-project.yml'
   workflow_dispatch: # Allow manual triggering of the workflow from the GitHub Actions interface
 
 # Cancel previous runs if a new commit is pushed to the same PR or branch
@@ -24,11 +28,9 @@ concurrency:
   group: ${{ github.ref }}  # Group runs by the ref (branch or PR)
   cancel-in-progress: true  # Cancel any ongoing runs in the same group
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages and modify PR labels
+# This workflow only reads the repository: it builds, it does not publish.
 permissions:
-  contents: read          # Read access to repository contents
-  pages: write            # Write access to GitHub Pages
-  id-token: write         # Write access to ID tokens
+  contents: read
 
 jobs:
   build_project:
@@ -40,38 +42,54 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags
 
-      # Our mathlib is a branch of a fork, so its cache lives in the `forks`
-      # container, which is namespaced per mathlib commit. `lake exe cache get`
-      # takes that namespace from `git rev-parse HEAD` in the working directory
-      # -- here the SDG repository, not mathlib -- and so looks in a namespace
-      # that was never written, and the whole of mathlib gets recompiled.
-      # Setting the namespace explicitly from the pinned mathlib revision is the
-      # documented way to override it. Keep this step before lean-action, which
-      # is what runs `cache get`. See scripts/cache-get.sh for the local
-      # equivalent.
-      - name: Read the mathlib cache namespace from lake-manifest.json
+      # Restore before anything writes to .lake/build. The key pins the
+      # toolchain and the dependency set; the fallbacks reuse the most recent
+      # build made with the same toolchain, never one from a different
+      # toolchain.
+      - name: Cache build artifacts
+        uses: actions/cache@v5
+        with:
+          path: .lake/build
+          key: LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
+            LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-
+
+      # Our Mathlib is a branch of a fork, so its cache lives in the `forks`
+      # container, which is namespaced per Mathlib commit. `lake exe cache get`
+      # works out that namespace from `git rev-parse HEAD` in the working
+      # directory -- here the SDG repository, not Mathlib -- so it looks in a
+      # namespace that was never written, finds nothing, and the whole of
+      # Mathlib gets recompiled (25 minutes, against 3 with the cache).
+      # Setting the namespace explicitly from the pinned Mathlib revision is the
+      # documented override. Keep this step before lean-action, which is what
+      # runs `cache get`. See scripts/cache-get.sh for the local equivalent.
+      - name: Read the Mathlib cache namespace from lake-manifest.json
         run: |
           rev=$(jq -er '.packages[] | select(.name == "mathlib") | .rev' lake-manifest.json)
-          echo "mathlib revision: $rev"
+          echo "Mathlib revision: $rev"
           echo "MATHLIB_CACHE_REPO_SCOPE=$rev" >> "$GITHUB_ENV"
 
-      - name: Install and configure Lean, and get mathlib cache
+      - name: Install and configure Lean, and get Mathlib cache
         uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
         with:
           auto-config: false
           use-github-cache: false
           use-mathlib-cache: true
 
-      - name: "Check that SDG.lean is up to date"
+      # A module that nothing imports is never compiled by `lake build SDG`, so
+      # it could rot unnoticed. `lake exe mk_all --check` is the usual guard,
+      # but it insists on regenerating SDG.lean without its copyright header,
+      # so it can never pass here. Compare the import list directly instead.
+      - name: Check that SDG.lean imports every module
         run: |
-          ~/.elan/bin/lake exe mk_all --check || echo "ERROR: please ensure that SDG.lean is up to date, for instance by running lake exe mk_all"
-
-      - name: Cache build artifacts
-        uses: actions/cache@v5
-        with:
-          path: .lake/build
-          key: LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
-          restore-keys: LakeBuild-
+          find SDG -name '*.lean' | sed 's#/#.#g; s#\.lean$##' | sort > /tmp/sdg-modules.txt
+          sed -nE 's/^[[:space:]]*(public[[:space:]]+)?import[[:space:]]+([A-Za-z0-9_.]+).*/\2/p' SDG.lean | sort > /tmp/sdg-imported.txt
+          if ! diff -u /tmp/sdg-imported.txt /tmp/sdg-modules.txt; then
+            echo "::error::SDG.lean does not import exactly the modules under SDG/. In the diff above, '-' is imported but missing from disk and '+' is present on disk but not imported. Edit SDG.lean by hand, keeping its copyright header."
+            exit 1
+          fi
+          echo "SDG.lean imports all $(wc -l < /tmp/sdg-modules.txt) modules."
 
       - name: Build project
         run: ~/.elan/bin/lake build SDG
