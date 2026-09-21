@@ -21,27 +21,20 @@ set_option linter.detectClassical false
 
 namespace SDG
 
-variable {R : Type*} [CommRing R] [IsKockLawvere_one R]
+variable (R : Type*) [CommRing R] [IsKockLawvere_one R]
 
 open IsKockLawvere_one
 
 include R in
 theorem false_of_isKockLawvere_one : False := by
   classical
+  obtain ⟨d, hd, hd0⟩ : ∃ d ∈ D R, d ≠ 0 := by grind [D_ne_zero R]
   let g : D R → R := fun ⟨d, hd⟩ ↦ if d ≠ 0 then 1 else 0
-  obtain ⟨b, hb, hbunique⟩ := isKockLawvere_one g
-  refine D_ne_zero R (fun d hd ↦ ?_)
-  by_contra h
+  obtain ⟨b, hb, -⟩ := isKockLawvere_one g
+  have : 1 = b * d := by simpa [g, hd0] using hb ⟨d, hd⟩
   refine one_ne_zero (α := R) ?_
-  have : 1 = b * d := by simpa [g, h] using hb ⟨d, hd⟩
   calc 1 = 1 ^ 2 := by rw [one_pow]
-       _ = (b * d) ^ 2 := by simp [this]
-       _ = 0 := by simp [mul_pow, D_mem_iff.1 hd]
-
-lemma nontrivial_D : Nontrivial (D R) := by
-  have := D_ne_zero R
-  simp only [Subsemigroup.mem_mk, Set.mem_ofPred_eq, not_forall] at this
-  obtain ⟨d, hd, hd0⟩ := this
-  exact ⟨0, ⟨d, hd⟩, fun h ↦ hd0 <| Subtype.ext_iff.1 h.symm⟩
+    _ = (b * d) ^ 2 := by rw [this]
+    _ = 0 := by rw [mul_pow, D_mem_iff.1 hd, mul_zero]
 
 end SDG
