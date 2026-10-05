@@ -125,14 +125,16 @@ theorem deriv_equiv (f : R ≃ R) : ∂↑f⁻¹ * ∂f ∘ ↑f⁻¹ = 1 := by
 
 section taylor
 
+/-- The second-order expansion along two first-order infinitesimals, without division by `2`. -/
+theorem taylor_two_add (f : R → R) (x : R) (d₁ d₂ : D R) :
+    f (x + d₁ + d₂) = f x + ∂f x * (d₁ + d₂) + ∂∂f x * (d₁ * d₂) := by
+  rw [taylor_one f, taylor_one f, taylor_one ∂f]
+  ring
+
 theorem taylor_two_aux [Invertible (2 : R)] (f : R → R) (x : R) (d₁ d₂ : D R) :
-    letI δ : R := d₁ + d₂
-    f (x + δ) = f x + ∂f x * δ + ∂∂f x * δ ^ 2 * ⅟2 :=
+    f (x + (d₁ + d₂)) = f x + ∂f x * (d₁ + d₂) + ∂∂f x * (d₁ + d₂) ^ 2 * ⅟2 :=
   calc f (x + (d₁ + d₂)) = f (x + d₁ + d₂) := by rw [add_assoc]
-       _ = f (x + d₁) + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
-       _ = f x + ∂f x * d₁ + ∂f (x + d₁) * d₂ := by rw [taylor_one f]
-       _ = f x + ∂f x * d₁ + (∂f x + ∂∂f x * d₁) * d₂ := by rw [taylor_one ∂f]
-       _ = f x + ∂f x * (d₁ + d₂) + ∂∂f x * (d₁ * d₂) := by ring
+       _ = f x + ∂f x * (d₁ + d₂) + ∂∂f x * (d₁ * d₂) := taylor_two_add f x d₁ d₂
        _ = f x + ∂f x * (d₁ + d₂) + ∂∂f x * ((d₁ + d₂) ^ 2 * ⅟2) := by rw [D_add_sq_dvd_two]
        _ = _ := by ring
 
