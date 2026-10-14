@@ -55,20 +55,17 @@ jobs:
             LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
             LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-
 
-      # Our Mathlib is a branch of a fork, so its cache lives in the `forks`
-      # container, which is namespaced per Mathlib commit. `lake exe cache get`
-      # works out that namespace from `git rev-parse HEAD` in the working
-      # directory -- here the SDG repository, not Mathlib -- so it looks in a
-      # namespace that was never written, finds nothing, and the whole of
-      # Mathlib gets recompiled (25 minutes, against 3 with the cache).
-      # Setting the namespace explicitly from the pinned Mathlib revision is the
-      # documented override. Keep this step before lean-action, which is what
-      # runs `cache get`. See scripts/cache-get.sh for the local equivalent.
-      - name: Read the Mathlib cache namespace from lake-manifest.json
+      # Our Mathlib is a branch of a fork built with a custom Lean toolchain,
+      # which upstream Mathlib CI no longer builds, so its cache is not on
+      # cache.mathlib.org. It is hosted on webusers.imj-prg.fr, and
+      # `lake exe cache get` (run by lean-action) reads it from there through
+      # MATHLIB_CACHE_GET_URL; without it the whole of Mathlib gets recompiled.
+      # Do not also set MATHLIB_CACHE_REPO_SCOPE: a scope adds a per-commit
+      # segment to every URL, and this endpoint is flat. Keep this step before
+      # lean-action. See scripts/cache-get.sh for the local equivalent.
+      - name: Point the Mathlib cache at its host
         run: |
-          rev=$(jq -er '.packages[] | select(.name == "mathlib") | .rev' lake-manifest.json)
-          echo "Mathlib revision: $rev"
-          echo "MATHLIB_CACHE_REPO_SCOPE=$rev" >> "$GITHUB_ENV"
+          echo "MATHLIB_CACHE_GET_URL=https://webusers.imj-prg.fr/~riccardo.brasca/mathlib-cache" >> "$GITHUB_ENV"
 
       - name: Install and configure Lean, and get Mathlib cache
         uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # v1.6.0

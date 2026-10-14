@@ -40,19 +40,18 @@ Building the project type-checks all files; there is no separate test command.
 Use `./scripts/cache-get.sh`. **Plain `lake exe cache get` downloads nothing
 here** and leaves you recompiling the whole of Mathlib, which takes hours.
 
-The reason is that our Mathlib is a branch of a fork. Caches for a fork are
-stored under the Mathlib commit they were built from, and `lake exe cache get`
-works out which commit that is by looking at the git repository of the directory
-it is run in -- which, run from here, is SDG rather than Mathlib. So it looks in
-the wrong place and finds nothing. The script simply tells it the right commit:
+The reason is that our Mathlib is a branch of a fork built with a custom Lean
+toolchain. Upstream Mathlib CI does not build such branches, so its compiled
+files are not on the official cache server. They are hosted on
+webusers.imj-prg.fr instead, and the script points `lake exe cache` there:
 
 ```bash
-lake exe cache get --scope=$(git -C .lake/packages/mathlib rev-parse HEAD)
+MATHLIB_CACHE_GET_URL=https://webusers.imj-prg.fr/~riccardo.brasca/mathlib-cache \
+  lake exe cache get --repo=riccardobrasca/mathlib4
 ```
 
-It prints a security notice about reading a cache "at a non-default scope". That
-is expected -- it means you are trusting the fork's own CI, which is where these
-files come from.
+`cache` only accepts a file whose hash matches the Mathlib sources you have
+checked out, so a stale or foreign file is never used.
 
 The script passes its arguments through to `lake exe cache`, so you can also say:
 
@@ -64,7 +63,7 @@ The script passes its arguments through to `lake exe cache`, so you can also say
 The cache only ever covers the dependencies (Mathlib, Batteries, Aesop, ...),
 never SDG's own files: those are always compiled locally by `lake build SDG`.
 
-CI does the same thing through the `MATHLIB_CACHE_REPO_SCOPE` environment
+CI does the same thing through the `MATHLIB_CACHE_GET_URL` environment
 variable; see `.github/workflows/build-project.yml`.
 
 ## File structure

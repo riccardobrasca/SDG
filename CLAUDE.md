@@ -22,17 +22,18 @@ lake exe mk_all --check
 ```
 
 **Never use plain `lake exe cache get` here — it downloads nothing.** Mathlib is
-a branch of a fork (`riccardobrasca/mathlib4`, `less_choice`), so its artifacts
-live in the cache's `forks` container, namespaced per mathlib commit. Run from a
-downstream project, `cache` reads that commit from the *project's* git
-repository rather than from the mathlib package, and probes a namespace that was
-never written. The hashes it asks for are right; only the namespace is wrong.
+a branch of a fork (`riccardobrasca/mathlib4`, `less_choice`) built with a
+custom Lean toolchain, which upstream mathlib CI no longer builds, so nothing is
+on cache.mathlib.org. The artifacts are hosted as a flat endpoint at
+`https://webusers.imj-prg.fr/~riccardo.brasca/mathlib-cache`
+(`f/riccardobrasca/mathlib4/<hash>.ltar`).
 
-`scripts/cache-get.sh` supplies the right one (`--scope=<mathlib HEAD>`) and
-forwards its arguments to `lake exe cache`, so `./scripts/cache-get.sh get!`
-forces a re-download. CI does the same via `MATHLIB_CACHE_REPO_SCOPE`, set from
-`lake-manifest.json` in `.github/workflows/build-project.yml`. The "non-default
-scope" security notice both print is expected. See the README for details.
+`scripts/cache-get.sh` sets `MATHLIB_CACHE_GET_URL` to that endpoint, passes
+`--repo=riccardobrasca/mathlib4`, and forwards its arguments to
+`lake exe cache`, so `./scripts/cache-get.sh get!` forces a re-download. CI sets
+the same `MATHLIB_CACHE_GET_URL` in `.github/workflows/build-project.yml`. Never
+add `--scope` or `MATHLIB_CACHE_REPO_SCOPE`: a scope inserts a commit segment
+into every URL and misses the flat endpoint. See the README for details.
 
 There is no separate test command — building the project IS the test. All files are type-checked by `lake build SDG`.
 
