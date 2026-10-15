@@ -33,7 +33,10 @@ on cache.mathlib.org. The artifacts are hosted as a flat endpoint at
 `lake exe cache`, so `./scripts/cache-get.sh get!` forces a re-download. CI sets
 the same `MATHLIB_CACHE_GET_URL` in `.github/workflows/build-project.yml`. Never
 add `--scope` or `MATHLIB_CACHE_REPO_SCOPE`: a scope inserts a commit segment
-into every URL and misses the flat endpoint. See the README for details.
+into every URL and misses the flat endpoint. On a fresh clone the script fetches
+the dependencies itself, at the manifest revisions; never use `lake update` for
+that, since it moves Mathlib to the tip of `less_choice`, which may have no
+cache. See the README for details.
 
 There is no separate test command — building the project IS the test. All files are type-checked by `lake build SDG`.
 

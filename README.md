@@ -26,7 +26,8 @@ The project depends on a custom fork of [Mathlib4](https://github.com/riccardobr
 see [here](https://github.com/leanprover-community/mathlib4/pull/35685).
 
 ```bash
-# Get the Mathlib cache -- use this script, not `lake exe cache get`
+# Fetch the dependencies and the Mathlib cache -- use this script, not
+# `lake exe cache get`, and do not run `lake update` first
 ./scripts/cache-get.sh
 
 # Build the project
@@ -50,8 +51,14 @@ MATHLIB_CACHE_GET_URL=https://webusers.imj-prg.fr/~riccardo.brasca/mathlib-cache
   lake exe cache get --repo=riccardobrasca/mathlib4
 ```
 
-`cache` only accepts a file whose hash matches the Mathlib sources you have
-checked out, so a stale or foreign file is never used.
+`cache` only asks for files named after the hash of your exact Mathlib sources
+and toolchain, so it never fetches files built for another commit.
+
+On a fresh clone the script first fetches the dependencies at the revisions
+pinned in `lake-manifest.json`. Do not use `lake update` for that: it moves
+Mathlib to the tip of the `less_choice` branch, which may not have a cache yet.
+When you do run `lake update` on purpose, Mathlib prints "You should run
+`lake exe cache get` manually"; run `./scripts/cache-get.sh` instead.
 
 The script passes its arguments through to `lake exe cache`, so you can also say:
 

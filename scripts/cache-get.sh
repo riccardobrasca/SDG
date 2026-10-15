@@ -25,8 +25,11 @@ cd "$root"
 
 mathlib=.lake/packages/mathlib
 if [ ! -d "$mathlib/.git" ]; then
-  echo "error: no mathlib checkout at $mathlib -- run 'lake update' first." >&2
-  exit 1
+  # A fresh clone has no dependencies yet.  Any lake command clones them at the
+  # revisions pinned in lake-manifest.json; `lake update` would instead move
+  # mathlib to the tip of `less_choice`, which may have no cache yet.
+  echo "Fetching dependencies at the revisions in lake-manifest.json..."
+  lake env true
 fi
 
 # The cache keys are computed from the files in the checkout, so a checkout
